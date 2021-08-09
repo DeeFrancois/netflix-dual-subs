@@ -1,4 +1,4 @@
-//8-7-21 4:35AM - IT WORKS (kind of)
+//8-7-21 4:35AM - IT FUCKING WORKS (kind of)
 // RIght now it works if you use the "enable right click" extension to allow for google translate option
 // And MAJOR PROBLEM: It flickers. For some reason Netflix constantly refreshes the subtitles, the refresh is fast but noticable when google translate has to work on every refresh
 // Distinguish between a refresh and a subtitle change, keep addedSubs onscreen until subtitle change rather than refresh (clear happens when childelementcount === 0)
@@ -9,11 +9,16 @@
 //Store the translation strings until clear, apply those on refresh, clear stored on sub clear
 
 //IT WORKS PERFECTLY!!!!!!!!!!!!!!!!!!!!!!!!
-//Next I need to address spacing 
+//Next I need to address spacing
+
+//Basically works well enough now, just need to do the user preferences
+//oh wait, need to figure out how to enable right click on netflix
+//There's a problem where the translations don't always show up without refreshing
+//Also maybe figure out how to request from google translate directly so it doesn't need the browser to do the translations
+//Can go back to using mutation observer for inset but add a time limiter for how many times it can be accessed?
 console.log("New page!.. Waiting for captions");
 
 window.initialFlag=1;
-
 
 
 function waitForElement(selector) {
@@ -77,9 +82,8 @@ waitForElement("#appMountPoint > div > div > div:nth-child(1) > div > div > div.
     console.log("Netflix Player Detected!");
    
     console.log("Starting Script");
-
+    document.oncontextmenu=null;
     llsubs();
-
     
 });
 
@@ -93,9 +97,9 @@ function llsubs(){
     const timedtext = document.getElementsByClassName(id)[0];
 
     window.mysubs = timedtext.cloneNode();
-    mysubs.setAttribute('class','MYSUBSBRO')
+    mysubs.setAttribute('class','mysubscontainer')
     timedtext.parentNode.appendChild(mysubs);
-    timedtext.style.left='80%';
+    //timedtext.style.left='80%';
     window.cleared=1;
     var dupe =timedtext.cloneNode(true);
     dupe.setAttribute('class','TESTSTETSETES');
@@ -115,12 +119,12 @@ function llsubs(){
                     //console.log(mutation.addedNodes[0].className);
                     
                     addSubs(timedtext);
-                    console.log("ADDED TARGET: ",mutation.target);
+                    //console.log("ADDED TARGET: ",mutation.target);
                 }
                 else{
-                    console.log("Removed Nodes");
-                    console.log(mutation);
-                    console.log("Children: ",mutation.target.childElementCount); // When this is ZERO it was a CLEAR
+                    //console.log("Removed Nodes");
+                    //console.log(mutation);
+                    //console.log("Children: ",mutation.target.childElementCount); // When this is ZERO it was a CLEAR
                     if (mutation.target.childElementCount===0){
                         window.cleared=1;
                     }
@@ -131,7 +135,12 @@ function llsubs(){
                 
                 
             }
-           
+            //else if(mutation.type === 'attributes' && mutation.target.className ==="player-timedtext" && mutation.attributeName === "style"){
+            //    //console.log(mutation);
+            //    mysubs.style.inset=timedtext.style.inset;
+            //    //mysubs.style.fontSize = timedtext.style.fontSize;
+            //    //mysubs.setAttribute('style',timedtext.getAttribute('style'));
+            //}
         }
     };
 
@@ -144,20 +153,31 @@ const addSubs = function(caption_row){ // COPY AND PLACEMENT IS GOOD!
 
     if(caption_row.firstChild!=null){// && (window.recent_add == 0 && window.cleared==1)){ // Ensures Subs were added rather than removed
         
-        caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 1%; bottom: 10%;'); // move original to left
+        caption_row.firstChild.setAttribute('style','display: inline; text-align: center; position: absolute; left: 5%; bottom: 10%;'); // move original to left
+        //console.log(caption_row.firstChild.getBoundingClientRect());
+        
 
         if (window.cleared === 1){ //If cleared subs recent, pull new subs, store, display
 
             window.stored_subs = caption_row.firstChild.cloneNode(true);
             stored_subs.setAttribute('class','mysubs');
             stored_subs.setAttribute('translate','yes');
-            stored_subs.setAttribute('style','display: block;white-space: nowrap;text-align: center; position: absolute; right: 1%;bottom: 10%;');
+            stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${caption_row.firstChild.getBoundingClientRect().right+10+'px'} ;bottom: 10%;`); //Room here for User Preference "Distance between subs"
+             
+            stored_subs.firstChild.style.color='yellow';
+            if (stored_subs.childElementCount>1){
+                stored_subs.children[1].style.color='yellow';
+            }
+            mysubs.style.inset=caption_row.style.inset; //Better to do this than mutation observer catching EVERY attribute change (which is ALOT)
             mysubs.appendChild(stored_subs);
             window.cleared=0;
+            
         }
         else{// not cleared so just place 
             mysubs.appendChild(stored_subs);
         }
+
+        //dragElement(document.getElementsByClassName("mysubs"));
         //var current_span = caption_row;
         //console.log(current_span.getAttribute('style'));
         //current_span.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 1%; bottom: 10%;'); // move original to left
@@ -171,7 +191,7 @@ const addSubs = function(caption_row){ // COPY AND PLACEMENT IS GOOD!
         
     }
     else{
-        console.log("DONT ADD SUBS");
+        //console.log("DONT ADD SUBS");
         window.old_text=["",""]; //clear old_text since subtitle row was removed, otherwise this would not work when a character repeats something
         
     }
@@ -179,6 +199,52 @@ const addSubs = function(caption_row){ // COPY AND PLACEMENT IS GOOD!
     window.observer.observe(caption_row,window.config);
 }
 
+function dragElement(elmnt) {
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  if (document.getElementById(elmnt.id + "header")) {
+    // if present, the header is where you move the DIV from:
+    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+  } else {
+    // otherwise, move the DIV from anywhere inside the DIV:
+    console.log("MOVING")
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // get the mouse cursor position at startup:
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    // call a function whenever the cursor moves:
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the element's new position:
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    // stop moving when mouse button is released:
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+
+
+
+
+///
 function update_style(setting){ //This just applies stored values, update preference should just change stored values
     //default style="font-size: 0.898472rem; bottom: 5%; padding-left: 2%;color:yellow"
     //console.log("Update Element: ",element);
