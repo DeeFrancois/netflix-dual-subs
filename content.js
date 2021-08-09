@@ -3,6 +3,8 @@
 //There's a problem where the translations don't always show up without refreshing
 //Also maybe figure out how to request from google translate directly so it doesn't need the browser to do the translations
 //Can go back to using mutation observer for inset but add a time limiter for how many times it can be accessed?
+
+//Fixed Right Click but found new issue. Netflix page updates dynamically which prevents content script from running when changing videos (until refresh), add event listener for url change in background js, trigger a call to waitforelement
 console.log("New page!.. Waiting for captions");
 
 window.initialFlag=1;
