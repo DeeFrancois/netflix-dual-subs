@@ -1,8 +1,15 @@
-//8-7-21 4:35AM - IT WORKS (kind of)
+//8-7-21 4:35AM - IT FUCKING WORKS (kind of)
 // RIght now it works if you use the "enable right click" extension to allow for google translate option
 // And MAJOR PROBLEM: It flickers. For some reason Netflix constantly refreshes the subtitles, the refresh is fast but noticable when google translate has to work on every refresh
 // Distinguish between a refresh and a subtitle change, keep addedSubs onscreen until subtitle change rather than refresh (clear happens when childelementcount === 0)
 // Also, the subs have a tendency to overlap during long lines. Could do a font size change but I also want to add a way to drag the added text. Use that script to make it a draggable element.
+
+//Latest Update:
+//Made it so the extension creates its own caption container (player-timedtext) and it can properly update and clear at the proper times. BUT a script is STILL making it refresh even..
+//Store the translation strings until clear, apply those on refresh, clear stored on sub clear
+
+//IT WORKS PERFECTLY!!!!!!!!!!!!!!!!!!!!!!!!
+//Next I need to address spacing 
 console.log("New page!.. Waiting for captions");
 
 window.initialFlag=1;
@@ -84,7 +91,12 @@ function llsubs(){
     window.recent_add=0;
     window.old_text = ["",""];
     const timedtext = document.getElementsByClassName(id)[0];
-    
+
+    window.mysubs = timedtext.cloneNode();
+    mysubs.setAttribute('class','MYSUBSBRO')
+    timedtext.parentNode.appendChild(mysubs);
+    timedtext.style.left='80%';
+    window.cleared=1;
     var dupe =timedtext.cloneNode(true);
     dupe.setAttribute('class','TESTSTETSETES');
 
@@ -97,15 +109,24 @@ function llsubs(){
                 
                 //console.log("Mutation Observed");
                 if (mutation.addedNodes.length===1){
+                    //window.cleared=0;
                     this.disconnect();
                     //console.log("Added Nodes");
                     //console.log(mutation.addedNodes[0].className);
+                    
                     addSubs(timedtext);
+                    console.log("ADDED TARGET: ",mutation.target);
                 }
                 else{
                     console.log("Removed Nodes");
                     console.log(mutation);
                     console.log("Children: ",mutation.target.childElementCount); // When this is ZERO it was a CLEAR
+                    if (mutation.target.childElementCount===0){
+                        window.cleared=1;
+                    }
+                    while (mysubs.firstChild){
+                        mysubs.removeChild(mysubs.firstChild);
+                    }
                 }
                 
                 
@@ -122,50 +143,30 @@ function llsubs(){
 const addSubs = function(caption_row){ // COPY AND PLACEMENT IS GOOD!
 
     if(caption_row.firstChild!=null){// && (window.recent_add == 0 && window.cleared==1)){ // Ensures Subs were added rather than removed
-
-        window.recent_add = 1;
-        //console.log("ADDing SUBS NOW");
-        //var children = caption_row.childNodes;
-
-        var current_span = caption_row.firstChild;
-        current_span.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: inherit; left: 1%; bottom: 10%;');
-        var new_span = current_span.cloneNode(true);
-        new_span.setAttribute('class','MYSUBS!!!!');
-        new_span.setAttribute('style','display: block; white-space: nowrap; text-align:center; left:50%; position: inherit; bottom: 10%;')
-        new_span.setAttribute('translate','yes');
-        current_span.parentNode.appendChild(new_span);
-        //console.log("Created element: ", new_span);
         
+        caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 1%; bottom: 10%;'); // move original to left
 
-        //console.log("Caption Row First Child Not Null: ",caption_row.firstChild);
-        /*const child_count = caption_row.childElementCount; // Get row count
-        var children = caption_row.childNodes; //Get the subtitle rows
+        if (window.cleared === 1){ //If cleared subs recent, pull new subs, store, display
 
-        for (var i = 0; i < child_count; i++)
-        {
-
-        var insertion_point = children[i]; //Get insertion Point
-        var current_span = children[i].firstChild;
-        var current_text = current_span.innerHTML; //Getting actual text to make sure there aren't duplicates
-
-        //Modifying Subtitle Row
-        var new_span = current_span.cloneNode(true);
-        current_span.setAttribute('style',`font-size: ${window.current_size};padding-left: 2%; color: ${window.text_color};opacity: ${window.opacity}; background: rgba(0,0,0,0.66);border-radius: 0.15em;line-height: 1.4;display: inline-block;padding: 0 0.3em;margin: 0.05em 0;`);
-        new_span.setAttribute('class','notranslate');
-
-            if(parseInt(window.left_or_right)===1){ //Place Text on RIGHT side
-                insertion_point.append(new_span);
-                
-            }
-            else{ //Otherwise Place text on LEFT side
-                insertion_point.prepend(new_span);
-            }
-
+            window.stored_subs = caption_row.firstChild.cloneNode(true);
+            stored_subs.setAttribute('class','mysubs');
+            stored_subs.setAttribute('translate','yes');
+            stored_subs.setAttribute('style','display: block;white-space: nowrap;text-align: center; position: absolute; right: 1%;bottom: 10%;');
+            mysubs.appendChild(stored_subs);
+            window.cleared=0;
         }
-        */
-        window.cleared=0;
-        window.recent_add=1;
-        window.new_subs=0;
+        else{// not cleared so just place 
+            mysubs.appendChild(stored_subs);
+        }
+        //var current_span = caption_row;
+        //console.log(current_span.getAttribute('style'));
+        //current_span.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 1%; bottom: 10%;'); // move original to left
+        //var new_span = current_span.firstChild.cloneNode(true); //Clone actually sub element
+        //new_span.setAttribute('class','MYSUBS!!!!');
+        //new_span.setAttribute('translate','yes'); //modify so it's translatable
+        //new_span.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; right: 1%; bottom: 10%;')
+        //mysubs.appendChild(new_span);
+        
         //Finish Modifying Subtitle Row
         
     }
