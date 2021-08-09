@@ -1,0 +1,30 @@
+{
+    "manifest_version": 2,
+  
+    "name": "LLSubsNetflix",
+    "description": "This extension will add subtitles in a target language to Netflix",
+    "version": "1.6",
+    "background": {
+        "scripts": ["background.js"]
+    },
+  
+    "permissions": [
+        "activeTab", "storage"
+      ],
+
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.netflix.com/*"
+            ],
+            "js": ["jquery-3.5.1.min.js","content.js"]
+        }
+    ],
+    
+    "browser_action": {
+     "default_icon": "icon.png",
+     "default_popup": "popup.html"
+
+    }
+
+  }

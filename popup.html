@@ -1,0 +1,29 @@
+<!doctype html>
+<html style=>
+  <head>
+    <title>LLSubs-NRKTV</title>
+  </head>
+  <body style="background-color: black;color:white;">
+    <img src='icon.png'></img>
+    <p>Make sure to right click the NRK page and select "Translate this Page"!</p>
+    <div id="sliderLabel">Font Size</div>
+    <input id="mySlider" type="range" min=".2" max="3" step=".05">
+    <div id="mySliderValue"></div>
+    <div id="sideSliderLabel">Original Text Side</div>
+    <input id="sideSlider" type="range" min="0" max="1" step="1">
+    <div id ="sideSliderValue"></div>
+
+    <div id="opacitySliderLabel">Opacity</div>
+    <input id="opacitySlider" type="range" min="0" max="1" step=".1">
+    <div id ="opacitySliderValue"></div>
+
+    <div id = "colorPickerLabel">Translation Color</div>
+    <input id="myColorPicker" type="color" value="#FFFF00">
+    <br>
+    <br>
+    <input type="button" id="resetButton" value="Reset Settings" style="margin:auto; display:block;"></input>
+
+  </body>
+  <script src="popup.js"></script>
+  
+</html>
