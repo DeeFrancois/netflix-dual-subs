@@ -1,4 +1,4 @@
-//8-7-21 4:35AM - IT FUCKING WORKS (kind of)
+//8-7-21 4:35AM - IT WORKS (kind of)
 // RIght now it works if you use the "enable right click" extension to allow for google translate option
 // And MAJOR PROBLEM: It flickers. For some reason Netflix constantly refreshes the subtitles, the refresh is fast but noticable when google translate has to work on every refresh
 // Distinguish between a refresh and a subtitle change, keep addedSubs onscreen until subtitle change rather than refresh (clear happens when childelementcount === 0)
