@@ -1,16 +1,3 @@
-//8-7-21 4:35AM - IT FUCKING WORKS (kind of)
-// RIght now it works if you use the "enable right click" extension to allow for google translate option
-// And MAJOR PROBLEM: It flickers. For some reason Netflix constantly refreshes the subtitles, the refresh is fast but noticable when google translate has to work on every refresh
-// Distinguish between a refresh and a subtitle change, keep addedSubs onscreen until subtitle change rather than refresh (clear happens when childelementcount === 0)
-// Also, the subs have a tendency to overlap during long lines. Could do a font size change but I also want to add a way to drag the added text. Use that script to make it a draggable element.
-
-//Latest Update:
-//Made it so the extension creates its own caption container (player-timedtext) and it can properly update and clear at the proper times. BUT a script is STILL making it refresh even..
-//Store the translation strings until clear, apply those on refresh, clear stored on sub clear
-
-//IT WORKS PERFECTLY!!!!!!!!!!!!!!!!!!!!!!!!
-//Next I need to address spacing
-
 //Basically works well enough now, just need to do the user preferences
 //oh wait, need to figure out how to enable right click on netflix
 //There's a problem where the translations don't always show up without refreshing
@@ -46,6 +33,7 @@ function waitForElement(selector) {
       observer.observe(document.documentElement, { childList: true, subtree: true });
     });
 }
+
 function getSetting(setting){
     var value;
     chrome.storage.sync.get(setting,function(data){
@@ -82,7 +70,6 @@ waitForElement("#appMountPoint > div > div > div:nth-child(1) > div > div > div.
     console.log("Netflix Player Detected!");
    
     console.log("Starting Script");
-    document.oncontextmenu=null;
     llsubs();
     
 });
@@ -106,6 +93,9 @@ function llsubs(){
 
     window.config = { attributes: true, childList: true, subtree:true};
 
+    var elements = document.getElementsByTagName("*");
+    for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
+    
     const callback = function(mutationsList, observer){
         for (const mutation of mutationsList){
             if (mutation.type === 'childList' && mutation.target.className && mutation.target.className==="player-timedtext"){// && mutation.target.className && mutation.target.className==="player-timedtext") { //Found out I could do the mutation.target === stuff really late so there might be some of the checks add_subs could be redundant
@@ -117,7 +107,6 @@ function llsubs(){
                     this.disconnect();
                     //console.log("Added Nodes");
                     //console.log(mutation.addedNodes[0].className);
-                    
                     addSubs(timedtext);
                     //console.log("ADDED TARGET: ",mutation.target);
                 }
@@ -177,77 +166,16 @@ const addSubs = function(caption_row){ // COPY AND PLACEMENT IS GOOD!
             mysubs.appendChild(stored_subs);
         }
 
-        //dragElement(document.getElementsByClassName("mysubs"));
-        //var current_span = caption_row;
-        //console.log(current_span.getAttribute('style'));
-        //current_span.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 1%; bottom: 10%;'); // move original to left
-        //var new_span = current_span.firstChild.cloneNode(true); //Clone actually sub element
-        //new_span.setAttribute('class','MYSUBS!!!!');
-        //new_span.setAttribute('translate','yes'); //modify so it's translatable
-        //new_span.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; right: 1%; bottom: 10%;')
-        //mysubs.appendChild(new_span);
         
         //Finish Modifying Subtitle Row
-        
-    }
-    else{
-        //console.log("DONT ADD SUBS");
-        window.old_text=["",""]; //clear old_text since subtitle row was removed, otherwise this would not work when a character repeats something
         
     }
 
     window.observer.observe(caption_row,window.config);
 }
 
-function dragElement(elmnt) {
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  if (document.getElementById(elmnt.id + "header")) {
-    // if present, the header is where you move the DIV from:
-    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-  } else {
-    // otherwise, move the DIV from anywhere inside the DIV:
-    console.log("MOVING")
-    elmnt.onmousedown = dragMouseDown;
-  }
-
-  function dragMouseDown(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // get the mouse cursor position at startup:
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.onmouseup = closeDragElement;
-    // call a function whenever the cursor moves:
-    document.onmousemove = elementDrag;
-  }
-
-  function elementDrag(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // calculate the new cursor position:
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    // set the element's new position:
-    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-  }
-
-  function closeDragElement() {
-    // stop moving when mouse button is released:
-    document.onmouseup = null;
-    document.onmousemove = null;
-  }
-}
-
-
-
-
 ///
-function update_style(setting){ //This just applies stored values, update preference should just change stored values
-    //default style="font-size: 0.898472rem; bottom: 5%; padding-left: 2%;color:yellow"
-    //console.log("Update Element: ",element);
+function update_style(setting){
     
     const lines = document.getElementsByClassName("ludo-captions__line");
 
