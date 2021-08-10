@@ -61,13 +61,13 @@ function getSetting(setting){
         }
         else if (setting === "text_color"){
             window.text_color = data[setting];
-            document.getElementsByName("llsubsb2")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
-            document.getElementsByName("llsubsb1")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
-            console.log("Retrieved Font Multiplier From Storage: ",window.text_color);
+            //document.getElementsByName("llsubsb2")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
+            //document.getElementsByName("llsubsb1")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
+            //console.log("Retrieved Font Multiplier From Storage: ",window.text_color);
         }
         else if (setting === "opacity"){
             window.opacity = data[setting];
-            console.log("Retrieved Font Multiplier From Storage: ",window.opacity);
+            console.log("Retrieved Opacity From Storage: ",window.opacity);
         }
         else{
             console.log("Setting: ", setting, " Does Not Exist");
@@ -84,7 +84,7 @@ function wait_for_player(){
     //getSetting('font_multiplier');
     //getSetting('left_or_right');
     getSetting('text_color');
-    //getSetting('opacity');
+    getSetting('opacity');
     llsubs();
     
 });
@@ -155,19 +155,15 @@ const addSubs = function(caption_row){
             stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${caption_row.firstChild.getBoundingClientRect().right+10+'px'} ;bottom: 10%;`); //Room here for User Preference "Distance between subs"
              
             
-            //stored_subs.firstChild.style.color='yellow';
-            //if (stored_subs.childElementCount>1){
-            //    stored_subs.children[1].style.color='yellow';
-            //}
             mysubs.style.inset=caption_row.style.inset; //Better to do this than mutation observer catching EVERY attribute change (which is ALOT)
             mysubs.appendChild(stored_subs);
             update_style('text_color');
+            update_style('opacity');
             
             window.cleared=0;
             
         }
         else{// Just a refresh so just place stored instead 
-            console.log("Clear is 0");
             mysubs.appendChild(stored_subs);
         }
 
@@ -187,12 +183,10 @@ function update_style(setting){
     if (setting === 'font_size'){
 
         for (var i = 0; i<lines.length;i++){
-            console.log(lines[i]);
             lines[i].children[0].style["font-size"]=window.current_size;
             lines[i].children[1].style["font-size"]=window.current_size;
 
         }
-        console.log("Updated Lines");
     }
     if (setting === "text_color"){ 
 
@@ -211,15 +205,7 @@ function update_style(setting){
 
         for (var i = 0; i<lines.length;i++){
             console.log(lines[i]);
-            if (window.left_or_right == 0){ //Original Text Side Left
-                console.log("Original Text is on LEFT, changing children[1] See: ",window.left_or_right);
-                lines[i].children[1].style["opacity"]=window.opacity;
-            }
-            else{
-                console.log(window.left_or_right);
-                lines[i].children[0].style["opacity"]=window.opacity;
-                //lines[i].children[1].style["opacity"]=window.opacity; 
-            }
+            lines[i].style["opacity"]=window.opacity;
 
         }
 
