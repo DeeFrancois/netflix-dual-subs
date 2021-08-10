@@ -9,7 +9,7 @@
 //a visible 1 second delay on the first message.. this is fine for now tbh
 
 //Mostly done with preferences, considering doing distance slider instead of text side. Also, a font size for original subs
-
+//Added distance slider, might want to add font size for original text as well
 console.log("New page!.. Waiting for captions");
 
 window.initialFlag=1;
@@ -151,13 +151,13 @@ const addSubs = function(caption_row){
             window.stored_subs = caption_row.firstChild.cloneNode(true);
             stored_subs.setAttribute('class','mysubs');
             stored_subs.setAttribute('translate','yes');
-            stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${caption_row.firstChild.getBoundingClientRect().right+window.sub_distance+'px'} ;bottom: 10%;`); //Room here for User Preference "Distance between subs"
-            console.log("adding subs with distance: ",window.sub_distance);            
+            window.baseOffset = parseInt(caption_row.firstChild.getBoundingClientRect().right);
+            var current_dist = window.baseOffset+parseInt(window.sub_distance);
+            stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${current_dist+'px'} ;bottom: 10%;`); //Room here for User Preference "Distance between subs"  
             mysubs.style.inset=caption_row.style.inset; //Better to do this than mutation observer catching EVERY attribute change (which is ALOT)
             mysubs.appendChild(stored_subs);
             window.baseFont = parseFloat(stored_subs.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
-            window.baseOffset = caption_row.firstChild.getBoundingClientRect().right;
-            console.log("current font-size: ",window.baseFont);
+            console.log("base offset is: ",window.baseOffset);
             window.current_size = window.baseFont*window.current_multiplier+'px';
             update_style('text_color');
             update_style('opacity');

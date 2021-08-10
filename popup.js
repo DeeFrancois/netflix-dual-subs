@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded',function(){
         opacitySlider.dispatchEvent(new Event('change'));
         slider.value=1;
         slider.dispatchEvent(new Event('change'));
-        sideSlider.value=0;
+        sideSlider.value=10;
         sideSlider.dispatchEvent(new Event('change'));
         //chrome.runtime.sendMessage({
         //    "message": "default_settings",
