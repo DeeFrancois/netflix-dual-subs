@@ -42,13 +42,13 @@ chrome.storage.sync.get('font_multiplier',function(data){
 
 
 //Text Side
-chrome.storage.sync.get('left_or_right', function(data){
-  if(data.left_or_right!=null){
-    console.log("Preferences: English Side Found - : " + data.left_or_right);
+chrome.storage.sync.get('sub_distance', function(data){
+  if(data.sub_distance!=null){
+    console.log("Preferences: Sub Distance Found - : " + data.sub_distance);
   }
   else{
     console.log("No Side Preference Found - Setting RIGHT");
-    chrome.storage.sync.set({'left_or_right':1}); //1 = Right Side (Prepend New Span) 0= Left Side (Append New Span)
+    chrome.storage.sync.set({'sub_distance':10}); //1 = Right Side (Prepend New Span) 0= Left Side (Append New Span)
   }
   
 });
@@ -134,15 +134,15 @@ chrome.runtime.onMessage.addListener(
         });
       }
 
-      if(request.message === "update_text_side")
+      if(request.message === "update_sub_distance")
       {
 
-        console.log("BACKGROUND.JS recieved a message from SIDESLIDER to update TEXT_SIDE to " + request.value);
-        chrome.storage.sync.set({'left_or_right':request.value});
+        console.log("BACKGROUND.JS recieved a message from SIDESLIDER to update SUB_DISTANCE to " + request.value);
+        chrome.storage.sync.set({'sub_distance':request.value});
 
         chrome.tabs.query({active:true, currentWindow:true}, function(tabs){
           chrome.tabs.sendMessage(tabs[0].id, {
-            "message": "update_text_side", 
+            "message": "update_sub_distance", 
             "value": request.value});
         });
 

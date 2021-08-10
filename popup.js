@@ -15,9 +15,9 @@ document.addEventListener('DOMContentLoaded',function(){
 
     });
 
-    chrome.storage.sync.get('left_or_right',function(data){
-        sideSlider.value=data.left_or_right;
-        sideSliderValue.innerHTML=data.left_or_right;
+    chrome.storage.sync.get('sub_distance',function(data){
+        sideSlider.value=data.sub_distance;
+        sideSliderValue.innerHTML=data.sub_distance;
 
     });
 
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
         //chrome.storage.sync.set({"left_or_right":this.value});
         chrome.runtime.sendMessage({
-            "message": "update_text_side",
+            "message": "update_sub_distance",
             "value": this.value
         });
     }, false);

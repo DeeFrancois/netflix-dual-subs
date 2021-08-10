@@ -8,15 +8,14 @@
 //Found out it's because the extensions created container is being made too early and it copies the wrong style properties. Fixed it by making waitforelement wait for actual text to show before doing anything but this causes
 //a visible 1 second delay on the first message.. this is fine for now tbh
 
+//Mostly done with preferences, considering doing distance slider instead of text side. Also, a font size for original subs
+
 console.log("New page!.. Waiting for captions");
 
 window.initialFlag=1;
 chrome.extension.sendMessage({"message": "prevent_waitfor"});
 
-//Opacity can be changed at container level
-//Text side can be changed at container level
-//font size must be applied individually
-//text color must be applied individually
+
 
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -51,13 +50,11 @@ function getSetting(setting){
         
         if (setting === "font_multiplier"){
             window.current_multiplier = parseFloat(data[setting]);
-            window.current_size = window.baseFont*window.current_multiplier+'px';
             console.log("Retrieved Font Multiplier From Storage: ",window.current_multiplier);
-            console.log("Before running, the current_size is: ",window.current_size);
         }
-        else if (setting === "left_or_right"){
-            window.left_or_right = data[setting];
-            console.log("Retrieved Font Multiplier From Storage: ",window.left_or_right);
+        else if (setting === "sub_distance"){
+            window.sub_distance= data[setting];
+            console.log("Retrieved Sub Distance From Storage: ",window.sub_distance);
         }
         else if (setting === "text_color"){
             window.text_color = data[setting];
@@ -85,6 +82,8 @@ function wait_for_player(){
     //getSetting('left_or_right');
     getSetting('text_color');
     getSetting('opacity');
+    getSetting('font_multiplier');
+    getSetting('sub_distance');
     llsubs();
     
 });
@@ -152,13 +151,19 @@ const addSubs = function(caption_row){
             window.stored_subs = caption_row.firstChild.cloneNode(true);
             stored_subs.setAttribute('class','mysubs');
             stored_subs.setAttribute('translate','yes');
-            stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${caption_row.firstChild.getBoundingClientRect().right+10+'px'} ;bottom: 10%;`); //Room here for User Preference "Distance between subs"
-             
-            
+            stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${caption_row.firstChild.getBoundingClientRect().right+window.sub_distance+'px'} ;bottom: 10%;`); //Room here for User Preference "Distance between subs"
+            console.log("adding subs with distance: ",window.sub_distance);            
             mysubs.style.inset=caption_row.style.inset; //Better to do this than mutation observer catching EVERY attribute change (which is ALOT)
             mysubs.appendChild(stored_subs);
+            window.baseFont = parseFloat(stored_subs.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
+            window.baseOffset = caption_row.firstChild.getBoundingClientRect().right;
+            console.log("current font-size: ",window.baseFont);
+            window.current_size = window.baseFont*window.current_multiplier+'px';
             update_style('text_color');
             update_style('opacity');
+            update_style('font_size');
+
+            
             
             window.cleared=0;
             
@@ -183,15 +188,15 @@ function update_style(setting){
     if (setting === 'font_size'){
 
         for (var i = 0; i<lines.length;i++){
-            lines[i].children[0].style["font-size"]=window.current_size;
-            lines[i].children[1].style["font-size"]=window.current_size;
+
+            lines[i].style["font-size"]=window.current_size;
 
         }
     }
     if (setting === "text_color"){ 
 
         for (var i = 0; i<lines.length;i++){
-            console.log(lines[i]);
+
             lines[i].style["color"]=window.text_color;
 
         }
@@ -204,21 +209,16 @@ function update_style(setting){
     if (setting === "opacity"){
 
         for (var i = 0; i<lines.length;i++){
-            console.log(lines[i]);
+
             lines[i].style["opacity"]=window.opacity;
 
         }
 
     }
 
-    if (setting === "text_side"){ //Not quite sure how to pick the color yet..
-        for (var i = 0; i<lines.length;i++){
-            //console.log(lines[i].childList);
-            lines[i].appendChild(lines[i].children[0]) //https://stackoverflow.com/questions/7742305/changing-the-order-of-elements
-            // It works BUT it triggers the observer...
-            //lines[i].children[1].style["color"]=window.current_size;
-
-        }
+    if (setting === "sub_distance"){ //Not quite sure how to pick the color yet..
+        document.getElementsByClassName("mysubs")[0].style.left=window.baseOffset+window.sub_distance+'px';
+        console.log("Set sub distance");
     }
 
 }
@@ -242,11 +242,11 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
             //ludo_captions = document.getElementsByClassName("ludo-captions");
         }
 
-        if (request.message ==='update_text_side'){
+        if (request.message ==='update_sub_distance'){
             console.log("Recieved Message from BACKGROUND.JS to CHANGE side to " + request.value);
-            window.left_or_right=parseInt(request.value);
+            window.sub_distance=parseInt(request.value);
             //StoreSetting('current_size',window.current_size)
-            update_style('text_side');
+            update_style('sub_distance');
         }
 
         if (request.message ==='update_text_color'){
