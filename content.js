@@ -10,6 +10,8 @@
 
 //Mostly done with preferences, considering doing distance slider instead of text side. Also, a font size for original subs
 //Added distance slider, might want to add font size for original text as well
+//Removed Distance slider.. for some reason getBoundingClientRect is not consistent. dont think this option is necessary though so I'm gonna remove it for now
+
 console.log("New page!.. Waiting for captions");
 
 window.initialFlag=1;
@@ -52,10 +54,10 @@ function getSetting(setting){
             window.current_multiplier = parseFloat(data[setting]);
             console.log("Retrieved Font Multiplier From Storage: ",window.current_multiplier);
         }
-        else if (setting === "sub_distance"){
+        /*else if (setting === "sub_distance"){
             window.sub_distance= data[setting];
             console.log("Retrieved Sub Distance From Storage: ",window.sub_distance);
-        }
+        }*/
         else if (setting === "text_color"){
             window.text_color = data[setting];
             //document.getElementsByName("llsubsb2")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
@@ -83,7 +85,7 @@ function wait_for_player(){
     getSetting('text_color');
     getSetting('opacity');
     getSetting('font_multiplier');
-    getSetting('sub_distance');
+    //getSetting('sub_distance'); inconsistent functionality for some reason.. but I don't think people would need this option anyways so I'll disable for now
     llsubs();
     
 });
@@ -151,8 +153,9 @@ const addSubs = function(caption_row){
             window.stored_subs = caption_row.firstChild.cloneNode(true);
             stored_subs.setAttribute('class','mysubs');
             stored_subs.setAttribute('translate','yes');
-            window.baseOffset = parseInt(caption_row.firstChild.getBoundingClientRect().right);
-            var current_dist = window.baseOffset+parseInt(window.sub_distance);
+            //window.baseOffset = parseInt(caption_row.firstChild.firstChild.getBoundingClientRect().right);
+            var current_dist = parseInt(caption_row.firstChild.getBoundingClientRect().right)+20;
+            console.log(caption_row.firstChild.getBoundingClientRect().right);
             stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${current_dist+'px'} ;bottom: 10%;`); //Room here for User Preference "Distance between subs"  
             mysubs.style.inset=caption_row.style.inset; //Better to do this than mutation observer catching EVERY attribute change (which is ALOT)
             mysubs.appendChild(stored_subs);
@@ -184,7 +187,6 @@ const addSubs = function(caption_row){
 function update_style(setting){
     
     const lines = document.getElementsByClassName("mysubs")[0].children; //lines are this elements children
-
     if (setting === 'font_size'){
 
         for (var i = 0; i<lines.length;i++){
@@ -216,10 +218,12 @@ function update_style(setting){
 
     }
 
-    if (setting === "sub_distance"){ //Not quite sure how to pick the color yet..
-        document.getElementsByClassName("mysubs")[0].style.left=window.baseOffset+window.sub_distance+'px';
+    /*if (setting === "sub_distance"){ //Not quite sure how to pick the color yet..
+        var test = parseInt(window.baseOffset)+parseInt(window.sub_distance);
+        document.getElementsByClassName("mysubs")[0].style.left=test+'px';
         console.log("Set sub distance");
     }
+    */
 
 }
 
@@ -242,12 +246,13 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
             //ludo_captions = document.getElementsByClassName("ludo-captions");
         }
 
-        if (request.message ==='update_sub_distance'){
+        /*if (request.message ==='update_sub_distance'){ inconsistent functionality for some reason.. but I don't think people would need this option anyways so I'll disable for now
             console.log("Recieved Message from BACKGROUND.JS to CHANGE side to " + request.value);
             window.sub_distance=parseInt(request.value);
             //StoreSetting('current_size',window.current_size)
             update_style('sub_distance');
         }
+        */
 
         if (request.message ==='update_text_color'){
             console.log("Recieved Message from BACKGROUND.JS to CHANGE color to " + request.value);

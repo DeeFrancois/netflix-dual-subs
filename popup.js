@@ -15,11 +15,12 @@ document.addEventListener('DOMContentLoaded',function(){
 
     });
 
-    chrome.storage.sync.get('sub_distance',function(data){
+    /*chrome.storage.sync.get('sub_distance',function(data){
         sideSlider.value=data.sub_distance;
         sideSliderValue.innerHTML=data.sub_distance;
 
     });
+    */
 
     chrome.storage.sync.get('opacity',function(data){
         opacitySlider.value=data.opacity;
@@ -44,7 +45,7 @@ document.addEventListener('DOMContentLoaded',function(){
         
     }, false);
 
-    sideSlider.addEventListener('change',function() {
+    /*sideSlider.addEventListener('change',function() {
         sideSliderValue.innerHTML=this.value;
         sideSlider.value = this.value;
 
@@ -53,7 +54,7 @@ document.addEventListener('DOMContentLoaded',function(){
             "message": "update_sub_distance",
             "value": this.value
         });
-    }, false);
+    }, false);*/
 
     opacitySlider.addEventListener('change',function() {
         opacitySliderValue.innerHTML=this.value;

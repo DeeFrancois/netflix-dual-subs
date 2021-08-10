@@ -42,7 +42,7 @@ chrome.storage.sync.get('font_multiplier',function(data){
 
 
 //Text Side
-chrome.storage.sync.get('sub_distance', function(data){
+/*chrome.storage.sync.get('sub_distance', function(data){ //inconsistent functionality for some reason.. but I don't think people would need this option anyways so I'll disable for now
   if(data.sub_distance!=null){
     console.log("Preferences: Sub Distance Found - : " + data.sub_distance);
   }
@@ -52,6 +52,7 @@ chrome.storage.sync.get('sub_distance', function(data){
   }
   
 });
+*/
 
 
 
@@ -134,7 +135,7 @@ chrome.runtime.onMessage.addListener(
         });
       }
 
-      if(request.message === "update_sub_distance")
+      /*if(request.message === "update_sub_distance") //inconsistent functionality for some reason.. but I don't think people would need this option anyways so I'll disable for now
       {
 
         console.log("BACKGROUND.JS recieved a message from SIDESLIDER to update SUB_DISTANCE to " + request.value);
@@ -146,7 +147,7 @@ chrome.runtime.onMessage.addListener(
             "value": request.value});
         });
 
-      }
+      }*/
 
       if(request.message === "update_opacity")
       {
