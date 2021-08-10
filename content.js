@@ -1,13 +1,17 @@
-//Basically works well enough now, just need to do the user preferences
-//oh wait, need to figure out how to enable right click on netflix
-//There's a problem where the translations don't always show up without refreshing
-//Also maybe figure out how to request from google translate directly so it doesn't need the browser to do the translations
 //Can go back to using mutation observer for inset but add a time limiter for how many times it can be accessed?
 
-//Fixed Right Click but found new issue. Netflix page updates dynamically which prevents content script from running when changing videos (until refresh), add event listener for url change in background js, trigger a call to waitforelement
+//Fixed dynamic update issue, now just need to clean everything up and implement user preferences
+
+//fixed issue that caused two instances of this script from running initially (from concept script reload and background trigger)
+//Still issue where subs dont always show
+//it's hard to reproduce the bug though. So far it seems like what happens when you go from a video with display subs immediately to one without (in betwee lines), the subs ARE injected but not display somehow
+//Found out it's because the extensions created container is being made too early and it copies the wrong style properties. Fixed it by making waitforelement wait for actual text to show before doing anything but this causes
+//a visible 1 second delay on the first message.. this is fine for now tbh
+
 console.log("New page!.. Waiting for captions");
 
 window.initialFlag=1;
+chrome.extension.sendMessage({"message": "prevent_waitfor"});
 
 
 function waitForElement(selector) {
@@ -37,7 +41,6 @@ function waitForElement(selector) {
 }
 
 function getSetting(setting){
-    var value;
     chrome.storage.sync.get(setting,function(data){
         console.log("Fetching User Preference: " + setting);
         console.log("FETCHED: "+data[setting]);
@@ -70,7 +73,7 @@ function getSetting(setting){
 }
 
 function wait_for_player(){
-    waitForElement("#appMountPoint > div > div > div:nth-child(1) > div > div > div.nfp.AkiraPlayer > div > div.VideoContainer > div").then(function(element) {
+    waitForElement("#appMountPoint > div > div > div:nth-child(1) > div > div > div.nfp.AkiraPlayer > div > div.VideoContainer > div > div > div > div").then(function(element) {
     console.log("Netflix Player Detected!");
    
     console.log("Starting Script");
@@ -78,7 +81,7 @@ function wait_for_player(){
     
 });
 }
-
+wait_for_player();
 function llsubs(){
     var id = "player-timedtext";
     var slider = document.getElementById("myFontSize");
@@ -143,8 +146,9 @@ function llsubs(){
 }
 
 const addSubs = function(caption_row){ // COPY AND PLACEMENT IS GOOD!
-
+    console.log("Call to addsubs, clear: ",window.cleared);
     if(caption_row.firstChild!=null){// && (window.recent_add == 0 && window.cleared==1)){ // Ensures Subs were added rather than removed
+        console.log("firstchild not null, cleared: ",window.cleared);
         
         caption_row.firstChild.setAttribute('style','display: inline; text-align: center; position: absolute; left: 5%; bottom: 10%;'); // move original to left
         //console.log(caption_row.firstChild.getBoundingClientRect());
@@ -167,7 +171,7 @@ const addSubs = function(caption_row){ // COPY AND PLACEMENT IS GOOD!
             
         }
         else{// not cleared so just place 
-            //console.log("Clear is 0");
+            console.log("Clear is 0");
             mysubs.appendChild(stored_subs);
         }
 
@@ -175,6 +179,7 @@ const addSubs = function(caption_row){ // COPY AND PLACEMENT IS GOOD!
         //Finish Modifying Subtitle Row
         
     }
+    console.log("end of addsubs, cleared: ",window.cleared);
 
     window.observer.observe(caption_row,window.config);
 }

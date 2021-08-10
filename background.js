@@ -1,13 +1,21 @@
 // background.js
 
 //content scripts are only run on page reload but netflix is dynamically updated so instead have to run the script on url change
+
 chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
-  console.log("URL CHANGE");
+  
+  //console.log(details);
+  if (details.transitionType==='link' && window.allow_wait===1){
+    //console.log("URL CHANGE");
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { 
     var activeTab = tabs[0];
     chrome.tabs.sendMessage(activeTab.id, {"message": "trigger_wait"});
 
   });
+}
+else{
+  window.allow_wait=1; //Prevents background from firing a second instance on top of the initial call from the content script 
+}
 });
 
 
@@ -92,7 +100,10 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 //Messages to background script, typically for changing User Preference variables - Only Font Size is completed so far
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-
+      if (request.message === "prevent_waitfor"){
+        console.log("Recieved msg from content js to prevent waitforelement call");
+        window.allow_wait=0;
+      }
       if( request.message === "update_font_multiplier" ) 
       {
 
