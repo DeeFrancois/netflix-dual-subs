@@ -13,6 +13,10 @@ console.log("New page!.. Waiting for captions");
 window.initialFlag=1;
 chrome.extension.sendMessage({"message": "prevent_waitfor"});
 
+//Opacity can be changed at container level
+//Text side can be changed at container level
+//font size must be applied individually
+//text color must be applied individually
 
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -77,6 +81,10 @@ function wait_for_player(){
     console.log("Netflix Player Detected!");
    
     console.log("Starting Script");
+    //getSetting('font_multiplier');
+    //getSetting('left_or_right');
+    getSetting('text_color');
+    //getSetting('opacity');
     llsubs();
     
 });
@@ -84,42 +92,40 @@ function wait_for_player(){
 wait_for_player();
 function llsubs(){
     var id = "player-timedtext";
-    var slider = document.getElementById("myFontSize");
-    window.recent_add=0;
-    window.old_text = ["",""];
+
     const timedtext = document.getElementsByClassName(id)[0];
 
+    //My container creation
     window.mysubs = timedtext.cloneNode();
-    mysubs.setAttribute('class','mysubscontainer')
+    mysubs.setAttribute('class','mysubscontainer');
     timedtext.parentNode.appendChild(mysubs);
-    //timedtext.style.left='80%';
-    window.cleared=1;
-    var dupe =timedtext.cloneNode(true);
-    dupe.setAttribute('class','TESTSTETSETES');
+    //
+
+    window.cleared=1; //Prevents constant refresh from original sub container from happening in my container 
 
     window.config = { attributes: true, childList: true, subtree:true};
 
+    //Enables right click
     var elements = document.getElementsByTagName("*");
     for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
-    
+    //
+
     const callback = function(mutationsList, observer){
         for (const mutation of mutationsList){
-            //console.log(mutation);
-            if (mutation.type === 'childList' && mutation.target.className && mutation.target.className==="player-timedtext"){// && mutation.target.className && mutation.target.className==="player-timedtext") { //Found out I could do the mutation.target === stuff really late so there might be some of the checks add_subs could be redundant
-                //console.log('A child node has been added or removed.');
+            if (mutation.type === 'childList' && mutation.target.className && mutation.target.className==="player-timedtext"){ //Observes removal/addition to subtitle container
                 
-                if (mutation.addedNodes.length===1){
-                    this.disconnect();
+                if (mutation.addedNodes.length===1){ //If added rather than removed..
 
-                    addSubs(timedtext);
+                    this.disconnect(); //stop observer so I can add subs without triggering this infinitely
+                    addSubs(timedtext); //add subs
+
                 }
                 else{
                 
-                    //console.log("Children: ",mutation.target.childElementCount); // When this is ZERO it was a CLEAR
-                    if (mutation.target.childElementCount===0){
+                    if (mutation.target.childElementCount===0){ //No children means the mutation was a subtitle CLEAR rather than refresh, double check necessary because refresh would make it here as well but with children
                         window.cleared=1;
                     }
-                    while (mysubs.firstChild){
+                    while (mysubs.firstChild){ //clear my container (Netflix script does this anyways ? might not need)
                         mysubs.removeChild(mysubs.firstChild);
                     }
                 }
@@ -134,32 +140,33 @@ function llsubs(){
     window.observer.observe(timedtext,window.config);
 }
 
-const addSubs = function(caption_row){ // COPY AND PLACEMENT IS GOOD!
-    console.log("Call to addsubs, clear: ",window.cleared);
-    if(caption_row.firstChild!=null){// && (window.recent_add == 0 && window.cleared==1)){ // Ensures Subs were added rather than removed
-        console.log("firstchild not null, cleared: ",window.cleared);
+const addSubs = function(caption_row){ 
+
+    if(caption_row.firstChild!=null){// && (window.recent_add == 0 && window.cleared==1)){ // Ensures Subs were added rather than removed, probably redundant
         
-        caption_row.firstChild.setAttribute('style','display: inline; text-align: center; position: absolute; left: 5%; bottom: 10%;'); // move original to left
-        //console.log(caption_row.firstChild.getBoundingClientRect());
+        caption_row.firstChild.setAttribute('style','display: inline; text-align: center; position: absolute; left: 5%; bottom: 10%;'); // move original to left 
         
 
-        if (window.cleared === 1){ //If cleared subs recent, pull new subs, store, display
+        if (window.cleared === 1){ //If CLEARED subs recently, pull new subs, store, display
 
             window.stored_subs = caption_row.firstChild.cloneNode(true);
             stored_subs.setAttribute('class','mysubs');
             stored_subs.setAttribute('translate','yes');
             stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${caption_row.firstChild.getBoundingClientRect().right+10+'px'} ;bottom: 10%;`); //Room here for User Preference "Distance between subs"
              
-            stored_subs.firstChild.style.color='yellow';
-            if (stored_subs.childElementCount>1){
-                stored_subs.children[1].style.color='yellow';
-            }
+            
+            //stored_subs.firstChild.style.color='yellow';
+            //if (stored_subs.childElementCount>1){
+            //    stored_subs.children[1].style.color='yellow';
+            //}
             mysubs.style.inset=caption_row.style.inset; //Better to do this than mutation observer catching EVERY attribute change (which is ALOT)
             mysubs.appendChild(stored_subs);
+            update_style('text_color');
+            
             window.cleared=0;
             
         }
-        else{// not cleared so just place 
+        else{// Just a refresh so just place stored instead 
             console.log("Clear is 0");
             mysubs.appendChild(stored_subs);
         }
@@ -168,7 +175,6 @@ const addSubs = function(caption_row){ // COPY AND PLACEMENT IS GOOD!
         //Finish Modifying Subtitle Row
         
     }
-    console.log("end of addsubs, cleared: ",window.cleared);
 
     window.observer.observe(caption_row,window.config);
 }
@@ -176,8 +182,7 @@ const addSubs = function(caption_row){ // COPY AND PLACEMENT IS GOOD!
 ///
 function update_style(setting){
     
-    const lines = document.getElementsByClassName("ludo-captions__line");
-
+    const lines = document.getElementsByClassName("mysubs")[0].children; //lines are this elements children
 
     if (setting === 'font_size'){
 
@@ -193,16 +198,11 @@ function update_style(setting){
 
         for (var i = 0; i<lines.length;i++){
             console.log(lines[i]);
-            if (window.left_or_right == 0){
-                lines[i].children[1].style["color"]=window.text_color;
-            }
-            else{
-                lines[i].children[0].style["color"]=window.text_color;
-            }
+            lines[i].style["color"]=window.text_color;
 
         }
-        document.getElementsByName("llsubsb2")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
-        document.getElementsByName("llsubsb1")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
+        //document.getElementsByName("llsubsb2")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
+        //document.getElementsByName("llsubsb1")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
 
 
     }
