@@ -108,18 +108,13 @@ function llsubs(){
             if (mutation.type === 'childList' && mutation.target.className && mutation.target.className==="player-timedtext"){// && mutation.target.className && mutation.target.className==="player-timedtext") { //Found out I could do the mutation.target === stuff really late so there might be some of the checks add_subs could be redundant
                 //console.log('A child node has been added or removed.');
                 
-                //console.log("Mutation Observed");
                 if (mutation.addedNodes.length===1){
-                    //window.cleared=0;
                     this.disconnect();
-                    //console.log("Added Nodes");
-                    //console.log(mutation.addedNodes[0].className);
+
                     addSubs(timedtext);
-                    //console.log("ADDED TARGET: ",mutation.target);
                 }
                 else{
-                    //console.log("Removed Nodes");
-                    //console.log(mutation);
+                
                     //console.log("Children: ",mutation.target.childElementCount); // When this is ZERO it was a CLEAR
                     if (mutation.target.childElementCount===0){
                         window.cleared=1;
@@ -131,12 +126,6 @@ function llsubs(){
                 
                 
             }
-            //else if(mutation.type === 'attributes' && mutation.target.className ==="player-timedtext" && mutation.attributeName === "style"){
-            //    //console.log(mutation);
-            //    mysubs.style.inset=timedtext.style.inset;
-            //    //mysubs.style.fontSize = timedtext.style.fontSize;
-            //    //mysubs.setAttribute('style',timedtext.getAttribute('style'));
-            //}
         }
     };
 
@@ -189,6 +178,7 @@ function update_style(setting){
     
     const lines = document.getElementsByClassName("ludo-captions__line");
 
+
     if (setting === 'font_size'){
 
         for (var i = 0; i<lines.length;i++){
@@ -197,10 +187,9 @@ function update_style(setting){
             lines[i].children[1].style["font-size"]=window.current_size;
 
         }
-        //console.log("Hmm..");
         console.log("Updated Lines");
     }
-    if (setting === "text_color"){ //Not quite sure how to pick the color yet..
+    if (setting === "text_color"){ 
 
         for (var i = 0; i<lines.length;i++){
             console.log(lines[i]);
@@ -214,17 +203,15 @@ function update_style(setting){
         }
         document.getElementsByName("llsubsb2")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
         document.getElementsByName("llsubsb1")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
-        //$("[name=llsubsb2]").children.style["stroke"]=window.text_color;
 
 
     }
 
-    if (setting === "opacity"){ //Not quite sure how to pick the color yet..
+    if (setting === "opacity"){
 
         for (var i = 0; i<lines.length;i++){
             console.log(lines[i]);
             if (window.left_or_right == 0){ //Original Text Side Left
-                //lines[i].children[0].style["opacity"]=window.opacity;
                 console.log("Original Text is on LEFT, changing children[1] See: ",window.left_or_right);
                 lines[i].children[1].style["opacity"]=window.opacity;
             }
@@ -235,7 +222,6 @@ function update_style(setting){
             }
 
         }
-
 
     }
 
