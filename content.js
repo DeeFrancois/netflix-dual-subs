@@ -68,15 +68,16 @@ function getSetting(setting){
 
     });
 }
-waitForElement("#appMountPoint > div > div > div:nth-child(1) > div > div > div.nfp.AkiraPlayer > div > div.VideoContainer > div").then(function(element) {
+
+function wait_for_player(){
+    waitForElement("#appMountPoint > div > div > div:nth-child(1) > div > div > div.nfp.AkiraPlayer > div > div.VideoContainer > div").then(function(element) {
     console.log("Netflix Player Detected!");
    
     console.log("Starting Script");
     llsubs();
     
 });
-
-
+}
 
 function llsubs(){
     var id = "player-timedtext";
@@ -100,6 +101,7 @@ function llsubs(){
     
     const callback = function(mutationsList, observer){
         for (const mutation of mutationsList){
+            //console.log(mutation);
             if (mutation.type === 'childList' && mutation.target.className && mutation.target.className==="player-timedtext"){// && mutation.target.className && mutation.target.className==="player-timedtext") { //Found out I could do the mutation.target === stuff really late so there might be some of the checks add_subs could be redundant
                 //console.log('A child node has been added or removed.');
                 
@@ -165,6 +167,7 @@ const addSubs = function(caption_row){ // COPY AND PLACEMENT IS GOOD!
             
         }
         else{// not cleared so just place 
+            //console.log("Clear is 0");
             mysubs.appendChild(stored_subs);
         }
 
@@ -246,6 +249,11 @@ function update_style(setting){
 
 chrome.runtime.onMessage.addListener( //Listens for messages sent from background script (Settings Controller)
     function (request, sendRespone, sendResponse){
+        
+        if (request.message === 'trigger_wait'){
+            //console.log("Recieved msg from background to wait for player");
+            wait_for_player();
+        }
         
         if (request.message==='update_font_multiplier'){
             console.log("Recieved Message from BACKGROUND.JS to CHANGE font_multiplier to " + request.value);

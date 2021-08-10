@@ -1,11 +1,24 @@
 // background.js
-//console.log("This version works just not when you fast forward while there's still text on the screen, also the font size button doesn't work");
+
+//content scripts are only run on page reload but netflix is dynamically updated so instead have to run the script on url change
+chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
+  console.log("URL CHANGE");
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { 
+    var activeTab = tabs[0];
+    chrome.tabs.sendMessage(activeTab.id, {"message": "trigger_wait"});
+
+  });
+});
+
 
 //STORAGE VALUES
 
 //First Run, store default settings
 
 //Font Multiplier
+
+
+
 chrome.storage.sync.get('font_multiplier',function(data){
   if(data.font_multiplier!=null){
     console.log("Preferences: Font_multiplier found: ");
