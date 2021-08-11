@@ -2,7 +2,8 @@
 
 //Life Before Death, Strength Before Weakness, Journey Before Destination
 
-
+//<button class="touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerBackTen" tabindex="0" role="button" aria-label="Seek Back">
+//<svg class="svg-icon svg-icon-nfplayerBackTen" focusable="false"><use filter="" xlink:href="#nfplayerBackTen"></use></svg></button>
 console.log("New page!.. Waiting for captions");
 
 window.initialFlag=1;
@@ -76,6 +77,32 @@ function wait_for_player(){
         getSetting('font_multiplier');
 
         //getSetting('sub_distance'); disabled for now, unnecessary imo
+        //Button inject
+
+        const button_row = document.getElementsByClassName("PlayerControlsNeo__button-control-row")[0];
+
+        //netflix button example
+        //<button class="touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerBackTen" tabindex="0" role="button" aria-label="Seek Back">
+        //<svg class="svg-icon svg-icon-nfplayerBackTen" focusable="false"><use filter="" xlink:href="#nfplayerBackTen"></use></svg></button>
+
+        //$("<button data-ludo-overflow='11' type='button' name='llsubsb1' class='ludo-bar__button ludo--desktop--delay-hide-after-click' \
+        //aria-label='Increase font size'><svg viewBox='0 0 24 24' class='llsubsb2' width='1.500em' height='1.500em' aria-hidden='true' focusable='false'>\
+        //<path fill='none' d='m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='white' stroke-width='2'></path></svg></button>").appendTo(button_row);
+        
+        //my attempt
+        //$("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-mysubsButton' tabindex='0' role='button' aria-label='Increase font size'>\
+        //<svg viewBox='0 0 24 24' class='llsubsb2' width='1.500em' height='1.500em' aria-hidden='true' focusable='false'>\
+        //<path fill='none' d='m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='white' stroke-width='2'></path></svg></button>").eq(3).after(".touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerFastForward");
+
+        //Decrease font button
+        $(".PlayerControlsNeo__button-control-row").children().eq(3).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-mysubsButton' tabindex='0' role='button' aria-label='Increase font size'>\
+        <svg viewBox='0 0 24 24' class='llsubsb2' width='1.500em' height='1.500em' aria-hidden='true' focusable='false'>\
+        <path fill='none' d='m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='yellow' stroke-width='2'></path></svg></button>")
+
+        //Increase font button
+        $(".PlayerControlsNeo__button-control-row").children().eq(4).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-mysubsButton' tabindex='0' role='button' aria-label='Increase font size'>\
+        <svg viewBox='0 0 24 24' class='llsubsb2' width='1.500em' height='1.500em' aria-hidden='true' focusable='false'>\
+        <path fill='none' d='m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='yellow' stroke-width='2'></path></svg></button>")
 
         llsubs();
     
