@@ -66,7 +66,7 @@ function getSetting(setting){
 }
 
 function wait_for_player(){
-
+    
     waitForElement("#appMountPoint > div > div > div:nth-child(1) > div > div > div.nfp.AkiraPlayer > div > div.VideoContainer > div > div > div > div").then(function(element) {
 
         console.log("Netflix Player Detected!");
@@ -75,34 +75,81 @@ function wait_for_player(){
         getSetting('text_color');
         getSetting('opacity');
         getSetting('font_multiplier');
-
         //getSetting('sub_distance'); disabled for now, unnecessary imo
-        //Button inject
+
+
+        //BUTTON STUFF
 
         const button_row = document.getElementsByClassName("PlayerControlsNeo__button-control-row")[0];
 
-        //netflix button example
-        //<button class="touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerBackTen" tabindex="0" role="button" aria-label="Seek Back">
-        //<svg class="svg-icon svg-icon-nfplayerBackTen" focusable="false"><use filter="" xlink:href="#nfplayerBackTen"></use></svg></button>
-
-        //$("<button data-ludo-overflow='11' type='button' name='llsubsb1' class='ludo-bar__button ludo--desktop--delay-hide-after-click' \
-        //aria-label='Increase font size'><svg viewBox='0 0 24 24' class='llsubsb2' width='1.500em' height='1.500em' aria-hidden='true' focusable='false'>\
-        //<path fill='none' d='m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='white' stroke-width='2'></path></svg></button>").appendTo(button_row);
-        
-        //my attempt
-        //$("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-mysubsButton' tabindex='0' role='button' aria-label='Increase font size'>\
-        //<svg viewBox='0 0 24 24' class='llsubsb2' width='1.500em' height='1.500em' aria-hidden='true' focusable='false'>\
-        //<path fill='none' d='m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='white' stroke-width='2'></path></svg></button>").eq(3).after(".touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerFastForward");
-
         //Decrease font button
-        $(".PlayerControlsNeo__button-control-row").children().eq(3).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-mysubsButton' tabindex='0' role='button' aria-label='Increase font size'>\
-        <svg viewBox='0 0 24 24' class='llsubsb2' width='1.500em' height='1.500em' aria-hidden='true' focusable='false'>\
+        $(".PlayerControlsNeo__button-control-row").children().eq(3).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyDecrease PlayerControls--control-element-blurred' tabindex='0' role='button' aria-label='Decrease font size'>\
+        <svg viewBox='0 0 24 24' id='mybuttonDec' width='1.500em' height='1.500em' aria-hidden='true' focusable='false'>\
         <path fill='none' d='m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='yellow' stroke-width='2'></path></svg></button>")
 
         //Increase font button
-        $(".PlayerControlsNeo__button-control-row").children().eq(4).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-mysubsButton' tabindex='0' role='button' aria-label='Increase font size'>\
-        <svg viewBox='0 0 24 24' class='llsubsb2' width='1.500em' height='1.500em' aria-hidden='true' focusable='false'>\
+        $(".PlayerControlsNeo__button-control-row").children().eq(4).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyIncrease PlayerControls--control-element-blurred' tabindex='0' role='button' aria-label='Increase font size'>\
+        <svg viewBox='0 0 24 24' id='myButtonInc' width='1.500em' height='1.500em' aria-hidden='true' focusable='false'>\
         <path fill='none' d='m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='yellow' stroke-width='2'></path></svg></button>")
+
+        //Listeners for button clicks
+        var increase_font_size_button = document.getElementsByClassName("touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyIncrease PlayerControls--control-element-blurred")[0];
+        
+        increase_font_size_button.addEventListener("click", function() {
+        
+            window.current_multiplier+=.1;
+            //Save Setting here
+            chrome.storage.sync.set({"font_multiplier":window.current_multiplier.toFixed(2)}); //Save setting into storage on Change
+            window.current_size=window.baseFont*window.current_multiplier+'px';
+            update_style('font_size'); //Live Update the setting change
+
+        });
+
+        increase_font_size_button.addEventListener("mouseenter", function(){
+
+            //console.log("Hovering increase button");
+            increase_font_size_button.setAttribute('class','touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyIncrease')
+
+
+        });
+
+        increase_font_size_button.addEventListener("mouseleave", function(){
+
+            //console.log("Left increase button");
+            increase_font_size_button.setAttribute('class','touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyIncrease PlayerControls--control-element-blurred');
+
+
+        });
+
+        var decrease_font_size_button = document.getElementsByClassName("touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyDecrease PlayerControls--control-element-blurred")[0];
+        
+        decrease_font_size_button.addEventListener("click", function(){
+
+            window.current_multiplier-=.1;
+            chrome.storage.sync.set({"font_multiplier":window.current_multiplier.toFixed(2)});
+            window.current_size=window.baseFont*window.current_multiplier+'px';
+            update_style('font_size');
+
+        });
+
+        decrease_font_size_button.addEventListener("mouseenter", function(){
+
+            //console.log("Hovering decrease button");
+            decrease_font_size_button.setAttribute('class','touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyDecrease')
+
+
+        });
+
+        decrease_font_size_button.addEventListener("mouseleave", function(){
+
+            //console.log("Left decrease button");
+            decrease_font_size_button.setAttribute('class','touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyDecrease PlayerControls--control-element-blurred');
+
+
+        });
+
+        // PlayerControls--control-element-blurred
+        // PlayerControls--control-element-active
 
         llsubs();
     
@@ -229,7 +276,10 @@ const addSubs = function(caption_row){
 }
 
 function update_style(setting){
-    
+
+    if (!document.getElementsByClassName("mysubs")[0]){
+        return;
+    }
     const lines = document.getElementsByClassName("mysubs")[0].children; //Subtitle lines
 
     if (setting === 'font_size'){
@@ -247,10 +297,9 @@ function update_style(setting){
             lines[i].style["color"]=window.text_color;
 
         }
-        
-        //For if I add buttons again
-        //document.getElementsByName("llsubsb2")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
-        //document.getElementsByName("llsubsb1")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
+        //Change button color also
+        document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
+        document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
 
 
     }
