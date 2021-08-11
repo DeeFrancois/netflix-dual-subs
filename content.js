@@ -4,10 +4,16 @@
 
 //<button class="touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerBackTen" tabindex="0" role="button" aria-label="Seek Back">
 //<svg class="svg-icon svg-icon-nfplayerBackTen" focusable="false"><use filter="" xlink:href="#nfplayerBackTen"></use></svg></button>
+
+//MAJOR BUG: Multiple instances are created when going from a video --> search bar --> new video
+//Figure out how to ensure only one instance is ever running
+
+//fixed bug by making content script only ever ran by background.js calls which are triggered everytime the url changes to netflix.com/watch/...
+//may need to find the "best practice" way to do it before release otherwise it probably wont get accepted by chrome store reviewer
 console.log("New page!.. Waiting for captions");
 
 window.initialFlag=1;
-chrome.extension.sendMessage({"message": "prevent_waitfor"});
+//chrome.extension.sendMessage({"message": "prevent_waitfor"});
 
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -50,8 +56,8 @@ function getSetting(setting){
         }*/
         else if (setting === "text_color"){
             window.text_color = data[setting];
-            //document.getElementsByName("llsubsb2")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
-            //document.getElementsByName("llsubsb1")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
+            document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
+            document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
             //console.log("Retrieved Font Multiplier From Storage: ",window.text_color);
         }
         else if (setting === "opacity"){
@@ -76,7 +82,6 @@ function wait_for_player(){
         getSetting('opacity');
         getSetting('font_multiplier');
         //getSetting('sub_distance'); disabled for now, unnecessary imo
-
 
         //BUTTON STUFF
 
@@ -157,7 +162,7 @@ function wait_for_player(){
 }
 
 
-wait_for_player();
+//wait_for_player();
 
 function llsubs(){
 
@@ -328,7 +333,9 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
         
         if (request.message === 'trigger_wait'){ //Retriggers the script on url change rather than just page refresh (netflix loads pages dynamically)
 
+            console.log("IN CONTENT WAITING");
             wait_for_player();
+            
 
         }
         

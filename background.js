@@ -2,25 +2,20 @@
 
 //content scripts are only run on page reload but netflix is dynamically updated so I instead have to run the script on url change
 
-chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) { //On URL Change..
-  
-  if (details.transitionType==='link' && window.allow_wait===1){
-
+chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) { //On URL Change to netflix/watch, start content script.. This seems like a permissions nightmare, probably need to make more specific
+  console.log(details.url);
+  if (details.transitionType==='link' && details.url.includes('netflix.com/watch/')){
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { 
 
       var activeTab = tabs[0];
       chrome.tabs.sendMessage(activeTab.id, {"message": "trigger_wait"});
+      console.log("TRIGGERING WAIT");
 
     });
   
   }
-  else{
 
-    window.allow_wait=1; //Prevents background from firing a second instance on top of the initial call from the content script 
-  
-  }
-
-});
+},{url: [{hostSuffix:'netflix.com'}]});
 
 
 //STORAGE VALUES
