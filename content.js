@@ -10,9 +10,10 @@
 
 //fixed bug by making content script only ever ran by background.js calls which are triggered everytime the url changes to netflix.com/watch/...
 //may need to find the "best practice" way to do it before release otherwise it probably wont get accepted by chrome store reviewer
-console.log("New page!.. Waiting for captions");
+//new problem, direct linking to video doesn't trigger historystateupdate..
 
-window.initialFlag=1;
+//ACTUALL FIXED THIS TIME, had to change the structure so that content.js is only ever called using tabs.executeScript
+window.initialFlag=0;
 //chrome.extension.sendMessage({"message": "prevent_waitfor"});
 
 function waitForElement(selector) {
@@ -43,12 +44,12 @@ function waitForElement(selector) {
 
 function getSetting(setting){
     chrome.storage.sync.get(setting,function(data){
-        console.log("Fetching User Preference: " + setting);
-        console.log("FETCHED: "+data[setting]);
+        //console.log("Fetching User Preference: " + setting);
+        //console.log("FETCHED: "+data[setting]);
         
         if (setting === "font_multiplier"){
             window.current_multiplier = parseFloat(data[setting]);
-            console.log("Retrieved Font Multiplier From Storage: ",window.current_multiplier);
+            //console.log("Retrieved Font Multiplier From Storage: ",window.current_multiplier);
         }
         /*else if (setting === "sub_distance"){
             window.sub_distance= data[setting];
@@ -62,10 +63,10 @@ function getSetting(setting){
         }
         else if (setting === "opacity"){
             window.opacity = data[setting];
-            console.log("Retrieved Opacity From Storage: ",window.opacity);
+            //console.log("Retrieved Opacity From Storage: ",window.opacity);
         }
         else{
-            console.log("Setting: ", setting, " Does Not Exist");
+            //console.log("Setting: ", setting, " Does Not Exist");
         }
 
     });
@@ -75,8 +76,8 @@ function wait_for_player(){
     
     waitForElement("#appMountPoint > div > div > div:nth-child(1) > div > div > div.nfp.AkiraPlayer > div > div.VideoContainer > div > div > div > div").then(function(element) {
 
-        console.log("Netflix Player Detected!");
-        console.log("Starting Script");
+        //console.log("Netflix Player Detected!");
+        console.log("Starting Subtitle Script");
 
         getSetting('text_color');
         getSetting('opacity');
@@ -162,7 +163,7 @@ function wait_for_player(){
 }
 
 
-//wait_for_player();
+wait_for_player();
 
 function llsubs(){
 
@@ -240,7 +241,7 @@ function llsubs(){
 
 }
 
-const addSubs = function(caption_row){ 
+var addSubs = function(caption_row){ 
 
     if(caption_row.firstChild!=null){ // Ensures Subs were added rather than removed, probably redundant
         
@@ -333,7 +334,7 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
         
         if (request.message === 'trigger_wait'){ //Retriggers the script on url change rather than just page refresh (netflix loads pages dynamically)
 
-            console.log("IN CONTENT WAITING");
+            //console.log("IN CONTENT WAITING");
             wait_for_player();
             
 

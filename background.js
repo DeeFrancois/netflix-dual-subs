@@ -1,21 +1,40 @@
 // background.js
 
 //content scripts are only run on page reload but netflix is dynamically updated so I instead have to run the script on url change
+var filter = {
+  url: [{
+    hostEquals: 'www.netflix.com'
+  }]
+}
+chrome.webNavigation.onCommitted.addListener(onWebNav,filter);
+chrome.webNavigation.onHistoryStateUpdated.addListener(onWebNav,filter);
 
-chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) { //On URL Change to netflix/watch, start content script.. This seems like a permissions nightmare, probably need to make more specific
-  console.log(details.url);
-  if (details.transitionType==='link' && details.url.includes('netflix.com/watch/')){
+  
+function onWebNav(details) { //On URL Change to netflix/watch, start content script.. This seems like a permissions nightmare, probably need to make more specific
+  console.log(details);
+  if (details.url.includes('netflix.com/watch/')){
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { 
 
-      var activeTab = tabs[0];
-      chrome.tabs.sendMessage(activeTab.id, {"message": "trigger_wait"});
-      console.log("TRIGGERING WAIT");
+      //var activeTab = tabs[0];
+      //chrome.tabs.sendMessage(activeTab.id, {"message": "trigger_wait"});
+      
+      console.log("TRIGGERING SCRIPT");
+      //chrome.tabs.executeScript(null, {file: "content.js"});
+
+      chrome.tabs.executeScript({
+        file:'jquery-3.5.1.min.js'
+      },function(){
+        chrome.tabs.executeScript(null,{file:"content.js"});
+      });
 
     });
   
   }
 
-},{url: [{hostSuffix:'netflix.com'}]});
+}
+
+
+//,{url: [{hostSuffix:'netflix.com'}]});
 
 
 //STORAGE VALUES

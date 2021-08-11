@@ -5,22 +5,13 @@
     "description": "This extension will add subtitles in a target language to Netflix",
     "version": "1.6",
     "background": {
-        "scripts": ["background.js"]
+        "scripts": ["jquery-3.5.1.min.js","background.js"]
     },
   
     "permissions": [
-        "activeTab", "storage","webNavigation"
+        "storage","webNavigation","https://*.netflix.com/*"
       ],
 
-    "content_scripts": [
-        {
-            "matches": [
-                "https://www.netflix.com/*"
-            ],
-            "js": ["jquery-3.5.1.min.js","content.js"]
-        }
-    ],
-    
     "browser_action": {
      "default_icon": "icon.png",
      "default_popup": "popup.html"
