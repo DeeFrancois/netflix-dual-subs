@@ -3,8 +3,8 @@
 document.addEventListener('DOMContentLoaded',function(){
     var slider = document.getElementById('mySlider');
     var slideValue = document.getElementById('mySliderValue');
-    var sideSlider = document.getElementById('sideSlider');
-    var sideSliderValue = document.getElementById('sideSliderValue');
+    //var sideSlider = document.getElementById('sideSlider');
+    //var sideSliderValue = document.getElementById('sideSliderValue');
     var opacitySlider = document.getElementById('opacitySlider');
     var opacitySliderValue = document.getElementById('opacitySliderValue');
     var colorPicker = document.getElementById('myColorPicker');
@@ -87,8 +87,8 @@ document.addEventListener('DOMContentLoaded',function(){
         opacitySlider.dispatchEvent(new Event('change'));
         slider.value=1;
         slider.dispatchEvent(new Event('change'));
-        sideSlider.value=10;
-        sideSlider.dispatchEvent(new Event('change'));
+        //sideSlider.value=10;
+        //sideSlider.dispatchEvent(new Event('change'));
         //chrome.runtime.sendMessage({
         //    "message": "default_settings",
         //    "value": 0

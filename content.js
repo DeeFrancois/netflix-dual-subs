@@ -1,28 +1,12 @@
-//Can go back to using mutation observer for inset but add a time limiter for how many times it can be accessed?
+//After release I can think about adding original text size/color and sub_distance options
 
-//Fixed dynamic update issue, now just need to clean everything up and implement user preferences
-
-//fixed issue that caused two instances of this script from running initially (from concept script reload and background trigger)
-//Still issue where subs dont always show
-//it's hard to reproduce the bug though. So far it seems like what happens when you go from a video with display subs immediately to one without (in betwee lines), the subs ARE injected but not display somehow
-//Found out it's because the extensions created container is being made too early and it copies the wrong style properties. Fixed it by making waitforelement wait for actual text to show before doing anything but this causes
-//a visible 1 second delay on the first message.. this is fine for now tbh
-
-//Removed Distance slider.. for some reason getBoundingClientRect is not consistent. dont think this option is necessary though so I'm gonna remove it for now
-
-//Gonna reimplement attribute change 
-//reimplemented attribute change for adjustment on window resize, If I find it uses too much power I'll revert
-//also fixed the inconsistent sub placement so I could reintroduce that option, I'll leave it for now
-//Now I just need to clean up the code and it'll be all set for release
-//After release I can think about adding original text size/sub_distance
+//Life Before Death, Strength Before Weakness, Journey Before Destination
 
 
 console.log("New page!.. Waiting for captions");
 
 window.initialFlag=1;
 chrome.extension.sendMessage({"message": "prevent_waitfor"});
-
-
 
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -81,35 +65,41 @@ function getSetting(setting){
 }
 
 function wait_for_player(){
+
     waitForElement("#appMountPoint > div > div > div:nth-child(1) > div > div > div.nfp.AkiraPlayer > div > div.VideoContainer > div > div > div > div").then(function(element) {
-    console.log("Netflix Player Detected!");
-   
-    console.log("Starting Script");
 
-    getSetting('text_color');
-    getSetting('opacity');
-    getSetting('font_multiplier');
-    //getSetting('sub_distance'); inconsistent functionality for some reason.. but I don't think people would need this option anyways so I'll disable for now
-    llsubs();
+        console.log("Netflix Player Detected!");
+        console.log("Starting Script");
+
+        getSetting('text_color');
+        getSetting('opacity');
+        getSetting('font_multiplier');
+
+        //getSetting('sub_distance'); disabled for now, unnecessary imo
+
+        llsubs();
     
-});
+    });
 }
-wait_for_player();
-function llsubs(){
-    var id = "player-timedtext";
 
-    const timedtext = document.getElementsByClassName(id)[0];
+
+wait_for_player();
+
+function llsubs(){
+
+    //Pull Original Sub Container
+    var id = "player-timedtext";
+    const timedtext = document.getElementsByClassName(id)[0]; //Original Container
 
     //My container creation
     window.mysubs = timedtext.cloneNode();
     mysubs.setAttribute('class','mysubscontainer');
     timedtext.parentNode.appendChild(mysubs);
+    //For Placement
     window.old_inset = timedtext.style.inset;
-    console.log("Saved initial inset: ", window.old_inset);
     window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.05; //Original text is placed at Left:5%, using .right on original subs wasn't consistent
-    //
 
-    window.cleared=1; //Prevents constant refresh from original sub container from happening in my container 
+    window.cleared=1; //Only takes new subs on clear, necessary because subs are constantly refreshed 
 
     window.config = { attributes: true, childList: true, subtree:true,attributeFilter: [ "style"],
     attributeOldValue: true};
@@ -119,9 +109,9 @@ function llsubs(){
     for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
     //
 
-    const callback = function(mutationsList, observer){
+    const callback = function(mutationsList, observer){ //Observes original text box for changes
         for (const mutation of mutationsList){
-            if (mutation.type === 'childList' && mutation.target.className && mutation.target.className==="player-timedtext"){ //Observes removal/addition to subtitle container
+            if (mutation.type === 'childList' && mutation.target.className && mutation.target.className==="player-timedtext"){ //track removal/addition to subtitle container
                 
                 if (mutation.addedNodes.length===1){ //If added rather than removed..
 
@@ -131,37 +121,35 @@ function llsubs(){
                 }
                 else{
                 
-                    if (mutation.target.childElementCount===0){ //No children means the mutation was a subtitle CLEAR rather than refresh, double check necessary because refresh would make it here as well but with children
+                    if (mutation.target.childElementCount===0){ //No children means the mutation was a subtitle CLEAR rather than refresh, double check necessary because refresh would make it here as well but with children (..i think? I forget at this point)
+                        
                         window.cleared=1;
+
                     }
                     while (mysubs.firstChild){ //clear my container (Netflix script does this anyways ? might not need)
+                        
                         mysubs.removeChild(mysubs.firstChild);
+
                     }
                 }
                 
                 
             }
-            else if(mutation.type==='attributes' && mutation.target.className==="player-timedtext" && mutation.target.style.inset != window.old_inset){ // On window resize..
-                window.old_inset = mutation.target.style.inset;
-                mysubs.style.inset=window.old_inset;
-                window.baseFont = parseFloat(mutation.target.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
-                //console.log("base offset is: ",window.baseOffset);
-                console.log("new basefont: ",window.baseFont);
-                console.log(mutation.target.firstChild.firstChild);
-                window.current_size = window.baseFont*window.current_multiplier+'px';
-                update_style('font_size');
-                window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.05;
-                //console.log(window.screen_width);
+            else if(mutation.type==='attributes' && mutation.target.className==="player-timedtext" && mutation.target.style.inset != window.old_inset){ 
+                // Refresh styles on window resize (takes a lot of processing power to track every attribute change so I'd rather not do this but then the extension looks poorly made)
+                // Will test if it's a problem for other computers before release, fine for now
+                    
+                    window.old_inset = mutation.target.style.inset;
+                    mysubs.style.inset=window.old_inset;
 
-                const test = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
-                //console.log(test);
-                mysubs.firstChild.style['left']=test+'px';
-                //console.log((parseInt(mutation.target.firstChild.firstChild.getBoundingClientRect().right)+10)+'px');                
-                //console.log("Inset Updated");
-                //console.log(mutation);
-                //console.log(mutation.oldValue.inset);
-                //console.log(mutation.target.style.inset);
-                //Current console.log(mutation.target.style.inset);
+                    window.baseFont = parseFloat(mutation.target.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way more often than on nrk so will take basefont after every clear instead (if inset updates, update this as well)
+                    window.current_size = window.baseFont*window.current_multiplier+'px';
+                    update_style('font_size');
+                    
+                    window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.05;
+                    const test = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
+                    mysubs.firstChild.style['left']=test+'px';
+
                 
             }
             
@@ -169,59 +157,54 @@ function llsubs(){
     };
 
     window.observer = new MutationObserver(callback);
-
     window.observer.observe(timedtext,window.config);
+
 }
 
 const addSubs = function(caption_row){ 
 
-    if(caption_row.firstChild!=null){// && (window.recent_add == 0 && window.cleared==1)){ // Ensures Subs were added rather than removed, probably redundant
+    if(caption_row.firstChild!=null){ // Ensures Subs were added rather than removed, probably redundant
         
         caption_row.firstChild.setAttribute('style','display: inline; text-align: center; position: absolute; left: 5%; bottom: 10%;'); // move original to left 
         
+        if (window.cleared === 1){ //If CLEARED subs recently, pull new subs, store, and display
 
-        if (window.cleared === 1){ //If CLEARED subs recently, pull new subs, store, display
-
+            const sub_dist =window.original_subs_placement+caption_row.firstChild.getBoundingClientRect().width+10;
+            
             window.stored_subs = caption_row.firstChild.cloneNode(true);
             stored_subs.setAttribute('class','mysubs');
             stored_subs.setAttribute('translate','yes');
-            //window.baseOffset = parseInt(caption_row.firstChild.firstChild.getBoundingClientRect().right);
-            var current_dist = parseInt(caption_row.firstChild.getBoundingClientRect().right)+10;
-            //console.log("Place with distance: ",current_dist);
-            //console.log(caption_row.firstChild.getBoundingClientRect().right);
-            const test =window.original_subs_placement+caption_row.firstChild.getBoundingClientRect().width+10;
-            //console.log(test);
-            stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${test+'px'} ;bottom: 10%;`); //Room here for User Preference "Distance between subs"  
-            mysubs.style.inset=caption_row.style.inset; //Better to do this than mutation observer catching EVERY attribute change (which is ALOT)
+            stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${sub_dist+'px'} ;bottom: 10%;`); 
+
+            mysubs.style.inset=caption_row.style.inset;
             mysubs.appendChild(stored_subs);
+
             window.baseFont = parseFloat(stored_subs.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
-            //console.log("base offset is: ",window.baseOffset);
             window.current_size = window.baseFont*window.current_multiplier+'px';
+
+            //Apply changes to onscreen subs
             update_style('text_color');
             update_style('opacity');
-            update_style('font_size');
-
-            
+            update_style('font_size'); 
             
             window.cleared=0;
             
         }
-        else{// Just a refresh so just place stored instead 
-            mysubs.appendChild(stored_subs);
-        }
+        else{// Just a refresh so place stored instead 
 
-        
-        //Finish Modifying Subtitle Row
+            mysubs.appendChild(stored_subs);
+
+        }
         
     }
 
     window.observer.observe(caption_row,window.config);
 }
 
-///
 function update_style(setting){
     
-    const lines = document.getElementsByClassName("mysubs")[0].children; //lines are this elements children
+    const lines = document.getElementsByClassName("mysubs")[0].children; //Subtitle lines
+
     if (setting === 'font_size'){
 
         for (var i = 0; i<lines.length;i++){
@@ -237,6 +220,8 @@ function update_style(setting){
             lines[i].style["color"]=window.text_color;
 
         }
+        
+        //For if I add buttons again
         //document.getElementsByName("llsubsb2")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
         //document.getElementsByName("llsubsb1")[0].firstElementChild.firstElementChild.setAttribute('stroke',window.text_color);
 
@@ -262,23 +247,24 @@ function update_style(setting){
 
 }
 
-
-chrome.runtime.onMessage.addListener( //Listens for messages sent from background script (Settings Controller)
+chrome.runtime.onMessage.addListener( //Listens for messages sent from background script (Preferences Controller)
     function (request, sendRespone, sendResponse){
         
-        if (request.message === 'trigger_wait'){
-            //console.log("Recieved msg from background to wait for player");
+        if (request.message === 'trigger_wait'){ //Retriggers the script on url change rather than just page refresh (netflix loads pages dynamically)
+
             wait_for_player();
+
         }
         
         if (request.message==='update_font_multiplier'){
-            console.log("Recieved Message from BACKGROUND.JS to CHANGE font_multiplier to " + request.value);
-            //updatePreference('font_size',request.value);
+
+            //console.log("Recieved Message from BACKGROUND.JS to CHANGE font_multiplier to " + request.value);
+
             window.current_multiplier=parseFloat(request.value);
             window.current_size=window.baseFont*request.value+'px'
             //StoreSetting('current_size',window.current_size)
             update_style('font_size');
-            //ludo_captions = document.getElementsByClassName("ludo-captions");
+
         }
 
         /*if (request.message ==='update_sub_distance'){ inconsistent functionality for some reason.. but I don't think people would need this option anyways so I'll disable for now
@@ -290,16 +276,20 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
         */
 
         if (request.message ==='update_text_color'){
-            console.log("Recieved Message from BACKGROUND.JS to CHANGE color to " + request.value);
+
+            //console.log("Recieved Message from BACKGROUND.JS to CHANGE color to " + request.value);
             window.text_color=request.value;
             //StoreSetting('current_size',window.current_size)
             update_style('text_color');
+
         }
 
         if (request.message ==='update_opacity'){
-            console.log("Recieved Message from BACKGROUND.JS to CHANGE opacity to " + request.value);
+
+            //console.log("Recieved Message from BACKGROUND.JS to CHANGE opacity to " + request.value);
             window.opacity=parseFloat(request.value);
             //StoreSetting('current_size',window.current_size)
             update_style('opacity');
+
         }
 });
