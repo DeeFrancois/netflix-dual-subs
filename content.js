@@ -1,21 +1,6 @@
-//After release I can think about adding original text size/color and sub_distance options
-
 //Life Before Death, Strength Before Weakness, Journey Before Destination
 
-//<button class="touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerBackTen" tabindex="0" role="button" aria-label="Seek Back">
-//<svg class="svg-icon svg-icon-nfplayerBackTen" focusable="false"><use filter="" xlink:href="#nfplayerBackTen"></use></svg></button>
-
-//MAJOR BUG: Multiple instances are created when going from a video --> search bar --> new video
-//Figure out how to ensure only one instance is ever running
-
-//fixed bug by making content script only ever ran by background.js calls which are triggered everytime the url changes to netflix.com/watch/...
-//may need to find the "best practice" way to do it before release otherwise it probably wont get accepted by chrome store reviewer
-//new problem, direct linking to video doesn't trigger historystateupdate..
-
-//ACTUALL FIXED THIS TIME, had to change the structure so that content.js is only ever called using tabs.executeScript
-
-window.initialFlag=0;
-//chrome.extension.sendMessage({"message": "prevent_waitfor"});
+//Finished icons, Last thing to do is find a way to trigger subs a little bit earlier
 
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -89,7 +74,7 @@ function wait_for_player(){
     waitForElement("#appMountPoint > div > div > div:nth-child(1) > div > div > div.nfp.AkiraPlayer > div > div.VideoContainer > div > div > div > div").then(function(element) {
 
         //console.log("Netflix Player Detected!");
-        console.log("Starting Subtitle Script");
+        //console.log("Starting Subtitle Script");
 
         getSetting('text_color');
         getSetting('opacity');

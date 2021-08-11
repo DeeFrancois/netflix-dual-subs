@@ -10,18 +10,11 @@ chrome.webNavigation.onCommitted.addListener(onWebNav,filter);
 chrome.webNavigation.onHistoryStateUpdated.addListener(onWebNav,filter);
 
   
-function onWebNav(details) { //On URL Change to netflix/watch, start content script.. This seems like a permissions nightmare, probably need to make more specific
-  console.log(details);
+function onWebNav(details) { //On URL Change to netflix/watch, start content script..
   if (details.url.includes('netflix.com/watch/')){
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { 
 
-      //var activeTab = tabs[0];
-      //chrome.tabs.sendMessage(activeTab.id, {"message": "trigger_wait"});
-      
-      console.log("TRIGGERING SCRIPT");
-      //chrome.tabs.executeScript(null, {file: "content.js"});
-
-      chrome.tabs.executeScript({
+      chrome.tabs.executeScript({ //nested call so that content only runs AFTER jquery
         file:'jquery-3.5.1.min.js'
       },function(){
         chrome.tabs.executeScript(null,{file:"content.js"});
@@ -110,7 +103,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     });
 });
   
-//Messages to background script, typically for changing User Preference variables - Only Font Size is completed so far
+//Messages to background script, typically for changing User Preference variables
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
 
@@ -171,7 +164,7 @@ chrome.runtime.onMessage.addListener(
         
       }
 
-      /*if(request.message === "update_sub_distance") //inconsistent functionality for some reason.. but I don't think people would need this option anyways so I'll disable for now
+      /*if(request.message === "update_sub_distance") 
       {
 
         console.log("BACKGROUND.JS recieved a message from SIDESLIDER to update SUB_DISTANCE to " + request.value);
