@@ -1,9 +1,9 @@
 {
     "manifest_version": 2,
   
-    "name": "LLSubsNetflix",
-    "description": "This extension will add subtitles in a target language to Netflix",
-    "version": "1.6",
+    "name": "NETFLIX Language Learning Subtitles",
+    "description": "This extension will enable dual language subtitles for Netflix",
+    "version": "0.9",
     "background": {
         "scripts": ["jquery-3.5.1.min.js","background.js"]
     },
