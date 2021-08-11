@@ -8,9 +8,14 @@
 //Found out it's because the extensions created container is being made too early and it copies the wrong style properties. Fixed it by making waitforelement wait for actual text to show before doing anything but this causes
 //a visible 1 second delay on the first message.. this is fine for now tbh
 
-//Mostly done with preferences, considering doing distance slider instead of text side. Also, a font size for original subs
-//Added distance slider, might want to add font size for original text as well
 //Removed Distance slider.. for some reason getBoundingClientRect is not consistent. dont think this option is necessary though so I'm gonna remove it for now
+
+//Gonna reimplement attribute change 
+//reimplemented attribute change for adjustment on window resize, If I find it uses too much power I'll revert
+//also fixed the inconsistent sub placement so I could reintroduce that option, I'll leave it for now
+//Now I just need to clean up the code and it'll be all set for release
+//After release I can think about adding original text size/sub_distance
+
 
 console.log("New page!.. Waiting for captions");
 
@@ -80,8 +85,7 @@ function wait_for_player(){
     console.log("Netflix Player Detected!");
    
     console.log("Starting Script");
-    //getSetting('font_multiplier');
-    //getSetting('left_or_right');
+
     getSetting('text_color');
     getSetting('opacity');
     getSetting('font_multiplier');
@@ -100,11 +104,15 @@ function llsubs(){
     window.mysubs = timedtext.cloneNode();
     mysubs.setAttribute('class','mysubscontainer');
     timedtext.parentNode.appendChild(mysubs);
+    window.old_inset = timedtext.style.inset;
+    console.log("Saved initial inset: ", window.old_inset);
+    window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.05; //Original text is placed at Left:5%, using .right on original subs wasn't consistent
     //
 
     window.cleared=1; //Prevents constant refresh from original sub container from happening in my container 
 
-    window.config = { attributes: true, childList: true, subtree:true};
+    window.config = { attributes: true, childList: true, subtree:true,attributeFilter: [ "style"],
+    attributeOldValue: true};
 
     //Enables right click
     var elements = document.getElementsByTagName("*");
@@ -133,6 +141,30 @@ function llsubs(){
                 
                 
             }
+            else if(mutation.type==='attributes' && mutation.target.className==="player-timedtext" && mutation.target.style.inset != window.old_inset){ // On window resize..
+                window.old_inset = mutation.target.style.inset;
+                mysubs.style.inset=window.old_inset;
+                window.baseFont = parseFloat(mutation.target.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
+                //console.log("base offset is: ",window.baseOffset);
+                console.log("new basefont: ",window.baseFont);
+                console.log(mutation.target.firstChild.firstChild);
+                window.current_size = window.baseFont*window.current_multiplier+'px';
+                update_style('font_size');
+                window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.05;
+                //console.log(window.screen_width);
+
+                const test = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
+                //console.log(test);
+                mysubs.firstChild.style['left']=test+'px';
+                //console.log((parseInt(mutation.target.firstChild.firstChild.getBoundingClientRect().right)+10)+'px');                
+                //console.log("Inset Updated");
+                //console.log(mutation);
+                //console.log(mutation.oldValue.inset);
+                //console.log(mutation.target.style.inset);
+                //Current console.log(mutation.target.style.inset);
+                
+            }
+            
         }
     };
 
@@ -154,13 +186,16 @@ const addSubs = function(caption_row){
             stored_subs.setAttribute('class','mysubs');
             stored_subs.setAttribute('translate','yes');
             //window.baseOffset = parseInt(caption_row.firstChild.firstChild.getBoundingClientRect().right);
-            var current_dist = parseInt(caption_row.firstChild.getBoundingClientRect().right)+20;
-            console.log(caption_row.firstChild.getBoundingClientRect().right);
-            stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${current_dist+'px'} ;bottom: 10%;`); //Room here for User Preference "Distance between subs"  
+            var current_dist = parseInt(caption_row.firstChild.getBoundingClientRect().right)+10;
+            //console.log("Place with distance: ",current_dist);
+            //console.log(caption_row.firstChild.getBoundingClientRect().right);
+            const test =window.original_subs_placement+caption_row.firstChild.getBoundingClientRect().width+10;
+            //console.log(test);
+            stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${test+'px'} ;bottom: 10%;`); //Room here for User Preference "Distance between subs"  
             mysubs.style.inset=caption_row.style.inset; //Better to do this than mutation observer catching EVERY attribute change (which is ALOT)
             mysubs.appendChild(stored_subs);
             window.baseFont = parseFloat(stored_subs.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
-            console.log("base offset is: ",window.baseOffset);
+            //console.log("base offset is: ",window.baseOffset);
             window.current_size = window.baseFont*window.current_multiplier+'px';
             update_style('text_color');
             update_style('opacity');
