@@ -13,6 +13,7 @@
 //new problem, direct linking to video doesn't trigger historystateupdate..
 
 //ACTUALL FIXED THIS TIME, had to change the structure so that content.js is only ever called using tabs.executeScript
+
 window.initialFlag=0;
 //chrome.extension.sendMessage({"message": "prevent_waitfor"});
 
@@ -46,8 +47,19 @@ function getSetting(setting){
     chrome.storage.sync.get(setting,function(data){
         //console.log("Fetching User Preference: " + setting);
         //console.log("FETCHED: "+data[setting]);
-        
-        if (setting === "font_multiplier"){
+        if (setting === "on_off"){
+            window.on_off = data[setting];
+            if (!window.on_off){
+                document.getElementById("mybuttonDec").parentElement.style.display='none';
+                document.getElementById("myButtonInc").parentElement.style.display='none';
+            }
+            else{
+                document.getElementById("mybuttonDec").parentElement.style.display='block';
+                document.getElementById("myButtonInc").parentElement.style.display='block';
+            }
+            
+        }
+        else if (setting === "font_multiplier"){
             window.current_multiplier = parseFloat(data[setting]);
             //console.log("Retrieved Font Multiplier From Storage: ",window.current_multiplier);
         }
@@ -82,6 +94,7 @@ function wait_for_player(){
         getSetting('text_color');
         getSetting('opacity');
         getSetting('font_multiplier');
+        getSetting('on_off');
         //getSetting('sub_distance'); disabled for now, unnecessary imo
 
         //BUTTON STUFF
@@ -89,13 +102,14 @@ function wait_for_player(){
         const button_row = document.getElementsByClassName("PlayerControlsNeo__button-control-row")[0];
 
         //Decrease font button
+
         $(".PlayerControlsNeo__button-control-row").children().eq(3).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyDecrease PlayerControls--control-element-blurred' tabindex='0' role='button' aria-label='Decrease font size'>\
-        <svg viewBox='0 0 24 24' id='mybuttonDec' width='1.500em' height='1.500em' aria-hidden='true' focusable='false'>\
+        <svg viewBox='0 0 24 24' id='mybuttonDec' width='1.500em' height='1.500em' aria-hidden='true' style='display:block;' focusable='false'>\
         <path fill='none' d='m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='yellow' stroke-width='2'></path></svg></button>")
 
         //Increase font button
         $(".PlayerControlsNeo__button-control-row").children().eq(4).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyIncrease PlayerControls--control-element-blurred' tabindex='0' role='button' aria-label='Increase font size'>\
-        <svg viewBox='0 0 24 24' id='myButtonInc' width='1.500em' height='1.500em' aria-hidden='true' focusable='false'>\
+        <svg viewBox='0 0 24 24' id='myButtonInc' width='1.500em' height='1.500em' aria-hidden='true' style='display:block;' focusable='false'>\
         <path fill='none' d='m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='yellow' stroke-width='2'></path></svg></button>")
 
         //Listeners for button clicks
@@ -243,7 +257,7 @@ function llsubs(){
 
 var addSubs = function(caption_row){ 
 
-    if(caption_row.firstChild!=null){ // Ensures Subs were added rather than removed, probably redundant
+    if(caption_row.firstChild!=null && window.on_off){ // Ensures Subs were added rather than removed, probably redundant
         
         caption_row.firstChild.setAttribute('style','display: inline; text-align: center; position: absolute; left: 5%; bottom: 10%;'); // move original to left 
         
@@ -284,6 +298,10 @@ var addSubs = function(caption_row){
 function update_style(setting){
 
     if (!document.getElementsByClassName("mysubs")[0]){
+        if(setting==="text_color"){
+            document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
+            document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
+        }
         return;
     }
     const lines = document.getElementsByClassName("mysubs")[0].children; //Subtitle lines
@@ -296,8 +314,9 @@ function update_style(setting){
 
         }
     }
-    if (setting === "text_color"){ 
+    if (setting === "text_color"){
 
+        
         for (var i = 0; i<lines.length;i++){
 
             lines[i].style["color"]=window.text_color;
@@ -331,6 +350,18 @@ function update_style(setting){
 
 chrome.runtime.onMessage.addListener( //Listens for messages sent from background script (Preferences Controller)
     function (request, sendRespone, sendResponse){
+        
+        if (request.message === "update_on_off"){
+            window.on_off = request.value;
+            if (!window.on_off){
+                document.getElementById("mybuttonDec").parentElement.style.display='none';
+                document.getElementById("myButtonInc").parentElement.style.display='none';
+            }
+            else{
+                document.getElementById("mybuttonDec").parentElement.style.display='block';
+                document.getElementById("myButtonInc").parentElement.style.display='block';
+            }
+        }
         
         if (request.message === 'trigger_wait'){ //Retriggers the script on url change rather than just page refresh (netflix loads pages dynamically)
 

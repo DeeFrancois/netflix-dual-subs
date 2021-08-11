@@ -1,11 +1,84 @@
 <!doctype html>
 <html style=>
   <head>
+    <!--Taken from https://www.w3schools.com/howto/howto_css_switch.asp-->
+    <style>
+      .onSwitch {
+        position: relative;
+        display: block;
+        width: 30px;
+        height: 17px;
+      }
+      
+      .onSwitch input { 
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+      }
+      
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 13px;
+        width: 13px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+      }
+      
+      input:checked + .slider {
+        background-color: #2196F3;
+      }
+      
+      input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+      }
+      
+      input:checked + .slider:before {
+        -webkit-transform: translateX(13px);
+        -ms-transform: translateX(13px);
+        transform: translateX(13px);
+      }
+      
+      /* Rounded sliders */
+      .slider.round {
+        border-radius: 17px;
+      }
+      
+      .slider.round:before {
+        border-radius: 50%;
+      }
+      </style>
+
     <title>LLSubs-NRKTV</title>
+
   </head>
+
   <body style="background-color: black;color:white;">
     <img src='icon.png'></img>
     <p>Make sure to right click the NRK page and select "Translate this Page"!</p>
+
+    
+    <div id="switchLabel">Enable Dual Subtitles</div>
+    <label class="onSwitch">
+      <input id="switchValue" type="checkbox">
+      <span class="slider round"></span>
+      
+    </label>
     <div id="sliderLabel">Font Size</div>
     <input id="mySlider" type="range" min=".2" max="2" step=".1">
     <div id="mySliderValue"></div>
@@ -26,6 +99,7 @@
     <input type="button" id="resetButton" value="Reset Settings" style="margin:auto; display:block;"></input>
 
   </body>
+  <script src="jquery-3.5.1.min.js"></script>
   <script src="popup.js"></script>
   
 </html>

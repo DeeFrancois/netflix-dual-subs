@@ -1,6 +1,6 @@
 // background.js
 
-//content scripts are only run on page reload but netflix is dynamically updated so I instead have to run the script on url change
+//content scripts are usually only run on page reload but netflix is dynamically updated so I instead have to run the script on url change
 var filter = {
   url: [{
     hostEquals: 'www.netflix.com'
@@ -32,9 +32,6 @@ function onWebNav(details) { //On URL Change to netflix/watch, start content scr
   }
 
 }
-
-
-//,{url: [{hostSuffix:'netflix.com'}]});
 
 
 //STORAGE VALUES
@@ -78,6 +75,17 @@ chrome.storage.sync.get('opacity', function(data){
   }
 });
 
+//enabled disabled
+chrome.storage.sync.get('on_off', function(data){
+  if(data.on_off!=null){
+    console.log("Preferences: on_off : " + data.on_off);
+  }
+  else{
+    console.log("No Opacity Preference Found - Setting to ON");
+    chrome.storage.sync.set({'on_off': 1});
+  }
+});
+
 //Sub Distance
 
 /*chrome.storage.sync.get('sub_distance', function(data){ //inconsistent functionality for some reason.. but I don't think people would need this option anyways so I'll disable for now
@@ -105,9 +113,19 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 //Messages to background script, typically for changing User Preference variables - Only Font Size is completed so far
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-      if (request.message === "prevent_waitfor"){
 
-        window.allow_wait=0;
+
+      if( request.message === "update_on_off" ) 
+      {
+
+        console.log("Background.js recieved message from SLIDER to update on_off to " + request.value);
+        chrome.storage.sync.set({'on_off':request.value});           //Store into local variables
+        
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs){ //Pass message onto Content.js
+          chrome.tabs.sendMessage(tabs[0].id, {
+            "message":"update_on_off",
+            "value":request.value});
+        });
 
       }
 

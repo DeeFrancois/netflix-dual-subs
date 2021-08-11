@@ -9,7 +9,7 @@
     },
   
     "permissions": [
-        "storage","webNavigation","https://*.netflix.com/*"
+        "storage","webNavigation","https://www.netflix.com/*"
       ],
 
     "browser_action": {

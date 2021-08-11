@@ -1,6 +1,5 @@
-
-
 document.addEventListener('DOMContentLoaded',function(){
+   
     var slider = document.getElementById('mySlider');
     var slideValue = document.getElementById('mySliderValue');
     //var sideSlider = document.getElementById('sideSlider');
@@ -9,6 +8,8 @@ document.addEventListener('DOMContentLoaded',function(){
     var opacitySliderValue = document.getElementById('opacitySliderValue');
     var colorPicker = document.getElementById('myColorPicker');
     var resetButton = document.getElementById('resetButton');
+    var onSwitch = document.getElementById("switchValue");
+
     chrome.storage.sync.get('font_multiplier',function(data){
             slideValue.innerHTML=data.font_multiplier;
             slider.value=data.font_multiplier;
@@ -32,6 +33,13 @@ document.addEventListener('DOMContentLoaded',function(){
         colorPicker.value=data.text_color;
 
     });
+
+    chrome.storage.sync.get('on_off',function(data){
+        console.log("Stored value is: ",data.on_off);
+        onSwitch.checked=data.on_off;
+
+    });
+    
 
     slider.addEventListener('change', function() {
         mySliderValue.innerHTML=this.value;
@@ -76,6 +84,17 @@ document.addEventListener('DOMContentLoaded',function(){
             "message": "update_text_color",
             "value": this.value
         });
+    }, false);
+
+    onSwitch.addEventListener('change',function() {
+
+        //chrome.storage.sync.set({"left_or_right":this.value});
+       chrome.runtime.sendMessage({
+           "message":"update_on_off",
+           "value": this.checked
+       });
+        
+
     }, false);
 
     resetButton.addEventListener('click',function() {
