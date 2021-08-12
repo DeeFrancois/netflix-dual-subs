@@ -2,11 +2,9 @@
 
 //Finished icons, Last thing to do is find a way to trigger subs a little bit earlier
 //Problems: Waiting for clear isn't enough, some shows don't clear during conversations, quick fix would just be if (new_text != old_text) then cleared =1
-//Fix Duplication issue but disconnecting observer when not on a video 
 //NOTE: Not edge compatible since the notranslate option doesn't work the same as on chrome, can fix after release
 
-//Starting process of making buttons appear earlier
-//Early button creation done
+//Starting the final fix, subs that don't clear when changed
 
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -125,7 +123,10 @@ window.initial_observer.observe(document.documentElement,window.initial_config);
 
 function create_buttons(){
 
-        getSetting('text_color');
+        //Enables right click
+        var elements = document.getElementsByTagName("*");
+        for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
+    
 
         //Decrease font size
         $(".PlayerControlsNeo__button-control-row").children().eq(3).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyDecrease PlayerControls--control-element-blurred' tabindex='0' role='button' aria-label='Decrease font size'>\
@@ -137,7 +138,9 @@ function create_buttons(){
         <svg viewBox='0 0 24 24' id='myButtonInc' width='1.500em' height='1.500em' aria-hidden='true' style='display:block;' focusable='false'>\
         <path fill='none' d='m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='yellow' stroke-width='2'></path></svg></button>")
 
+        getSetting('text_color');
         getSetting('on_off');
+        
         //Listeners for button clicks
         var increase_font_size_button = document.getElementsByClassName("touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyIncrease PlayerControls--control-element-blurred")[0];
         
@@ -216,9 +219,6 @@ function llsubs(){
     window.config = { attributes: true, childList: true, subtree:true,attributeFilter: [ "style"],
     attributeOldValue: true};
 
-    //Enables right click
-    var elements = document.getElementsByTagName("*");
-    for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
     //
 
     const callback = function(mutationsList, observer){ //Observes original text box for changes
