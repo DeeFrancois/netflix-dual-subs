@@ -6,7 +6,7 @@
 
 
 //For english there are two options: Normal subs that use 1 container and don't overlap, or subs that use 2 containers and do overlap (change text without clearing)
-//So far this ext only works with the first option
+//So far this extension only works with the first option
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
       var element = document.querySelector(selector);
@@ -228,7 +228,7 @@ function llsubs(){
                 
                 if (mutation.addedNodes.length===1){ //If added rather than removed..
 
-                    console.log(mutation.target);
+                    //console.log(mutation.target);
                     this.disconnect(); //stop observer so I can add subs without triggering this infinitely
                     addSubs(timedtext); //add subs
                     
@@ -253,7 +253,8 @@ function llsubs(){
             else if(mutation.type==='attributes' && mutation.target.className==="player-timedtext" && mutation.target.style.inset != window.old_inset){ 
                 // Refresh styles on window resize (takes a lot of processing power to track every attribute change so I'd rather not do this but then the extension looks poorly made)
                 // Will test if it's a problem for other computers before release, fine for now
-                    
+                    var child_count = mysubs.childElementCount;
+
                     window.old_inset = mutation.target.style.inset;
                     mysubs.style.inset=window.old_inset;
 
@@ -262,9 +263,14 @@ function llsubs(){
                     update_style('font_size');
                     
                     window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.05;
+                    
                     const test = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
+                    
                     mysubs.firstChild.style['left']=test+'px';
-
+                    if (child_count==2){
+                        const test_two = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
+                        mysubs.children[1].style['left']=test_two+'px';
+                    }
                 
             }
             
@@ -280,19 +286,42 @@ var addSubs = function(caption_row){
 
     if(caption_row.firstChild!=null && window.on_off){ // Ensures Subs were added rather than removed, probably redundant
         
+        var container_count = caption_row.childElementCount;
+
         caption_row.firstChild.setAttribute('style','display: inline; text-align: center; position: absolute; left: 5%; bottom: 10%;'); // move original to left 
         
+        if(container_count==2){
+            caption_row.children[1].setAttribute('style','display: inline; text-align: center; position: absolute; left: 5%; top: 90%;');
+        }
+
         if (window.cleared === 1){ //If CLEARED subs recently, pull new subs, store, and display
 
             const sub_dist =window.original_subs_placement+caption_row.firstChild.getBoundingClientRect().width+10;
+            var container_count = caption_row.childElementCount;
             
             window.stored_subs = caption_row.firstChild.cloneNode(true);
+            //In case there are multiple sub containers, this is where you'd check
+            //console.log("Container Count: ",caption_row.childElementCount);
             stored_subs.setAttribute('class','mysubs');
             stored_subs.setAttribute('translate','yes');
             stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${sub_dist+'px'} ;bottom: 10%;`); 
 
+            if(container_count==2){
+                window.secondary_stored_subs= caption_row.children[1].cloneNode(true);
+                //console.log(caption_row.children[1]);
+                secondary_stored_subs.setAttribute('class','mysubs2');
+                secondary_stored_subs.setAttribute('translate','yes');
+                secondary_stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${sub_dist+'px'} ;top: 90%;`); 
+
+            }
             mysubs.style.inset=caption_row.style.inset;
+            
             mysubs.appendChild(stored_subs);
+
+            if(container_count===2){
+                mysubs.appendChild(secondary_stored_subs);
+                //console.log(secondary_stored_subs);
+            }
 
             window.baseFont = parseFloat(stored_subs.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
             window.current_size = window.baseFont*window.current_multiplier+'px';
@@ -308,6 +337,9 @@ var addSubs = function(caption_row){
         else{// Just a refresh so place stored instead 
 
             mysubs.appendChild(stored_subs);
+            if (container_count==2){
+                mysubs.appendChild(secondary_stored_subs);
+            }
 
         }
         
@@ -318,6 +350,7 @@ var addSubs = function(caption_row){
 
 function update_style(setting){
 
+
     if (!document.getElementsByClassName("mysubs")[0]){
         if(setting==="text_color"){
             document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
@@ -325,13 +358,27 @@ function update_style(setting){
         }
         return;
     }
+
+    var secondary = false;
+    
+
     const lines = document.getElementsByClassName("mysubs")[0].children; //Subtitle lines
+    var lines_two=null;
+
+    if(document.getElementsByClassName("mysubs2")[0]){
+        secondary=true;
+        lines_two=document.getElementsByClassName("mysubs2")[0].children;
+    }
+
 
     if (setting === 'font_size'){
 
         for (var i = 0; i<lines.length;i++){
 
             lines[i].style["font-size"]=window.current_size;
+            if (secondary){
+                lines_two[i].style["font-size"]=window.current_size;
+            }
 
         }
     }
@@ -341,6 +388,9 @@ function update_style(setting){
         for (var i = 0; i<lines.length;i++){
 
             lines[i].style["color"]=window.text_color;
+            if (secondary){
+                lines_two[i].style["color"]=window.text_color;
+            }
 
         }
         //Change button color also
@@ -355,6 +405,9 @@ function update_style(setting){
         for (var i = 0; i<lines.length;i++){
 
             lines[i].style["opacity"]=window.opacity;
+            if (secondary){
+                lines_two[i].style["opacity"]=window.opacity;
+            }
 
         }
 
