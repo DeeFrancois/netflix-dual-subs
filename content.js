@@ -4,7 +4,10 @@
 //Problems: Waiting for clear isn't enough, some shows don't clear during conversations, quick fix would just be if (new_text != old_text) then cleared =1
 //Fix Duplication issue but disconnecting observer when not on a video 
 //NOTE: Not edge compatible since the notranslate option doesn't work the same as on chrome, can fix after release
- 
+
+//Starting process of making buttons appear earlier
+//Early button creation done
+
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
       var element = document.querySelector(selector);
@@ -86,18 +89,45 @@ function wait_for_player(){
 
         //console.log("Netflix Player Detected!");
         //console.log("Starting Subtitle Script");
-        getSetting('text_color');
         getSetting('opacity');
         getSetting('font_multiplier');
-        getSetting('on_off');
         //getSetting('sub_distance'); disabled for now, unnecessary imo
 
-        //BUTTON STUFF
 
-        const button_row = document.getElementsByClassName("PlayerControlsNeo__button-control-row")[0];
+        // PlayerControls--control-element-blurred
+        // PlayerControls--control-element-active
 
-        //Decrease font button
+        llsubs();
+    
+    });
+}
 
+//Button Stuff
+//Need an observer to wait until the control row element is created, then the buttons are added, and then finally we can wait for subtitles
+//This observer was made "quick and dirty", worked the first try so I'll just leave it and worry about more efficient approach later (as if I haven't been saying this for literally everything this whole time)
+window.initial_config = {childList:true, subtree:true,attributeFilter:["style"],}
+var callback = function(mutationsList, observer){
+    if (!location.href.includes('netflix.com/watch/')){
+        observer.disconnect();
+    }
+    for (const mutation of mutationsList){
+        if (mutation.type === 'childList' && mutation.target.className==="PlayerControlsNeo__button-control-row"){
+            //console.log(mutation.target);
+            create_buttons();
+            observer.disconnect();
+        }
+    }
+}
+
+window.initial_observer = new MutationObserver(callback);
+window.initial_observer.observe(document.documentElement,window.initial_config);
+
+
+function create_buttons(){
+
+        getSetting('text_color');
+
+        //Decrease font size
         $(".PlayerControlsNeo__button-control-row").children().eq(3).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyDecrease PlayerControls--control-element-blurred' tabindex='0' role='button' aria-label='Decrease font size'>\
         <svg viewBox='0 0 24 24' id='mybuttonDec' width='1.500em' height='1.500em' aria-hidden='true' style='display:block;' focusable='false'>\
         <path fill='none' d='m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='yellow' stroke-width='2'></path></svg></button>")
@@ -107,6 +137,7 @@ function wait_for_player(){
         <svg viewBox='0 0 24 24' id='myButtonInc' width='1.500em' height='1.500em' aria-hidden='true' style='display:block;' focusable='false'>\
         <path fill='none' d='m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='yellow' stroke-width='2'></path></svg></button>")
 
+        getSetting('on_off');
         //Listeners for button clicks
         var increase_font_size_button = document.getElementsByClassName("touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyIncrease PlayerControls--control-element-blurred")[0];
         
@@ -163,16 +194,8 @@ function wait_for_player(){
 
         });
 
-        // PlayerControls--control-element-blurred
-        // PlayerControls--control-element-active
-
-        llsubs();
-    
-    });
+        wait_for_player();
 }
-
-
-wait_for_player();
 
 function llsubs(){
 
