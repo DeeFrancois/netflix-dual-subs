@@ -7,6 +7,8 @@
 
 //For english there are two options: Normal subs that use 1 container and don't overlap, or subs that use 2 containers and do overlap (change text without clearing)
 //So far this extension only works with the first option
+//Finished support for dual-container subs, just need to add support for change-on-refresh subs
+//change-on-refresh support added, just need to adjust placement since the bottom container usually gets cut off
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
       var element = document.querySelector(selector);
@@ -221,14 +223,22 @@ function llsubs(){
     attributeOldValue: true};
 
     //
-
+    window.old_text = "";
     const callback = function(mutationsList, observer){ //Observes original text box for changes
         for (const mutation of mutationsList){
             if (mutation.type === 'childList' && mutation.target.className && mutation.target.className==="player-timedtext"){ //track removal/addition to subtitle container
                 
                 if (mutation.addedNodes.length===1){ //If added rather than removed..
 
-                    //console.log(mutation.target);
+                    //console.log(mutation.target.innerText);
+                    if (mutation.target.innerText!==window.old_text){ 
+                        //I added this functionality last but it's much better than clear flag, eventually i'll make this the only way to trigger
+                        //a sub update, but for now I'll just make it support the current clear flag functionality
+                        window.old_text=mutation.target.innerText;
+                        window.cleared=1;
+                        //console.log("Sub changed detected");
+
+                    }
                     this.disconnect(); //stop observer so I can add subs without triggering this infinitely
                     addSubs(timedtext); //add subs
                     
@@ -268,7 +278,7 @@ function llsubs(){
                     
                     mysubs.firstChild.style['left']=test+'px';
                     if (child_count==2){
-                        const test_two = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
+                        const test_two = parseInt(document.getElementsByClassName("player-timedtext")[0].children[1].getBoundingClientRect().width)+(window.original_subs_placement)+10;
                         mysubs.children[1].style['left']=test_two+'px';
                     }
                 
@@ -307,11 +317,13 @@ var addSubs = function(caption_row){
             stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${sub_dist+'px'} ;bottom: 10%;`); 
 
             if(container_count==2){
+                const sub_dist_two =window.original_subs_placement+caption_row.children[1].getBoundingClientRect().width+10;
+            
                 window.secondary_stored_subs= caption_row.children[1].cloneNode(true);
                 //console.log(caption_row.children[1]);
                 secondary_stored_subs.setAttribute('class','mysubs2');
                 secondary_stored_subs.setAttribute('translate','yes');
-                secondary_stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${sub_dist+'px'} ;top: 90%;`); 
+                secondary_stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${sub_dist_two+'px'} ;top: 90%;`); 
 
             }
             mysubs.style.inset=caption_row.style.inset;
