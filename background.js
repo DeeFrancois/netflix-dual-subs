@@ -17,7 +17,9 @@ function onWebNav(details) { //On URL Change to netflix/watch, start content scr
       chrome.tabs.executeScript({ //nested call so that content only runs AFTER jquery
         file:'jquery-3.5.1.min.js'
       },function(){
-        chrome.tabs.executeScript(null,{file:"content.js"});
+          chrome.tabs.executeScript(null,{file:"content.js"});
+        
+
       });
 
     });

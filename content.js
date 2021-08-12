@@ -1,17 +1,26 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
 
 //Finished icons, Last thing to do is find a way to trigger subs a little bit earlier
-
+//Problems: Waiting for clear isn't enough, some shows don't clear during conversations, quick fix would just be if (new_text != old_text) then cleared =1
+//Fix Duplication issue but disconnecting observer when not on a video 
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
       var element = document.querySelector(selector);
-  
+
       if(element) {
         resolve(element);
         return;
       }
 
       var observer = new MutationObserver(function(mutations) {
+
+        //The following is to disconnect any lingering observers whenever a video is exiting without page reload (reloads handle themselves)
+        //Lingering observers are created whenever you click a video but exit before the observer detects the element
+        //Since netflix is dynamically updated, I can't use the "match" permission option because an "exit" is not a page reload
+        //This feels like bad practice as far as permissions go but we'll see 
+        if (!location.href.includes('netflix.com/watch/')){
+            observer.disconnect();
+        }
         mutations.forEach(function(mutation) {
           var nodes = Array.from(mutation.addedNodes);
           for(var node of nodes) {
@@ -75,7 +84,6 @@ function wait_for_player(){
 
         //console.log("Netflix Player Detected!");
         //console.log("Starting Subtitle Script");
-
         getSetting('text_color');
         getSetting('opacity');
         getSetting('font_multiplier');
