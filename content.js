@@ -1,14 +1,11 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
 
-//Finished icons, Last thing to do is find a way to trigger subs a little bit earlier
-//Problems: Waiting for clear isn't enough, some shows don't clear during conversations, quick fix would just be if (new_text != old_text) then cleared =1
 //NOTE: Not edge compatible since the notranslate option doesn't work the same as on chrome, can fix after release
-
 
 //For english there are two options: Normal subs that use 1 container and don't overlap, or subs that use 2 containers and do overlap (change text without clearing)
 //So far this extension only works with the first option
-//Finished support for dual-container subs, just need to add support for change-on-refresh subs
-//change-on-refresh support added, just need to adjust placement since the bottom container usually gets cut off
+//..and now it finally works for both. NICE
+
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
       var element = document.querySelector(selector);
@@ -301,7 +298,8 @@ var addSubs = function(caption_row){
         caption_row.firstChild.setAttribute('style','display: inline; text-align: center; position: absolute; left: 5%; bottom: 10%;'); // move original to left 
         
         if(container_count==2){
-            caption_row.children[1].setAttribute('style','display: inline; text-align: center; position: absolute; left: 5%; top: 90%;');
+            caption_row.firstChild.style['bottom']='20%'; //Dual-container subs are a bit too big so I gotta shift them up a little
+            caption_row.children[1].setAttribute('style','display: inline; text-align: center; position: absolute; left: 5%; top: 80%;');
         }
 
         if (window.cleared === 1){ //If CLEARED subs recently, pull new subs, store, and display
@@ -323,7 +321,8 @@ var addSubs = function(caption_row){
                 //console.log(caption_row.children[1]);
                 secondary_stored_subs.setAttribute('class','mysubs2');
                 secondary_stored_subs.setAttribute('translate','yes');
-                secondary_stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${sub_dist_two+'px'} ;top: 90%;`); 
+                stored_subs.style['bottom']='20%';
+                secondary_stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${sub_dist_two+'px'} ;top: 80%;`); 
 
             }
             mysubs.style.inset=caption_row.style.inset;

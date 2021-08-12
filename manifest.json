@@ -3,7 +3,7 @@
   
     "name": "Netflix Language Learning Subtitles",
     "description": "This extension will enable dual language subtitles for Netflix",
-    "version": "0.9",
+    "version": "1.0",
 
     "icons": {
       "128":"icons/new_icon128.png",
