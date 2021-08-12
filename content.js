@@ -4,8 +4,9 @@
 //Problems: Waiting for clear isn't enough, some shows don't clear during conversations, quick fix would just be if (new_text != old_text) then cleared =1
 //NOTE: Not edge compatible since the notranslate option doesn't work the same as on chrome, can fix after release
 
-//Starting the final fix, subs that don't clear when changed
 
+//For english there are two options: Normal subs that use 1 container and don't overlap, or subs that use 2 containers and do overlap (change text without clearing)
+//So far this ext only works with the first option
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
       var element = document.querySelector(selector);
@@ -227,8 +228,10 @@ function llsubs(){
                 
                 if (mutation.addedNodes.length===1){ //If added rather than removed..
 
+                    console.log(mutation.target);
                     this.disconnect(); //stop observer so I can add subs without triggering this infinitely
                     addSubs(timedtext); //add subs
+                    
 
                 }
                 else{
