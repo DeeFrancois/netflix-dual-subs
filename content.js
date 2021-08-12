@@ -3,6 +3,8 @@
 //Finished icons, Last thing to do is find a way to trigger subs a little bit earlier
 //Problems: Waiting for clear isn't enough, some shows don't clear during conversations, quick fix would just be if (new_text != old_text) then cleared =1
 //Fix Duplication issue but disconnecting observer when not on a video 
+//NOTE: Not edge compatible since the notranslate option doesn't work the same as on chrome, can fix after release
+ 
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
       var element = document.querySelector(selector);
