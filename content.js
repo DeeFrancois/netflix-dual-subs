@@ -6,6 +6,8 @@
 //So far this extension only works with the first option
 //..and now it finally works for both. NICE
 
+//Fixed bug related to using the Next Episode button (the control bar isn't removed which messes with observers watching it and creates buttons despite them already existing)
+
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
       var element = document.querySelector(selector);
@@ -20,7 +22,8 @@ function waitForElement(selector) {
         //The following is to disconnect any lingering observers whenever a video is exiting without page reload (reloads handle themselves)
         //Lingering observers are created whenever you click a video but exit before the observer detects the element
         //Since netflix is dynamically updated, I can't use the "match" permission option because an "exit" is not a page reload
-        //This feels like bad practice as far as permissions go but we'll see 
+        //This feels like bad practice as far as permissions go but we'll see
+        console.log("Is it undefined here?: ",location.href); 
         if (!location.href.includes('netflix.com/watch/')){
             observer.disconnect();
         }
@@ -104,19 +107,29 @@ function wait_for_player(){
 //Need an observer to wait until the control row element is created, then the buttons are added, and then finally we can wait for subtitles
 //This observer was made "quick and dirty", worked the first try so I'll just leave it and worry about more efficient approach later (as if I haven't been saying this for literally everything this whole time)
 window.initial_config = {childList:true, subtree:true,attributeFilter:["style"],}
+var last_url=location.href;
 var callback = function(mutationsList, observer){
-    if (!location.href.includes('netflix.com/watch/')){
+
+    if (!location.href.includes('netflix.com/watch/')){ //Remove observer when exiting video
         observer.disconnect();
     }
     for (const mutation of mutationsList){
-        if (mutation.type === 'childList' && mutation.target.className==="PlayerControlsNeo__button-control-row"){
-            //console.log(mutation.target);
-            create_buttons();
+        if (mutation.type === 'childList' && mutation.target.className==="PlayerControlsNeo__button-control-row" && mutation.removedNodes.length){ //Remove observer when changing video
+
+            //console.log("Video change?");
             observer.disconnect();
+        }
+        else if(mutation.type === 'childList' && mutation.target.className==="PlayerControlsNeo__button-control-row" && mutation.addedNodes.length){ //New video opened, start script
+            
+            
+            //console.log("Creating buttons");
+            //console.log(mutation);
+            observer.disconnect();
+
+            create_buttons();
         }
     }
 }
-
 window.initial_observer = new MutationObserver(callback);
 window.initial_observer.observe(document.documentElement,window.initial_config);
 
@@ -126,8 +139,12 @@ function create_buttons(){
         //Enables right click
         var elements = document.getElementsByTagName("*");
         for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
-    
 
+        if ($("#mybuttonDec").length){ //When next episode button is used, don't need to recreate (and surprisingly, don't need to refresh listeners)
+            //console.log("Buttons already exist");
+            wait_for_player();
+            return;
+        }
         //Decrease font size
         $(".PlayerControlsNeo__button-control-row").children().eq(3).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyDecrease PlayerControls--control-element-blurred' tabindex='0' role='button' aria-label='Decrease font size'>\
         <svg viewBox='0 0 24 24' id='mybuttonDec' width='1.500em' height='1.500em' aria-hidden='true' style='display:block;' focusable='false'>\
@@ -216,9 +233,8 @@ function llsubs(){
 
     window.cleared=1; //Only takes new subs on clear, necessary because subs are constantly refreshed 
 
-    window.config = { attributes: true, childList: true, subtree:true,attributeFilter: [ "style"],
-    attributeOldValue: true};
-
+    window.config = { attributes: true, childList: true, subtree:true,attributeFilter: [ "style"]};
+    console.log("Running subs");
     //
     window.old_text = "";
     const callback = function(mutationsList, observer){ //Observes original text box for changes
