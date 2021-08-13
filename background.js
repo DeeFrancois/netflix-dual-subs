@@ -1,6 +1,7 @@
 // background.js
 
 //content scripts are usually only run on page reload but netflix is dynamically updated so I instead have to run the script on url change
+
 var filter = {
   url: [{
     hostEquals: 'www.netflix.com'
@@ -9,17 +10,14 @@ var filter = {
 chrome.webNavigation.onCommitted.addListener(onWebNav,filter);
 chrome.webNavigation.onHistoryStateUpdated.addListener(onWebNav,filter);
 
-  
-function onWebNav(details) { //On URL Change to netflix/watch, start content script..
-  if (details.url.includes('netflix.com/watch/')){
+function onWebNav(details) { //On URL Change/reload to netflix/watch, start content script..
+  if (details.url.includes('netflix.com/watch/')){ // THe observer in content script that watches the player bar addition/removal might make this redundant now actually
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { 
 
       chrome.tabs.executeScript({ //nested call so that content only runs AFTER jquery
         file:'jquery-3.5.1.min.js'
       },function(){
           chrome.tabs.executeScript(null,{file:"content.js"});
-        
-
       });
 
     });
@@ -27,7 +25,6 @@ function onWebNav(details) { //On URL Change to netflix/watch, start content scr
   }
 
 }
-
 
 //STORAGE VALUES
 
@@ -105,10 +102,9 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     });
 });
   
-//Messages to background script, typically for changing User Preference variables
+//Handles message sent to background script, typically for changing User Preference variables
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-
 
       if( request.message === "update_on_off" ) 
       {
