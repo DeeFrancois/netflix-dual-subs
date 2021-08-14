@@ -13,7 +13,7 @@ I'm learning Norwegian and I've found that dual subtitles are a really great lan
 After successfully adding dual subs to NRK TV with my [previous extension](https://chrome.google.com/webstore/detail/nrk-tv-language-learning/lmjfcijpnghdkpnoakgljodpjnimbakp), I figured I'd try making it work for Netflix as well so more people can benefit from this functionality.
 
 ## How to use
-- Turn on the subtitles in your TARGET langauge
+- Turn on the subtitles for your target langauge
 - Right click the page and select "Translate to ____"
 - That's it! You can click the extension button at the top to adjust the font size and opacity. There are also two added buttons for adjusting font size so you can still do so while in fullscreen.
 
@@ -28,11 +28,11 @@ Also, the other extensions work by downloading both language subtitle files and 
 
 While that is great for beginners getting familiar with the language, I feel like direct translations are better for active learning.
 
-## Tips
+## More rambling
 
 **Google Translate is not perfect! Obviously, this should not be your only language learning tool.
 
-Netflix tends to hide most subtitle languages by default. However, if you find the titles through "https://netflix.com/browse/subtitles" after selecting a your target language, it will allow you to still use the hidden languages. For example, if I go to watch "After Life" it only shows French and Spanish, but if I use that link, select Italian, After Life shows up with italian subtitles. 
+Netflix tends to hide most subtitle languages by default. However, if you find the titles through https://netflix.com/browse/subtitles after selecting your target language, it will allow you to still use the hidden languages. For example, if I go to watch "After Life" it only shows French and Spanish, but if I use that link, select Italian, After Life shows up with Italian subtitles enabled. 
 
 
 
