@@ -237,7 +237,7 @@ function llsubs(){
 
     //For Placement
     window.old_inset = timedtext.style.inset;
-    window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.05; //Original text is placed at Left:5%, using .right on original subs wasn't consistent
+    window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025; //Original text is placed at Left:5%, using .right on original subs wasn't consistent
 
     window.cleared=1; //Only takes new subs on clear, necessary because subs are constantly refreshed 
 
@@ -321,11 +321,11 @@ var addSubs = function(caption_row){
         
         var container_count = caption_row.childElementCount;
 
-        caption_row.firstChild.setAttribute('style','display: inline; text-align: center; position: absolute; left: 5%; bottom: 10%;'); // move original to left 
+        caption_row.firstChild.setAttribute('style','display: inline; text-align: center; position: absolute; left: 2.5%; bottom: 10%;'); // move original to left 
         if(container_count==2){
 
             caption_row.firstChild.style['bottom']='20%'; //Dual-container subs are a bit too big so I gotta shift them up a little
-            caption_row.children[1].setAttribute('style','display: inline; text-align: center; position: absolute; left: 5%; top: 80%;');
+            caption_row.children[1].setAttribute('style','display: inline; text-align: center; position: absolute; left: 2.5%; top: 80%;');
 
         }
 
