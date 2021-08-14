@@ -1,52 +1,40 @@
-# netflix-dual-subs
-Enables dual language subtitles on Netflix
-Using my NRKTV extension as a foundation so there's currently a lot of unrelated files/code in here
+# Netflix Language Learning Subtitles
+Works with the browser's built-in translator to enable dual language subtitles on Netflix
+
+![demo](https://github.com/DeeFrancois/netflix-dual-subs/blob/master/DocumentImages/demo.gif)
+
+<sup><sup>_Hjem Til Jul (2019)_</sup></sup>
+#### *Does NOT Work for languages with subtitles that are inserted with images since the browser can't detect those*
+<sup>(This includes: Arabic, Hebrew, Hindi, Japanese, Korean, Persian, Thai, Traditional Chinese, Vietnamese)</sup>
 
 ## Motivation
-I've been learning Norwegian and I've found that dual subtitles are a really great learning tool. I started with making a dual subtitle extension specifically for NRK TV
-but realized the algorithm I came up with could be used for anything. So I figured I'd try it on Netflix as well so more people can benefit from this (and so I can watch Hjem til Jul).
+I'm learning Norwegian and I've found that dual subtitles are a really great language learning tool. Many people tend to watch shows with native subs on while using a seperate tab to constantly look up words they don't know. Dual subtitles improves this process by bringing translations to the video. 
+
+After successfully adding dual subs to NRK TV with my [previous extension](https://chrome.google.com/webstore/detail/nrk-tv-language-learning/lmjfcijpnghdkpnoakgljodpjnimbakp), I figured I'd try making it work for Netflix as well so more people can benefit from this functionality.
+
+## How to use
+- Turn on the subtitles in your TARGET langauge
+- Right click the page and select "Translate to ____"
+- That's it! You can click the extension button at the top to adjust the font size and opacity. There are also two added buttons for adjusting font size so you can still do so while in fullscreen.
+
+![demo](https://github.com/DeeFrancois/netflix-dual-subs/blob/master/DocumentImages/settings.gif)
 
 
 
+## There are plenty of Netflix Dual Subtitle Extensions already, why should I use this?
+Unfortunately the other extensions are either sketchy/not open-source, or they're just too obtrusive. I wanted something more lightweight that felt like I was just watching Netflix normally rather than using a full blown language learning program.
+
+Also, the other extensions work by downloading both language subtitle files and displaying them. The problem with this is that the subtitles are based on the audio tracks in the respective language. This means that often times the subtitles are entirely different sentences rather than direct translations. (This is why they usually need a "hover for translation feature")
+
+While that is great for beginners getting familiar with the language, I feel like direct translations are better for active learning.
+
+## Tips
+
+**Google Translate is not perfect! Obviously, this should not be your only language learning tool.
+
+Netflix tends to hide most subtitle languages by default. However, if you find the titles through "https://netflix.com/browse/subtitles" after selecting a your target language, it will allow you to still use the hidden languages. For example, if I go to watch "After Life" it only shows French and Spanish, but if I use that link, select Italian, After Life shows up with italian subtitles. 
 
 
 
-
-
-## The Journey
-since it might be interesting for people to have a peek into the process. Not inclined to make a youtube video so this will have to do.
-### Day 1
-- Got to the point where I can properly manipulate the subtitle container (track when subtitles are removed/added and insert my own). Unfortunately Netflix disables right click
-so I can't activate the translator...ugh
-
-- Okay, for now I will use the extension "Allow Right Click". I'll figure out how to do it myself later. 
-
-- The functionality is good now but it flickers.. For some reason netflix has the subtitles refreshing every second while they are still up. 
-It happens fast so you normally don't notice but it's resetting the translation every time..
-
-### Day 2
-- Okay, fixed the flickering by storing the translation on first appearance and inserting the same translated text everytime so there's no visual indication 
-of the constant refresh. NICE
-
-- Also made it so I have my own subtitle container instead of appending children into the original one, way easier to clear/add subtitles this way 
-
-- Okay the extension is officially usable at this point. WOOOO! just need to address spacing next because the subtitles tend to overlap a lot. 
-The rare long single line is my enemy right now. 
-
-### Day 3
-- After hours of messing around with the css properties trying to find what values will fit both containers the best, I've realized I can just get the pixel value of the right side
-of the original text's container, add an offset, and use absolute positioning to place the new subs there. Also changed the display option for the added subs so they don't go off the screen. 
-IT'S BEAUTIFUL NOW
-
-
-- Everything works well enough for me to happily use this on my own BUT since I'm releasing this, it's time to add the customization options and fix some bugs.
-
-- For now I will upload to github and outline the remaining tasks which are:
-  
-  - Fix bug where the subtitles dont show when opening a new video unless you refresh (probably a flag issue)
-  - Figure out how to enable right click without the other extension
-  - User Preferences like in the NRK but for: Font size/distance between original subs and translation subs/text color
-  - remove old code/files from nrk project,
-  - new icons
 
 
