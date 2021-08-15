@@ -9,7 +9,7 @@ Works with the browser's built-in translator to enable dual language subtitles o
 <sup>(This includes: Arabic, Hebrew, Hindi, Japanese, Korean, Persian, Thai, Traditional Chinese, Vietnamese)</sup>
 
 ## Motivation
-I'm learning Norwegian and I've found that dual subtitles are a really great language learning tool. Many people tend to watch shows with native subs on while using a seperate tab to constantly look up words they don't know. Dual subtitles improves this process by bringing translations to the video. 
+I'm learning Norwegian and I've found that dual subtitles are a really great language learning tool. Many people tend to watch shows with native subs on while using a seperate tab to constantly look up words they don't know. Dual subtitles improves this process by bringing the translations directly onto the video. 
 
 After successfully adding dual subs to NRK TV with my [previous extension](https://chrome.google.com/webstore/detail/nrk-tv-language-learning/lmjfcijpnghdkpnoakgljodpjnimbakp), I figured I'd try making it work for Netflix as well so more people can benefit from this functionality.
 
