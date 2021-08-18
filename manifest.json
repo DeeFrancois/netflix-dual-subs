@@ -1,28 +1,35 @@
 {
-    "manifest_version": 2,
+    "manifest_version": 3,
   
-    "name": "Netflix Language Learning Subtitles",
-    "description": "Enables dual language subtitles for Netflix",
-    "version": "1.0",
+    "name": "Dual Subtitles for Netflix",
+    "description": "Enables dual language subtitles for Netflix with the help of your browser's auto-translate feature",
+    "version": "1.2",
 
     "icons": {
-      "128":"icons/new_icon128.png",
-      "48":"icons/new_icon48.png",
-      "32":"icons/new_alticon32.png",
-      "24":"icons/new_alticon24.png",
-      "16":"icons/new_alticon16.png"
+      "128":"icons/icon128.png",
+      "48":"icons/icon48.png",
+      "32":"icons/icon32.png",
+      "24":"icons/icon24.png",
+      "16":"icons/icon16.png"
     },
 
     "background": {
-        "scripts": ["jquery-3.5.1.min.js","background.js"]
+        "service_worker": "background.js"
     },
   
     "permissions": [
-        "storage","webNavigation","https://www.netflix.com/*"
+        "storage"
+      ],
+    
+      "content_scripts":[
+        {
+          "matches":["https://www.netflix.com/*"],
+          "js":["jquery-3.5.1.min.js","content.js"]
+        }
       ],
 
-    "browser_action": {
-     "default_icon": "icons/new_alticon32.png",
+    "action": {
+     "default_icon": "icons/icon32.png",
      "default_popup": "popup.html"
 
     }

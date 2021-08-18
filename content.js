@@ -1,13 +1,17 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
 
+//8-18-21 update: Migrated to MV3, Removed need for Browser history permission by changing functionality so I can actually use content scripts as intended (match permissions)
+//also updated extension name and changed adjusted someicons
+
 //NOTE: Not edge compatible since the notranslate option doesn't work the same as on chrome, can fix after release
+
 
 //For english there are two options: Normal subs that use 1 container and don't overlap, or subs that use 2 containers and do overlap (change text without clearing)
 //So far this extension only works with the first option
 //..and now it finally works for both. NICE
 
 //Fixed bug related to using the Next Episode button (the control bar isn't removed which messes with observers watching it and creates buttons despite them already existing)
-
+window.player_active=0;
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
       var element = document.querySelector(selector);
@@ -23,9 +27,6 @@ function waitForElement(selector) {
         //Lingering observers are created whenever you click a video but exit before the observer detects the element
         //Since netflix is dynamically updated(not 100% that's the right term for that..), I can't use the "match" permission option because an "exit" is not a page reload
         //This feels like bad practice as far as permissions go but we'll see
-        if (!location.href.includes('netflix.com/watch/')){
-            observer.disconnect();
-        }
 
         mutations.forEach(function(mutation){
         var nodes = Array.from(mutation.addedNodes);
@@ -112,32 +113,47 @@ function wait_for_player(){
 //Button Stuff
 //Need an observer to wait until the control button row element is created, then the buttons are added, and THEN we can wait for subtitles
 //This observer was made "quick and dirty", worked the first try so I'll just leave it and worry about more efficient approach later (as if I haven't been saying this for literally everything this whole time)
-window.initial_config = {childList:true, subtree:true,attributeFilter:["style"],}
+window.initial_config = {childList:true, subtree:true,}
 var last_url=location.href;
+
 var callback = function(mutationsList, observer){
 
-    if (!location.href.includes('netflix.com/watch/')){ //Remove observer when exiting video
-        observer.disconnect();
-    }
+    //if (!location.href.includes('netflix.com/watch/')){ //Remove observer when exiting video
+    //    observer.disconnect();
+    //}
     for (const mutation of mutationsList){
-        if (mutation.type === 'childList' && mutation.target.className==="PlayerControlsNeo__button-control-row" && mutation.removedNodes.length){ //Remove observer when changing video
-
-            //console.log("Video change?");
-            observer.disconnect();
+      //Started this approach so I didn't need to use the Browser History permission
+      //Problem is that this observer runs the entire time. THis could be very demanding.
+        if (window.player_active===1 && !location.href.includes('netflix.com/watch/') || (location.href.includes('netflix.com/watch/') && location.href != last_url)){ //Constantly checking url during playblack seems demanding, maybe use a timer
+            last_url=location.href;
+            console.log("Video hard exit");
+            window.player_active=0;
+            try{
+            window.observer.disconnect();
+            }
+            catch(e){}
         }
-        else if(mutation.type === 'childList' && mutation.target.className==="PlayerControlsNeo__button-control-row" && mutation.addedNodes.length){ //New video opened, start script
-            
-            
-            //console.log("Creating buttons");
-            observer.disconnect();
-
-            create_buttons();
+        
+        if ( mutation.type === 'childList' && mutation.target.className==="PlayerControlsNeo__button-control-row" && mutation.removedNodes.length){ //Remove observer when changing video
+            window.player_active = 0;
+            console.log("Soft exit"); //Soft exit means disconnect subs listener, but don't redraw buttons after
+            window.observer.disconnect();
         }
+        else if( mutation.type === 'childList' && mutation.target.className==="PlayerControlsNeo__button-control-row" && mutation.addedNodes.length){ //New video opened, start script
+            console.log("New video: ",window.player_active);
+            if(!window.player_active){
+                console.log("Video started");
+                window.player_active=1;
+                create_buttons();
+            }
+
+        }
+        
     }
 }
 window.initial_observer = new MutationObserver(callback);
 window.initial_observer.observe(document.documentElement,window.initial_config);
-
+console.log("Running initial observer");
 
 function create_buttons(){
 
