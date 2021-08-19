@@ -1,5 +1,6 @@
 # Netflix Language Learning Subtitles
 [Now available here on the Chrome Extension Store](https://chrome.google.com/webstore/detail/netflix-language-learning/ljnmedkgcgidbbjhbkdonempgcgdhjfl?hl=en)
+release saturday (share with reddit)
 
 Works with the browser's built-in translator to enable dual language subtitles on Netflix
 
