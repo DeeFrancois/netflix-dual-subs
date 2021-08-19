@@ -1,6 +1,7 @@
 # Netflix Language Learning Subtitles
 Now available to install from the Chrome Extension Store [here](https://chrome.google.com/webstore/detail/netflix-language-learning/ljnmedkgcgidbbjhbkdonempgcgdhjfl?hl=en)
-(Haven't shared to Reddit yet since I'm currently working on getting rid of the "this extension can read your browser history" permission warning)
+
+*Update 1.2, which removes the need for the "This extension can read your browser history" permission, has been submitted for review. May take a couple of days before it's live, I'll share with the subreddit once it is*
 
 Works with the browser's built-in translator to enable dual language subtitles on Netflix
 
@@ -28,7 +29,7 @@ After successfully adding dual subs to NRK TV with my [previous extension](https
 ## There are plenty of Netflix Dual Subtitle Extensions already, why should I use this?
 Unfortunately the other extensions are either sketchy/not open-source, or they're just too obtrusive. I wanted something more lightweight that felt like I was just watching Netflix normally rather than using a full blown language learning program.
 
-Also, the other extensions work by downloading both language subtitle files and displaying them. The problem with this is that the subtitles are based on the audio tracks in the respective language. This means that often times the subtitles are entirely different sentences rather than direct translations. (This is why they usually need a "hover for translation feature")
+Also, the other extensions work by downloading both language subtitle files and displaying them. The problem with this is that the subtitles are based on the audio tracks of the respective language. This means that often times the subtitles are entirely different sentences rather than direct translations. (This is why they usually need a "hover for translation feature")
 
 While that is great for beginners getting familiar with the language, I feel like direct translations are better for active learning.
 
@@ -39,6 +40,4 @@ While that is great for beginners getting familiar with the language, I feel lik
 Netflix tends to hide most subtitle languages by default. However, if you find the titles through https://netflix.com/browse/subtitles after selecting your target language, it will allow you to still use the hidden languages. For example, if I go to watch "After Life" it only shows French and Spanish, but if I use that link, select Italian, After Life shows up with Italian subtitles enabled. 
 
 
-
-
-
+Licensed under the [MIT License](LICENSE).
