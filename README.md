@@ -1,5 +1,5 @@
 # Netflix Language Learning Subtitles
-Now available to install from the Chrome Extension Store [here](https://chrome.google.com/webstore/detail/netflix-language-learning/ljnmedkgcgidbbjhbkdonempgcgdhjfl?hl=en)
+[Now available here on the Chrome Extension Store](https://chrome.google.com/webstore/detail/netflix-language-learning/ljnmedkgcgidbbjhbkdonempgcgdhjfl?hl=en)
 
 Works with the browser's built-in translator to enable dual language subtitles on Netflix
 
@@ -11,7 +11,7 @@ Works with the browser's built-in translator to enable dual language subtitles o
 
 v1.2: Extension name change, Removed requirement of User History Permission
 
-v1.2.5: Forgot to remove console prints before submitting 1.2 oops
+v1.2.5: Feedback button
 
 ## Motivation
 I'm learning Norwegian and I've found that dual subtitles are a really great language learning tool. Many people tend to watch shows with native subs on while using a seperate tab to constantly look up words they don't know. Having dual subtitles makes that process more efficient by bringing the translations directly onto video. 
