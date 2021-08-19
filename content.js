@@ -126,7 +126,7 @@ var callback = function(mutationsList, observer){
       //Problem is that this observer runs the entire time. THis could be very demanding.
         if (window.player_active===1 && !location.href.includes('netflix.com/watch/') || (location.href.includes('netflix.com/watch/') && location.href != last_url)){ //Constantly checking url during playblack seems demanding, maybe use a timer
             last_url=location.href;
-            console.log("Video hard exit");
+            //console.log("Video hard exit");
             window.player_active=0;
             try{
             window.observer.disconnect();
@@ -136,13 +136,13 @@ var callback = function(mutationsList, observer){
         
         if ( mutation.type === 'childList' && mutation.target.className==="PlayerControlsNeo__button-control-row" && mutation.removedNodes.length){ //Remove observer when changing video
             window.player_active = 0;
-            console.log("Soft exit"); //Soft exit means disconnect subs listener, but don't redraw buttons after
+            //console.log("Soft exit"); //Soft exit means disconnect subs listener, but don't redraw buttons after
             window.observer.disconnect();
         }
         else if( mutation.type === 'childList' && mutation.target.className==="PlayerControlsNeo__button-control-row" && mutation.addedNodes.length){ //New video opened, start script
-            console.log("New video: ",window.player_active);
+            //console.log("New video: ",window.player_active);
             if(!window.player_active){
-                console.log("Video started");
+                //console.log("Video started");
                 window.player_active=1;
                 create_buttons();
             }
@@ -153,7 +153,7 @@ var callback = function(mutationsList, observer){
 }
 window.initial_observer = new MutationObserver(callback);
 window.initial_observer.observe(document.documentElement,window.initial_config);
-console.log("Running initial observer");
+//console.log("Running initial observer");
 
 function create_buttons(){
 
