@@ -10,6 +10,7 @@ Works with the browser's built-in translator to enable dual language subtitles o
 <sup>(This includes: Arabic, Hebrew, Hindi, Japanese, Korean, Persian, Thai, Traditional Chinese, Vietnamese)</sup>
 
 v1.2: Extension name change, Removed requirement of User History Permission
+
 v1.2.5: Forgot to remove console prints before submitting 1.2 oops
 
 ## Motivation
