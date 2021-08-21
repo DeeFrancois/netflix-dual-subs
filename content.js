@@ -5,12 +5,6 @@
 
 //NOTE: Not edge compatible since the notranslate option doesn't work the same as on chrome, can fix after release
 
-
-//For english there are two options: Normal subs that use 1 container and don't overlap, or subs that use 2 containers and do overlap (change text without clearing)
-//So far this extension only works with the first option
-//..and now it finally works for both. NICE
-
-//Fixed bug related to using the Next Episode button (the control bar isn't removed which messes with observers watching it and creates buttons despite them already existing)
 window.player_active=0;
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -22,11 +16,6 @@ function waitForElement(selector) {
       }
 
       var observer = new MutationObserver(function(mutations) {
-
-        //The following is to disconnect any lingering observers whenever a video is exited WITHOUT page reload (reloads handle themselves)
-        //Lingering observers are created whenever you click a video but exit before the observer detects the element
-        //Since netflix is dynamically updated(not 100% that's the right term for that..), I can't use the "match" permission option because an "exit" is not a page reload
-        //This feels like bad practice as far as permissions go but we'll see
 
         mutations.forEach(function(mutation){
         var nodes = Array.from(mutation.addedNodes);
@@ -118,9 +107,7 @@ var last_url=location.href;
 
 var callback = function(mutationsList, observer){
 
-    //if (!location.href.includes('netflix.com/watch/')){ //Remove observer when exiting video
-    //    observer.disconnect();
-    //}
+
     for (const mutation of mutationsList){
       //Started this approach so I didn't need to use the Browser History permission
       //Problem is that this observer runs the entire time. THis could be very demanding.
@@ -297,10 +284,8 @@ function llsubs(){
                 
                 
             }
-            else if(mutation.type==='attributes' && mutation.target.className==="player-timedtext" && mutation.target.style.inset != window.old_inset){ 
-                // Refresh styles on window resize (takes a lot of processing power to track every attribute change so I'd rather not do this but then the extension looks poorly made)
-                // Will test if it's a problem for other computers before release, fine for now
-                    
+            else if(mutation.type==='attributes' && mutation.target.className==="player-timedtext" && mutation.target.style.inset != window.old_inset){ //For adjusting subtitle style when window is resized
+
                     var child_count = mysubs.childElementCount;
 
                     window.old_inset = mutation.target.style.inset;
@@ -489,19 +474,12 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
             }
         }
         
-        if (request.message === 'trigger_wait'){ //Retriggers the script on url change rather than just page refresh (netflix loads pages dynamically)
-
-            wait_for_player();            
-
-        }
-        
         if (request.message==='update_font_multiplier'){
 
             //console.log("Recieved Message from BACKGROUND.JS to CHANGE font_multiplier to " + request.value);
 
             window.current_multiplier=parseFloat(request.value);
             window.current_size=window.baseFont*request.value+'px'
-            //StoreSetting('current_size',window.current_size)
             update_style('font_size');
 
         }
@@ -518,7 +496,6 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
 
             //console.log("Recieved Message from BACKGROUND.JS to CHANGE color to " + request.value);
             window.text_color=request.value;
-            //StoreSetting('current_size',window.current_size)
             update_style('text_color');
 
         }
@@ -527,7 +504,6 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
 
             //console.log("Recieved Message from BACKGROUND.JS to CHANGE opacity to " + request.value);
             window.opacity=parseFloat(request.value);
-            //StoreSetting('current_size',window.current_size)
             update_style('opacity');
 
         }
