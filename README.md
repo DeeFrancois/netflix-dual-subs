@@ -23,16 +23,16 @@ After successfully adding dual subs to NRK TV with my [previous extension](https
 ## How to use
 - Turn on the subtitles for your target langauge
 - Right click the page and select "Translate to ____"
-- That's it! You can click the extension button at the top to adjust the font size and opacity. There are also two added buttons for adjusting font size so you can still do so while in fullscreen.
+- That's it! You can click the extension button at the top to adjust the text color, font size, and opacity. There are also two added buttons for adjusting font size so you can still do so while in fullscreen.
 
 ![demo](https://github.com/DeeFrancois/netflix-dual-subs/blob/master/DocumentImages/settings.gif)
 
 
 
 ## There are plenty of Netflix Dual Subtitle Extensions already, why should I use this?
-Unfortunately the other extensions are either sketchy/not open-source, or they're just too obtrusive. I wanted something more lightweight that felt like I was just watching Netflix normally rather than using a full blown language learning program.
+Unfortunately the other extensions are either sketchy/not open-source, cost money, or just too obtrusive. I wanted something more lightweight that felt like I was still watching Netflix normally rather than using a full blown language learning program.
 
-Also, the other extensions work by downloading both language subtitle files and displaying them. The problem with this is that the subtitles are based on the audio tracks of the respective language. This means that often times the subtitles are entirely different sentences rather than direct translations. (This is why they usually need a "hover for translation feature")
+Also, the other extensions work by downloading both language subtitle files and displaying them. The problem with this is that the subtitles are based on the audio tracks of the respective language. This means that often times the subtitles are entirely different sentences from eachother rather than direct translations. (This is why they usually need a "hover for translation feature")
 
 While that is great for beginners getting familiar with the language, I feel like direct translations are better for active learning.
 
