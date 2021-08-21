@@ -1,8 +1,6 @@
 # Netflix Language Learning Subtitles
 [Now available here on the Chrome Extension Store](https://chrome.google.com/webstore/detail/netflix-language-learning/ljnmedkgcgidbbjhbkdonempgcgdhjfl?hl=en)
 
-release saturday (share with the subreddit)
-
 Works with the browser's built-in translator to enable dual language subtitles on Netflix
 
 ![demo](https://github.com/DeeFrancois/netflix-dual-subs/blob/master/DocumentImages/demo.gif)
@@ -14,6 +12,8 @@ Works with the browser's built-in translator to enable dual language subtitles o
 v1.2: Extension name change, Removed requirement of User History Permission
 
 v1.2.5: Feedback button
+
+##### _Note: For the programmers interested in contributing, just give me some time to learn about how that process actually works. Then I'll clean up/organize the code for you guys and announce in the Projects tab when pull requests (I think that's how people refer to that..) are welcomed_
 
 ## Motivation
 I'm learning Norwegian and I've found that dual subtitles are a really great language learning tool. Many people tend to watch shows with native subs on while using a seperate tab to constantly look up words they don't know. Having dual subtitles makes that process more efficient by bringing the translations directly onto video. 
@@ -38,9 +38,10 @@ While that is great for beginners getting familiar with the language, I feel lik
 
 ## More rambling
 
-**Google Translate is not perfect! Obviously, this should not be your only language learning tool.
+Incase you didn't know, you can browse for shows by subtitle/audio language here https://www.netflix.com/browse/subtitles. Finding a show through there will actually enable audio/subtitle tracks that are hidden by default. (But just putting the language in the search bar is better for finding actual foreign shows).
 
-Netflix tends to hide most subtitle languages by default. However, if you find the titles through https://netflix.com/browse/subtitles after selecting your target language, it will allow you to still use the hidden languages. For example, if I go to watch "After Life" it only shows French and Spanish, but if I use that link, select Italian, After Life shows up with Italian subtitles enabled. 
+** You can also watch shows in your native language and then tell your browser to translate the secondary subtitles into whatever language you're learning (including languages that I said aren't supported). But I don't know if that's an effective way to learn and it's too many steps to ask of people so I don't advertise it as a main feature.
 
+Google Translate is not perfect! The accuracy is fine for me, but I'm someone that already knows enough to notice the mistakes. The benefit of using the other dual subs extensions is that you are guaranteed to get sentences that make sense even if they aren't direct translations.
 
 Licensed under the [MIT License](LICENSE).
