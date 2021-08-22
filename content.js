@@ -361,7 +361,7 @@ var addSubs = function(caption_row){
             window.current_size = window.baseFont*window.current_multiplier+'px';
 
             //Apply changes to onscreen subs
-            caption_row.setAttribute('translate','no'); //Necessary to hide from Edge's translator, this would be the only fix necessary BUT some unpredictable behavior is caused by the translator (see line 370)
+            caption_row.setAttribute('translate','no'); //Necessary to hide from Edge's translator, this would be the only fix necessary BUT some unpredictable behavior is caused by the translator (see line 371)
             
             update_style('text_color');
             update_style('opacity');
