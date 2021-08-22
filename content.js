@@ -1,5 +1,8 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
-//working on Edge compatible version, good excuse to finally learn how to use branches
+
+//working on Edge compatible version, good excuse to finally learn how to use branches 
+//see line 364
+
 window.player_active=0;
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -358,7 +361,7 @@ var addSubs = function(caption_row){
             window.current_size = window.baseFont*window.current_multiplier+'px';
 
             //Apply changes to onscreen subs
-            caption_row.setAttribute('translate','no');
+            caption_row.setAttribute('translate','no'); //Necessary to hide from Edge's translator, this would be the only fix necessary BUT some unpredictable behavior is caused by the translator (see line 370)
             
             update_style('text_color');
             update_style('opacity');
