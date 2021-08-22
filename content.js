@@ -1,10 +1,5 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
-
-//8-18-21 update: Migrated to MV3, Removed need for Browser history permission by changing functionality so I can actually use content scripts as intended (match permissions)
-//also updated extension name and changed adjusted someicons
-
-//NOTE: Not edge compatible since the notranslate option doesn't work the same as on chrome, can fix after release
-
+//working on Edge compatible version, good excuse to finally learn how to use branches
 window.player_active=0;
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -363,11 +358,15 @@ var addSubs = function(caption_row){
             window.current_size = window.baseFont*window.current_multiplier+'px';
 
             //Apply changes to onscreen subs
+            caption_row.setAttribute('translate','no');
+            
             update_style('text_color');
             update_style('opacity');
             update_style('font_size'); 
             
             window.cleared=0;
+            console.log(document.getElementsByClassName("mysubs")[0].childNodes); //The problem is that the edge translator sometimes places the translated text outside of the span. you can check this by putting
+            //this into the console while its running, if it says "span,span,text" it's broken, "span,span" is normal behavior.. 
             
         }
         else{// Just a refresh so place stored instead 
