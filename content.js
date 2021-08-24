@@ -1,7 +1,12 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
 
-//working on Edge compatible version, good excuse to finally learn how to use branches 
-//see line 364
+//Regarding Edge compatibiliity:
+//The Edge Translator is just not nearly as good as Google Translate. It does not work nearly as fast or reliably as Chrome, often not even translating sentences at all. 
+//It also sometimes places the text back in the wrong position. I now know how to fix this but it's not worth making people think they should use this with Edge.
+//Regardless, here is the fix:
+// The text for the second row of the subtitles sometimes gets placed outside of the <span> element. I can simply loop through ".mysubs", select the "text()" element, and place it back after the <br>
+// Would only be able to do this on every "refresh" event (can't do it immediately because it takes time to translate) so even then it won't be smooth
+// I'll write up the fix anyways but only for the people desperate to use Edge, I'll have to announce that it is NOT edge compatible though. 
 
 window.player_active=0;
 function waitForElement(selector) {
