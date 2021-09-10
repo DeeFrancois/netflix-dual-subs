@@ -411,7 +411,10 @@ function update_style(setting){
 
             lines[i].style["font-size"]=window.current_size;
             if (secondary){
+                try{
                 lines_two[i].style["font-size"]=window.current_size;
+                }
+                catch(e){}
             }
 
         }
@@ -423,7 +426,10 @@ function update_style(setting){
 
             lines[i].style["color"]=window.text_color;
             if (secondary){
+                try{
                 lines_two[i].style["color"]=window.text_color;
+                }
+                catch(e){}
             }
 
         }
@@ -440,7 +446,11 @@ function update_style(setting){
 
             lines[i].style["opacity"]=window.opacity;
             if (secondary){
+                try{
                 lines_two[i].style["opacity"]=window.opacity;
+                }
+                catch(e){}
+                
             }
 
         }
