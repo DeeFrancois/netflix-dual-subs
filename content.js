@@ -1,9 +1,6 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
 
-//8-18-21 update: Migrated to MV3, Removed need for Browser history permission by changing functionality so I can actually use content scripts as intended (match permissions)
-//also updated extension name and changed adjusted someicons
-
-//NOTE: Not edge compatible since the notranslate option doesn't work the same as on chrome, can fix after release
+// Emergency Patch since there was a netflix update, no control bar buttons for now
 
 window.player_active=0;
 function waitForElement(selector) {
@@ -44,6 +41,8 @@ function getSetting(setting){
 
         if (setting === "on_off"){
             window.on_off = data[setting];
+            
+            /* Broken for now
             if (!window.on_off){
                 document.getElementById("mybuttonDec").parentElement.style.display='none';
                 document.getElementById("myButtonInc").parentElement.style.display='none';
@@ -52,6 +51,7 @@ function getSetting(setting){
                 document.getElementById("mybuttonDec").parentElement.style.display='block';
                 document.getElementById("myButtonInc").parentElement.style.display='block';
             }
+            */
             
         }
 
@@ -67,8 +67,11 @@ function getSetting(setting){
 
         else if (setting === "text_color"){
             window.text_color = data[setting];
-            document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
-            document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
+            
+            //document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
+            //document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
+            
+            
             //console.log("Retrieved Font Multiplier From Storage: ",window.text_color);
         }
 
@@ -86,10 +89,15 @@ function getSetting(setting){
 
 function wait_for_player(){
     
-    waitForElement("#appMountPoint > div > div > div:nth-child(1) > div > div > div.nfp.AkiraPlayer > div > div.VideoContainer > div > div > div > div").then(function(element) {
-
+    waitForElement("#appMountPoint > div > div >div > div > div > div:nth-child(1) > div > div > div > div").then(function(element) {
+        //console.log("Player detected");
         //console.log("Subs Detected");
 
+        //These usually go with button creation but button creation is currently broken
+        getSetting('on_off');
+        getSetting('text_color');
+        
+        //
         getSetting('opacity');
         getSetting('font_multiplier');
         //getSetting('sub_distance'); disabled for now, unnecessary imo
@@ -98,6 +106,7 @@ function wait_for_player(){
     
     });
 }
+//wait_for_player();
 
 //Button Stuff
 //Need an observer to wait until the control button row element is created, then the buttons are added, and THEN we can wait for subtitles
@@ -121,12 +130,12 @@ var callback = function(mutationsList, observer){
             catch(e){}
         }
         
-        if ( mutation.type === 'childList' && mutation.target.className==="PlayerControlsNeo__button-control-row" && mutation.removedNodes.length){ //Remove observer when changing video
+        if ( mutation.type === 'childList' && mutation.target.className===" ltr-op8orf" && mutation.removedNodes.length){ //Remove observer when changing video
             window.player_active = 0;
             //console.log("Soft exit"); //Soft exit means disconnect subs listener, but don't redraw buttons after
             window.observer.disconnect();
         }
-        else if( mutation.type === 'childList' && mutation.target.className==="PlayerControlsNeo__button-control-row" && mutation.addedNodes.length){ //New video opened, start script
+        else if( mutation.type === 'childList' && mutation.target.className===" ltr-op8orf" && mutation.addedNodes.length){ //New video opened, start script
             //console.log("New video: ",window.player_active);
             if(!window.player_active){
                 //console.log("Video started");
@@ -148,22 +157,20 @@ function create_buttons(){
         var elements = document.getElementsByTagName("*");
         for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
 
+        /*
         if ($("#mybuttonDec").length){ //When next episode button is used, don't need to recreate (and surprisingly, don't need to refresh listeners)
             //console.log("Buttons already exist");
             wait_for_player();
             return;
         }
-
         //Decrease font size
         $(".PlayerControlsNeo__button-control-row").children().eq(3).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyDecrease PlayerControls--control-element-blurred' tabindex='0' role='button' aria-label='Decrease font size'>\
         <svg viewBox='0 0 24 24' id='mybuttonDec' width='1.500em' height='1.500em' aria-hidden='true' style='display:block;' focusable='false'>\
         <path fill='none' d='m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='yellow' stroke-width='2'></path></svg></button>")
-
         //Increase font button
         $(".PlayerControlsNeo__button-control-row").children().eq(4).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyIncrease PlayerControls--control-element-blurred' tabindex='0' role='button' aria-label='Increase font size'>\
         <svg viewBox='0 0 24 24' id='myButtonInc' width='1.500em' height='1.500em' aria-hidden='true' style='display:block;' focusable='false'>\
         <path fill='none' d='m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='yellow' stroke-width='2'></path></svg></button>")
-
         getSetting('text_color');
         getSetting('on_off');
         
@@ -177,57 +184,40 @@ function create_buttons(){
             chrome.storage.sync.set({"font_multiplier":window.current_multiplier.toFixed(2)}); //Save setting into storage on Change
             window.current_size=window.baseFont*window.current_multiplier+'px';
             update_style('font_size'); //Live Update the setting change
-
         });
-
         increase_font_size_button.addEventListener("mouseenter", function(){
-
             //console.log("Hovering increase button");
             increase_font_size_button.setAttribute('class','touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyIncrease')
-
-
         });
-
         increase_font_size_button.addEventListener("mouseleave", function(){
-
             //console.log("Left increase button");
             increase_font_size_button.setAttribute('class','touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyIncrease PlayerControls--control-element-blurred');
-
-
         });
-
         var decrease_font_size_button = document.getElementsByClassName("touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyDecrease PlayerControls--control-element-blurred")[0];
         
         decrease_font_size_button.addEventListener("click", function(){
-
             window.current_multiplier-=.1;
             chrome.storage.sync.set({"font_multiplier":window.current_multiplier.toFixed(2)});
             window.current_size=window.baseFont*window.current_multiplier+'px';
             update_style('font_size');
-
         });
-
         decrease_font_size_button.addEventListener("mouseenter", function(){
-
             //console.log("Hovering decrease button");
             decrease_font_size_button.setAttribute('class','touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyDecrease')
-
-
         });
-
         decrease_font_size_button.addEventListener("mouseleave", function(){
-
             //console.log("Left decrease button");
             decrease_font_size_button.setAttribute('class','touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyDecrease PlayerControls--control-element-blurred');
-
-
         });
-
+        */
         wait_for_player();
 
 }
 
 function llsubs(){
+    //console.log("Starting llsubs");
+    var elements = document.getElementsByTagName("*");
+    for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
 
     //Pull Original Sub Container
     var id = "player-timedtext";
@@ -295,7 +285,7 @@ function llsubs(){
                     window.current_size = window.baseFont*window.current_multiplier+'px';
                     update_style('font_size');
                     
-                    window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.05;
+                    window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025;
                     const test = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
                     
                     mysubs.firstChild.style['left']=test+'px';
@@ -318,15 +308,22 @@ function llsubs(){
 
 var addSubs = function(caption_row){ 
 
+    //console.log("Adding Subs");
+    //console.log("Hmm: ",caption_row.firstChild!=null);
+    //console.log(window.on_off);
     if(caption_row.firstChild!=null && window.on_off){ // Ensures Subs were added rather than removed, probably redundant
-        
+        //console.log("Adding Subs");
         var container_count = caption_row.childElementCount;
-
-        caption_row.firstChild.setAttribute('style','display: inline; text-align: center; position: absolute; left: 2.5%; bottom: 10%;'); // move original to left 
+        //console.log("wtf");
+        //console.log("Their subs container?:", document.getElementsByClassName("player-timedtext")[0].firstChild);
+        caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 2.5%; bottom: 15%;'); // move original to left 
+        caption_row.firstChild.setAttribute('translate','no'); 
+        //display: block; white-space: nowrap; text-align: center; position: absolute; left: 36.0531%; bottom: 10%;
+        
         if(container_count==2){
 
             caption_row.firstChild.style['bottom']='20%'; //Dual-container subs are a bit too big so I gotta shift them up a little
-            caption_row.children[1].setAttribute('style','display: inline; text-align: center; position: absolute; left: 2.5%; top: 80%;');
+            caption_row.children[1].setAttribute('style','display: inline; text-align: center; position: absolute; left: 2.5%; top: 80%;'); 
 
         }
 
@@ -338,7 +335,7 @@ var addSubs = function(caption_row){
             window.stored_subs = caption_row.firstChild.cloneNode(true);
             stored_subs.setAttribute('class','mysubs');
             stored_subs.setAttribute('translate','yes');
-            stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${sub_dist+'px'} ;bottom: 10%;`); 
+            stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${sub_dist+'px'} ;bottom: 15%;`); 
 
             if(container_count==2){
 
@@ -390,8 +387,8 @@ function update_style(setting){
 
     if (!document.getElementsByClassName("mysubs")[0]){
         if(setting==="text_color"){
-            document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
-            document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
+            //document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
+            //document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
         }
         return;
     }
@@ -414,7 +411,10 @@ function update_style(setting){
 
             lines[i].style["font-size"]=window.current_size;
             if (secondary){
+                try{
                 lines_two[i].style["font-size"]=window.current_size;
+                }
+                catch(e){}
             }
 
         }
@@ -426,13 +426,16 @@ function update_style(setting){
 
             lines[i].style["color"]=window.text_color;
             if (secondary){
+                try{
                 lines_two[i].style["color"]=window.text_color;
+                }
+                catch(e){}
             }
 
         }
         //Change button color also
-        document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
-        document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
+        //document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
+        //document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
 
 
     }
@@ -443,7 +446,11 @@ function update_style(setting){
 
             lines[i].style["opacity"]=window.opacity;
             if (secondary){
+                try{
                 lines_two[i].style["opacity"]=window.opacity;
+                }
+                catch(e){}
+                
             }
 
         }
@@ -461,16 +468,21 @@ function update_style(setting){
 
 chrome.runtime.onMessage.addListener( //Listens for messages sent from background script (Preferences Controller)
     function (request, sendRespone, sendResponse){
+
+        if (request.message === "new_update"){
+            console.log("New update");
+            alert("Dual Subtitles for Netflix: Hey guys, it should be working again. Sorry about that, the Netflix update broke the extension. The bottom bar buttons will be back later, just wanted to get this out as fast as possible.");
+        }
         
         if (request.message === "update_on_off"){
             window.on_off = request.value;
             if (!window.on_off){
-                document.getElementById("mybuttonDec").parentElement.style.display='none';
-                document.getElementById("myButtonInc").parentElement.style.display='none';
+                //document.getElementById("mybuttonDec").parentElement.style.display='none';
+                //document.getElementById("myButtonInc").parentElement.style.display='none';
             }
             else{
-                document.getElementById("mybuttonDec").parentElement.style.display='block';
-                document.getElementById("myButtonInc").parentElement.style.display='block';
+                //document.getElementById("mybuttonDec").parentElement.style.display='block';
+                //document.getElementById("myButtonInc").parentElement.style.display='block';
             }
         }
         
