@@ -1,12 +1,9 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
 
-//Regarding Edge compatibiliity:
-//The Edge Translator is just not nearly as good as Google Translate. It does not work nearly as fast or reliably as Chrome, often not even translating sentences at all. 
-//It also sometimes places the text back in the wrong position. I now know how to fix this but it's not worth making people think they should use this with Edge.
-//Regardless, here is the fix:
-// The text for the second row of the subtitles sometimes gets placed outside of the <span> element. I can simply loop through ".mysubs", select the "text()" element, and place it back after the <br>
-// Would only be able to do this on every "refresh" event (can't do it immediately because it takes time to translate) so even then it won't be smooth
-// I'll write up the fix anyways but only for the people desperate to use Edge, I'll have to announce that it is NOT edge compatible though. 
+//8-18-21 update: Migrated to MV3, Removed need for Browser history permission by changing functionality so I can actually use content scripts as intended (match permissions)
+//also updated extension name and changed adjusted someicons
+
+//NOTE: Not edge compatible since the notranslate option doesn't work the same as on chrome, can fix after release
 
 window.player_active=0;
 function waitForElement(selector) {
@@ -47,6 +44,8 @@ function getSetting(setting){
 
         if (setting === "on_off"){
             window.on_off = data[setting];
+            
+            /* Broken for now
             if (!window.on_off){
                 document.getElementById("mybuttonDec").parentElement.style.display='none';
                 document.getElementById("myButtonInc").parentElement.style.display='none';
@@ -55,6 +54,7 @@ function getSetting(setting){
                 document.getElementById("mybuttonDec").parentElement.style.display='block';
                 document.getElementById("myButtonInc").parentElement.style.display='block';
             }
+            */
             
         }
 
@@ -70,8 +70,11 @@ function getSetting(setting){
 
         else if (setting === "text_color"){
             window.text_color = data[setting];
-            document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
-            document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
+            
+            //document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
+            //document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
+            
+            
             //console.log("Retrieved Font Multiplier From Storage: ",window.text_color);
         }
 
@@ -89,10 +92,15 @@ function getSetting(setting){
 
 function wait_for_player(){
     
-    waitForElement("#appMountPoint > div > div > div:nth-child(1) > div > div > div.nfp.AkiraPlayer > div > div.VideoContainer > div > div > div > div").then(function(element) {
-
+    waitForElement("#appMountPoint > div > div >div > div > div > div:nth-child(1) > div > div > div > div").then(function(element) {
+        console.log("Player detected");
         //console.log("Subs Detected");
 
+        //These usually go with button creation but button creation is currently broken
+        getSetting('on_off');
+        getSetting('text_color');
+        
+        //
         getSetting('opacity');
         getSetting('font_multiplier');
         //getSetting('sub_distance'); disabled for now, unnecessary imo
@@ -101,6 +109,7 @@ function wait_for_player(){
     
     });
 }
+//wait_for_player();
 
 //Button Stuff
 //Need an observer to wait until the control button row element is created, then the buttons are added, and THEN we can wait for subtitles
@@ -124,12 +133,12 @@ var callback = function(mutationsList, observer){
             catch(e){}
         }
         
-        if ( mutation.type === 'childList' && mutation.target.className==="PlayerControlsNeo__button-control-row" && mutation.removedNodes.length){ //Remove observer when changing video
+        if ( mutation.type === 'childList' && mutation.target.className===" ltr-op8orf" && mutation.removedNodes.length){ //Remove observer when changing video
             window.player_active = 0;
             //console.log("Soft exit"); //Soft exit means disconnect subs listener, but don't redraw buttons after
             window.observer.disconnect();
         }
-        else if( mutation.type === 'childList' && mutation.target.className==="PlayerControlsNeo__button-control-row" && mutation.addedNodes.length){ //New video opened, start script
+        else if( mutation.type === 'childList' && mutation.target.className===" ltr-op8orf" && mutation.addedNodes.length){ //New video opened, start script
             //console.log("New video: ",window.player_active);
             if(!window.player_active){
                 //console.log("Video started");
@@ -151,6 +160,7 @@ function create_buttons(){
         var elements = document.getElementsByTagName("*");
         for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
 
+        /*
         if ($("#mybuttonDec").length){ //When next episode button is used, don't need to recreate (and surprisingly, don't need to refresh listeners)
             //console.log("Buttons already exist");
             wait_for_player();
@@ -225,12 +235,15 @@ function create_buttons(){
 
 
         });
-
+        */
         wait_for_player();
 
 }
 
 function llsubs(){
+    console.log("Starting llsubs");
+    var elements = document.getElementsByTagName("*");
+    for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
 
     //Pull Original Sub Container
     var id = "player-timedtext";
@@ -321,11 +334,18 @@ function llsubs(){
 
 var addSubs = function(caption_row){ 
 
+    console.log("Adding Subs");
+    console.log("Hmm: ",caption_row.firstChild!=null);
+    console.log(window.on_off);
     if(caption_row.firstChild!=null && window.on_off){ // Ensures Subs were added rather than removed, probably redundant
-        
+        //console.log("Adding Subs");
         var container_count = caption_row.childElementCount;
-
-        caption_row.firstChild.setAttribute('style','display: inline; text-align: center; position: absolute; left: 2.5%; bottom: 10%;'); // move original to left 
+        console.log("wtf");
+        console.log("Their subs container?:", document.getElementsByClassName("player-timedtext")[0].firstChild);
+        caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 2.5%; bottom: 10%;'); // move original to left 
+        caption_row.firstChild.setAttribute('translate','no');
+        //display: block; white-space: nowrap; text-align: center; position: absolute; left: 36.0531%; bottom: 10%;
+        
         if(container_count==2){
 
             caption_row.firstChild.style['bottom']='20%'; //Dual-container subs are a bit too big so I gotta shift them up a little
@@ -366,15 +386,11 @@ var addSubs = function(caption_row){
             window.current_size = window.baseFont*window.current_multiplier+'px';
 
             //Apply changes to onscreen subs
-            caption_row.setAttribute('translate','no'); //Necessary to hide from Edge's translator, this would be the only fix necessary BUT some unpredictable behavior is caused by the translator (see line 371)
-            
             update_style('text_color');
             update_style('opacity');
             update_style('font_size'); 
             
             window.cleared=0;
-            console.log(document.getElementsByClassName("mysubs")[0].childNodes); //The problem is that the edge translator sometimes places the translated text outside of the span. you can check this by putting
-            //this into the console while its running, if it says "span,span,text" it's broken, "span,span" is normal behavior.. 
             
         }
         else{// Just a refresh so place stored instead 
@@ -397,8 +413,8 @@ function update_style(setting){
 
     if (!document.getElementsByClassName("mysubs")[0]){
         if(setting==="text_color"){
-            document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
-            document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
+            //document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
+            //document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
         }
         return;
     }
@@ -438,8 +454,8 @@ function update_style(setting){
 
         }
         //Change button color also
-        document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
-        document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
+        //document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
+        //document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
 
 
     }
