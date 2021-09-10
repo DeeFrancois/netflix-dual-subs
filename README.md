@@ -13,8 +13,7 @@ v1.2: Extension name change, Removed requirement of User History Permission
 
 v1.2.5: Feedback button
 
-v1.2.6: 
-##### Unfortunately, the Microsoft Edge Translator is just not nearly as fast or reliable as Google Translate. The update will make this extension at least "work" with Edge, in case the Edge translator improves in future, but for now I won't advertise that it is "Edge compatible". 
+v1.2.7: Netflix Update broke the extension, it's working now but without the bottom bar buttons (will be added back in next update)
 
 ## Motivation
 I'm learning Norwegian and I've found that dual subtitles are a really great language learning tool. Many people tend to watch shows with native subs on while using a seperate tab to constantly look up words they don't know. Having dual subtitles makes that process more efficient by bringing the translations directly onto video. 
