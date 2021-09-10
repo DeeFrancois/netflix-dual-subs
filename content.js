@@ -285,7 +285,7 @@ function llsubs(){
                     window.current_size = window.baseFont*window.current_multiplier+'px';
                     update_style('font_size');
                     
-                    window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.05;
+                    window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025;
                     const test = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
                     
                     mysubs.firstChild.style['left']=test+'px';
@@ -458,6 +458,11 @@ function update_style(setting){
 
 chrome.runtime.onMessage.addListener( //Listens for messages sent from background script (Preferences Controller)
     function (request, sendRespone, sendResponse){
+
+        if (request.message === "new_update"){
+            console.log("New update");
+            alert("Dual Subtitles for Netflix: Hey guys, it should be working again. Sorry about that, the Netflix update broke the extension. The bottom bar buttons will be back later, just wanted to get this out as fast as possible.");
+        }
         
         if (request.message === "update_on_off"){
             window.on_off = request.value;
