@@ -5,7 +5,9 @@
 // but I was correct, using my own container rather than cloning the existing one from the page makes Edge's translator more reliable
 
 // Just need time to find the bugs again and add the buttons back
+
 window.player_active=0;
+
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
       var element = document.querySelector(selector);
@@ -121,8 +123,8 @@ var callback = function(mutationsList, observer){
 
 
     for (const mutation of mutationsList){
-      //Started this approach so I didn't need to use the Browser History permission
-      //Problem is that this observer runs the entire time. THis could be very demanding.
+
+        // The following line was impementing when I used background.js to inject the script manually, but now I use content scripts so this isn't necessary.. I'll try removing it later on, don't want to break anything 
         if (window.player_active===1 && !location.href.includes('netflix.com/watch/') || (location.href.includes('netflix.com/watch/') && location.href != last_url)){ //Constantly checking url during playblack seems demanding, maybe use a timer
             last_url=location.href;
             //console.log("Video hard exit");
@@ -160,6 +162,7 @@ function create_buttons(){
         var elements = document.getElementsByTagName("*");
         for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
 
+        // Netflix update broke buttons, will add back for v2
         /*
         if ($("#mybuttonDec").length){ //When next episode button is used, don't need to recreate (and surprisingly, don't need to refresh listeners)
             //console.log("Buttons already exist");
@@ -226,7 +229,7 @@ function llsubs(){
     var id = "player-timedtext";
     const timedtext = document.getElementsByClassName(id)[0]; //Original Container
 
-    //My container creation
+    //My container creation my-timedtext-container
 
     $(".watch-video").append(`<div class='my-timedtext-container' style='display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 20%; font-size:21px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'><span id=my_subs_innertext>Waiting for Subtitles</span></div>`)
     window.my_timedtext_element= document.getElementsByClassName('my-timedtext-container')[0];
@@ -295,10 +298,7 @@ function llsubs(){
             
             else if(mutation.type==='attributes' && mutation.target.className==="player-timedtext" && mutation.target.style.inset != window.old_inset){ //For adjusting subtitle style when window is resized
 
-                    //var child_count = mysubs.childElementCount;
-
-                    //window.old_inset = mutation.target.style.inset;
-                    //mysubs.style.inset=window.old_inset;
+                   // Oh.. now I remember where the bugs were lol
 
                     try{window.baseFont = parseFloat(mutation.target.firstChild.firstChild.style.fontSize.replace('px',''));}catch(e){} //font size changes way more often than on nrk so will take basefont after every clear instead (if inset updates, update this as well)
                     window.current_size = window.baseFont*window.current_multiplier+'px';
