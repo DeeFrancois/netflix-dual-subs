@@ -8,6 +8,10 @@
 
 // Most bugs fixed, what's left is just fixing up initialization
 // off button needs to be updated
+
+// IMPORTANT: Broken for videos that use two containers (example: Community with English subs)
+// Also sub distance is not correct after reaching a certain size window (probably only for people with 1440p+ screens)
+
 window.player_active=0;
 
 function waitForElement(selector) {
