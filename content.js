@@ -6,6 +6,9 @@
 
 // Just need time to find the bugs again and add the buttons back
 
+// update: first bug is from returning null during style correction in mutation observer function
+// another is from opening a new video from the "next episode" button (problem related to container persistance on video change(?))
+
 window.player_active=0;
 
 function waitForElement(selector) {
@@ -299,19 +302,20 @@ function llsubs(){
             else if(mutation.type==='attributes' && mutation.target.className==="player-timedtext" && mutation.target.style.inset != window.old_inset){ //For adjusting subtitle style when window is resized
 
                    // Oh.. now I remember where the bugs were lol
-
-                    try{window.baseFont = parseFloat(mutation.target.firstChild.firstChild.style.fontSize.replace('px',''));}catch(e){} //font size changes way more often than on nrk so will take basefont after every clear instead (if inset updates, update this as well)
-                    window.current_size = window.baseFont*window.current_multiplier+'px';
-                    update_style('font_size');
-                    
-                    window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025;
-                    //const test = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
-                    
-                    try{var sub_dist = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;}catch(e){}
-                    try{var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
+                    //Script breaks sometimes due to this section. Working on a proper fix, but for now a big try/catch should be sufficient 
+                    try{
+                        window.baseFont = parseFloat(mutation.target.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way more often than on nrk so will take basefont after every clear instead (if inset updates, update this as well)
+                        window.current_size = window.baseFont*window.current_multiplier+'px';
+                        update_style('font_size');
+                        
+                        window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025;
+                        //const test = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
+                        
+                        var sub_dist = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
+                        var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
+                        window.my_timedtext_element.style['left']=sub_dist+'px';
+                        window.my_timedtext_element.style['bottom']=sub_bot+'px';
                     }catch(e){}
-                    window.my_timedtext_element.style['left']=sub_dist+'px';
-                    window.my_timedtext_element.style['bottom']=sub_bot+'px';
                     //mysubs.firstChild.style['left']=test+'px';
                     //if (child_count==2){
 
