@@ -1,7 +1,10 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
 
 // Emergency Patch since there was a netflix update, no control bar buttons for now
+// I last worked on this almost 2 weeks ago and I can't remember what was wrong with it..
+// but I was correct, using my own container rather than cloning the existing one from the page makes Edge's translator more reliable
 
+// Just need time to find the bugs again and add the buttons back
 window.player_active=0;
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -224,9 +227,24 @@ function llsubs(){
     const timedtext = document.getElementsByClassName(id)[0]; //Original Container
 
     //My container creation
-    window.mysubs = timedtext.cloneNode();
-    mysubs.setAttribute('class','mysubscontainer');
-    timedtext.parentNode.appendChild(mysubs);
+
+    $(".watch-video").append(`<div class='my-timedtext-container' style='display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 20%; font-size:21px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'><span id=my_subs_innertext>Waiting for Subtitles</span></div>`)
+    window.my_timedtext_element= document.getElementsByClassName('my-timedtext-container')[0];
+    
+    my_timedtext_element.setAttribute('translate','yes');
+
+    window.last_subs = '';
+
+    
+    /*
+    $("player-timedtext").append("<div class='my-timedtext-container' style="display: block; white-space: nowrap; text-align: center; position: absolute; left: 2.5%; bottom: 15%;" 
+    translate='no'><span style='font-size:31px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'>
+        Insert Text Here</span></div>")
+    */
+
+    //$(".PlayerControlsNeo__button-control-row").children().eq(3).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyDecrease PlayerControls--control-element-blurred' tabindex='0' role='button' aria-label='Decrease font size'>\
+    //    <svg viewBox='0 0 24 24' id='mybuttonDec' width='1.500em' height='1.500em' aria-hidden='true' style='display:block;' focusable='false'>\
+    //    <path fill='none' d='m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='yellow' stroke-width='2'></path></svg></button>")
 
     //For Placement
     window.old_inset = timedtext.style.inset;
@@ -263,40 +281,47 @@ function llsubs(){
                     if (mutation.target.childElementCount===0){ //No children means the mutation was a subtitle CLEAR rather than refresh, double check necessary because refresh would make it here as well but with children (..i think? I forget at this point)
                         
                         window.cleared=1;
-
-                    }
-                    while (mysubs.firstChild){ //clear my container (Netflix script does this anyways ? might not need)
+                        document.getElementsByClassName('my-timedtext-container')[0].innerText = "";
+                        window.last_subs="";
                         
-                        mysubs.removeChild(mysubs.firstChild);
 
                     }
+                    //window.my_timedtext_element.innerText = "";
+                    
                 }
                 
                 
             }
+            
             else if(mutation.type==='attributes' && mutation.target.className==="player-timedtext" && mutation.target.style.inset != window.old_inset){ //For adjusting subtitle style when window is resized
 
-                    var child_count = mysubs.childElementCount;
+                    //var child_count = mysubs.childElementCount;
 
-                    window.old_inset = mutation.target.style.inset;
-                    mysubs.style.inset=window.old_inset;
+                    //window.old_inset = mutation.target.style.inset;
+                    //mysubs.style.inset=window.old_inset;
 
-                    window.baseFont = parseFloat(mutation.target.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way more often than on nrk so will take basefont after every clear instead (if inset updates, update this as well)
+                    try{window.baseFont = parseFloat(mutation.target.firstChild.firstChild.style.fontSize.replace('px',''));}catch(e){} //font size changes way more often than on nrk so will take basefont after every clear instead (if inset updates, update this as well)
                     window.current_size = window.baseFont*window.current_multiplier+'px';
                     update_style('font_size');
                     
                     window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025;
-                    const test = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
+                    //const test = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
                     
-                    mysubs.firstChild.style['left']=test+'px';
-                    if (child_count==2){
+                    try{var sub_dist = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;}catch(e){}
+                    try{var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
+                    }catch(e){}
+                    window.my_timedtext_element.style['left']=sub_dist+'px';
+                    window.my_timedtext_element.style['bottom']=sub_bot+'px';
+                    //mysubs.firstChild.style['left']=test+'px';
+                    //if (child_count==2){
 
-                        const test_two = parseInt(document.getElementsByClassName("player-timedtext")[0].children[1].getBoundingClientRect().width)+(window.original_subs_placement)+10;
-                        mysubs.children[1].style['left']=test_two+'px';
+                    //    const test_two = parseInt(document.getElementsByClassName("player-timedtext")[0].children[1].getBoundingClientRect().width)+(window.original_subs_placement)+10;
+                    //    mysubs.children[1].style['left']=test_two+'px';
 
-                    }
+                    //}
                 
             }
+            
             
         }
     };
@@ -316,8 +341,11 @@ var addSubs = function(caption_row){
         var container_count = caption_row.childElementCount;
         //console.log("wtf");
         //console.log("Their subs container?:", document.getElementsByClassName("player-timedtext")[0].firstChild);
-        caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 2.5%; bottom: 15%;'); // move original to left 
+        old_style = caption_row.firstChild.style
+        console.log(old_style);
+        //caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 2.5%;'); // move original to left 
         caption_row.firstChild.setAttribute('translate','no'); 
+        caption_row.firstChild.style['left']='2.5%';
         //display: block; white-space: nowrap; text-align: center; position: absolute; left: 36.0531%; bottom: 10%;
         
         if(container_count==2){
@@ -327,6 +355,39 @@ var addSubs = function(caption_row){
 
         }
 
+        window.original_subs = caption_row.firstChild.innerText;
+        console.log("Original Subs: ",original_subs);
+        if (original_subs !== window.last_subs){
+            window.last_subs = original_subs;
+            window.my_timedtext_element.innerText = original_subs;
+            console.log("CHANGED");
+        }
+        else if (original_subs===''){
+            window.my_timedtext_element=original_subs;
+        }
+        
+        //console.log(untranslated_text);
+        //$(".player-timedtext").append("<div class='my-timedtext-container' style='display: block; white-space: nowrap; text-align: center; position: absolute; left: 10%; bottom: 15%;'translate='no'><span id=my_subs_innertext style='font-size:31px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'>Insert Text Here</span></div>")
+        //$("#my_subs_innertext").text(untranslated_text);
+
+        window.baseFont = parseFloat(caption_row.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
+        console.log(window.baseFont);
+        window.current_size = window.baseFont*window.current_multiplier+'px';
+
+
+        var sub_dist = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
+        var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
+        window.my_timedtext_element.style['left']=sub_dist+'px';
+        window.my_timedtext_element.style['bottom']=sub_bot+'px';
+
+        window.my_timedtext_element.style['font-size']=current_size;
+        console.log(current_size);
+        window.my_timedtext_element.style['color']='yellow';
+        //console.log($(".player-timedtext-text-container").position());
+        //console.log(sub_bot);
+
+        
+        /*
         if (window.cleared === 1){ //If CLEARED subs recently, pull new subs, store, and display
 
             const sub_dist =window.original_subs_placement+caption_row.firstChild.getBoundingClientRect().width+10;
@@ -375,6 +436,7 @@ var addSubs = function(caption_row){
             }
 
         }
+        */
         
     }
 

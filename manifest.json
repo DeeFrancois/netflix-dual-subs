@@ -3,7 +3,7 @@
   
     "name": "Dual Subtitles for Netflix",
     "description": "Enables dual language subtitles for Netflix with the help of your browser's auto-translate feature",
-    "version": "1.2.7",
+    "version": "1.2.8.1",
 
     "icons": {
       "128":"icons/icon128.png",
