@@ -7,7 +7,7 @@
 // Just need time to find the bugs again and add the buttons back
 
 // Most bugs fixed, what's left is just fixing up initialization
-
+// off button needs to be updated
 window.player_active=0;
 
 function waitForElement(selector) {
@@ -248,6 +248,7 @@ function llsubs(){
     translate='no'><span style='font-size:31px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'>
         Insert Text Here</span></div>")
     */
+    
 
     //$(".PlayerControlsNeo__button-control-row").children().eq(3).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyDecrease PlayerControls--control-element-blurred' tabindex='0' role='button' aria-label='Decrease font size'>\
     //    <svg viewBox='0 0 24 24' id='mybuttonDec' width='1.500em' height='1.500em' aria-hidden='true' style='display:block;' focusable='false'>\
@@ -311,7 +312,7 @@ function llsubs(){
                         
                         window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025;
                         //const test = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
-                        
+
                         var sub_dist = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
                         var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
                         window.my_timedtext_element.style['left']=sub_dist+'px';
