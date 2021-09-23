@@ -13,10 +13,12 @@ v1.2: Extension name change, Removed requirement of User History Permission
 
 v1.2.5: Feedback button
 
-v1.2.7: Netflix Update broke the extension, it's working now but without the bottom bar buttons (will be added back in next update)
+v1.2.8: Netflix Update broke the extension, it's working now but without the bottom bar buttons (will be added back in next update)
+
+v1.2.9(Coming soon): Edge compatibility is back on the menu! Found a way to allow the Edge translator to work way more reliably
 
 ## Motivation
-I'm learning Norwegian and I've found that dual subtitles are a really great language learning tool. Many people tend to watch shows with native subs on while using a seperate tab to constantly look up words they don't know. Having dual subtitles makes that process more efficient by bringing the translations directly onto video. 
+I'm learning Norwegian and I've found that dual subtitles are a really great language learning tool. Many people tend to watch foreign shows with its native subs on while using a seperate tab to constantly look up words they don't know. Having dual subtitles makes that process more efficient by bringing the translations directly onto the video.
 
 After successfully adding dual subs to NRK TV with my [previous extension](https://chrome.google.com/webstore/detail/nrk-tv-language-learning/lmjfcijpnghdkpnoakgljodpjnimbakp), I figured I'd try making it work for Netflix as well so more people can benefit from this functionality.
 
