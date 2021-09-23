@@ -6,8 +6,7 @@
 
 // Just need time to find the bugs again and add the buttons back
 
-// update: first bug is from returning null during style correction in mutation observer function
-// another is from opening a new video from the "next episode" button (problem related to container persistance on video change(?))
+// Most bugs fixed, what's left is just fixing up initialization
 
 window.player_active=0;
 
@@ -234,7 +233,9 @@ function llsubs(){
 
     //My container creation my-timedtext-container
 
-    $(".watch-video").append(`<div class='my-timedtext-container' style='display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 20%; font-size:21px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'><span id=my_subs_innertext>Waiting for Subtitles</span></div>`)
+    $(".my-timedtext-container").remove(); // should actually do this after video exit rather than before video start since it will fix the text lingering a bit on exit
+
+    $(".watch-video").append(`<div class='my-timedtext-container' style='display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 20%; font-size:21px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'><span id=my_subs_innertext></span></div>`)
     window.my_timedtext_element= document.getElementsByClassName('my-timedtext-container')[0];
     
     my_timedtext_element.setAttribute('translate','yes');
@@ -350,6 +351,9 @@ var addSubs = function(caption_row){
         //caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 2.5%;'); // move original to left 
         caption_row.firstChild.setAttribute('translate','no'); 
         caption_row.firstChild.style['left']='2.5%';
+        //caption_row.firstChild.style['bottom']='10%'; this hardlocks the captiosn there so that on hover the text cant move away from the bottom bar..
+        // need to do something like that but without the hardlock because there are shows where the subs appear above
+
         //display: block; white-space: nowrap; text-align: center; position: absolute; left: 36.0531%; bottom: 10%;
         
         if(container_count==2){
