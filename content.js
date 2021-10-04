@@ -17,6 +17,9 @@
 
 //10-4-21: This version is now officially working with Edge. Need some time to make sure there aren't any more bugs before I submit for review
 
+//Just added the swap text feature but I don't like it. It makes the untranslated text, which you're suppose to focus on, move too much since it has to adjust the spacing after the translation finishes.
+//I'll leave the code in tho just in case I end up having an idea on how to improve it (fixed spacing with adjust after threshold?)
+
 window.player_active=0;
 
 function waitForElement(selector) {
@@ -116,6 +119,9 @@ function wait_for_player(){
         //
         getSetting('opacity');
         getSetting('font_multiplier');
+
+        //getSetting('text_side');
+        window.original_text_side = 0;
         //getSetting('sub_distance'); disabled for now, unnecessary imo
 
         llsubs();
@@ -252,15 +258,21 @@ function llsubs(){
                     window.current_size = window.baseFont*window.current_multiplier+'px';
                     update_style('font_size');
                     
-                    window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x)+ (parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025);
-                    //const test = parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10;
 
-                    var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
+                    if (window.original_text_side == 0){
+                        window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x)+ (parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025);
+                        var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
+                        window.my_timedtext_element.style['left']=sub_dist+'px';
+                    }
+                    else{
+                        window.original_subs_placement = parseInt(my_timedtext_element.getBoundingClientRect().x)+ parseInt(my_timedtext_element.getBoundingClientRect().width);
+                        var sub_dist = (window.original_subs_placement)+10 - parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x);
+                        document.getElementsByClassName("player-timedtext")[0].firstChild.style['left']=sub_dist+'px';
+                    }
+                    
                     var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
-                    window.my_timedtext_element.style['left']=sub_dist+'px';
                     window.my_timedtext_element.style['bottom']=sub_bot+'px';
-                //}catch(e){}
-                    //mysubs.firstChild.style['left']=test+'px';
+                
                     //if (child_count==2){
 
                     //    const test_two = parseInt(document.getElementsByClassName("player-timedtext")[0].children[1].getBoundingClientRect().width)+(window.original_subs_placement)+10;
@@ -288,7 +300,15 @@ var addSubs = function(caption_row){
         //console.log(old_style);
 
         caption_row.firstChild.setAttribute('translate','no'); 
-        caption_row.firstChild.style['left']='2.5%';
+
+        
+        if (original_text_side == 0){
+            caption_row.firstChild.style['left']='2.5%'; //original_text_side = 0 = Left
+        }
+        else{
+            caption_row.firstChild.style['left']='97.5%';
+        }
+        
         //caption_row.firstChild.style['bottom']='10%'; this hardlocks the captiosn there so that on hover the text cant move away from the bottom bar..
         // need to do something like that but without the hardlock because there are shows where the subs appear above
         
@@ -312,12 +332,27 @@ var addSubs = function(caption_row){
 
         window.baseFont = parseFloat(caption_row.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
         window.current_size = window.baseFont*window.current_multiplier+'px';
-        window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x)+ (parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025);
 
 
-        var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
+        
+        if(window.original_text_side == 0){
+            window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x)+ (parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025);
+            var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
+            window.my_timedtext_element.style['left']=sub_dist+'px';
+        }
+        else{
+            window.my_timedtext_element.style['left']='2.5%';
+
+            //Same but applied to my element instead
+            window.original_subs_placement = parseInt(my_timedtext_element.getBoundingClientRect().x) + parseInt(my_timedtext_element.getBoundingClientRect().width);
+            var sub_dist = (window.original_subs_placement)+10 - parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x);
+            caption_row.firstChild.style['left']=sub_dist+'px';
+
+        }
+        
+        
         var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
-        window.my_timedtext_element.style['left']=sub_dist+'px';
+        
         window.my_timedtext_element.style['bottom']=sub_bot+'px';
 
         window.my_timedtext_element.style['font-size']=current_size;
