@@ -256,6 +256,12 @@ function llsubs(){
                     //var container_count = document.getElementsByClassName("player-timedtext")[0].childElementCount;
                     const caption_row = document.getElementsByClassName("player-timedtext")[0];
                     var container_count = caption_row.childElementCount;
+                    if (container_count == 2){
+                        document.getElementsByClassName('player-timedtext-text-container')[0].firstChild.innerText= document.getElementsByClassName('player-timedtext-text-container')[0].firstChild.innerText + '\n '+ document.getElementsByClassName("player-timedtext-text-container")[1].firstChild.innerText;
+                        $('.player-timedtext-text-container')[1].remove();    
+                        container_count=0;
+                    }
+
 
                     window.baseFont = parseFloat(mutation.target.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way more often than on nrk so will take basefont after every clear instead (if inset updates, update this as well)
                     window.current_size = window.baseFont*window.current_multiplier+'px';
@@ -267,12 +273,6 @@ function llsubs(){
                         var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
                         window.my_timedtext_element.style['left']=sub_dist+'px';
 
-                        if (container_count==2){
-                            if (caption_row.firstChild.getBoundingClientRect().width < caption_row.children[1].getBoundingClientRect().width){
-                                var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].children[1].getBoundingClientRect().width)+(window.original_subs_placement)+10);
-                                window.my_timedtext_element.style['left']=sub_dist+'px';
-                            }
-                        }
                     }
                     else{
                         window.original_subs_placement = parseInt(my_timedtext_element.getBoundingClientRect().x)+ parseInt(my_timedtext_element.getBoundingClientRect().width);
@@ -305,7 +305,13 @@ function llsubs(){
 var addSubs = function(caption_row){ 
 
    if(caption_row.firstChild!=null && window.on_off){ // Ensures Subs were added rather than removed, probably redundant
-        var container_count = caption_row.childElementCount;
+        var container_count = caption_row.childElementCount; 
+        if (container_count == 2){ // Why work around Netflix sometimes using a seperate container for each row when I can just force it back into using one.. wish I'd done this earlier
+            
+            document.getElementsByClassName('player-timedtext-text-container')[0].firstChild.innerText= document.getElementsByClassName('player-timedtext-text-container')[0].firstChild.innerText + '\n '+ document.getElementsByClassName("player-timedtext-text-container")[1].firstChild.innerText;
+            $('.player-timedtext-text-container')[1].remove();    
+            container_count=0;
+        }
 
         old_style = caption_row.firstChild.style
         //console.log(old_style);
@@ -319,14 +325,6 @@ var addSubs = function(caption_row){
         
         window.original_subs = caption_row.firstChild.innerText;
 
-        if(container_count==2){
-
-            caption_row.firstChild.style['bottom']='26%'; //Dual-container subs are a bit too big so I gotta shift them up a little
-            caption_row.children[1].setAttribute('style','display: inline; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
-            caption_row.children[1].setAttribute('translate','no'); 
-            window.original_subs+= '\n '+ caption_row.children[1].innerText
-
-        }
 
         if (original_text_side == 1){
             caption_row.firstChild.style['left']='97.5%';
@@ -353,12 +351,6 @@ var addSubs = function(caption_row){
             var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
             window.my_timedtext_element.style['left']=sub_dist+'px';
 
-            if (container_count==2){
-                if (caption_row.firstChild.getBoundingClientRect().width < caption_row.children[1].getBoundingClientRect().width){
-                    var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].children[1].getBoundingClientRect().width)+(window.original_subs_placement)+10);
-                    window.my_timedtext_element.style['left']=sub_dist+'px';
-                }
-            }
         }
         else{
             window.my_timedtext_element.style['left']='2.5%';
@@ -440,26 +432,9 @@ var addSubs = function(caption_row){
 
 function update_style(setting){
 
-    var secondary = false; //Some videos use two player-timedtext-container's, this is part of supporting those as well 
-
-    const lines = window.my_timedtext_element; //Subtitle lines
-    var lines_two=null;
-
-    if(document.getElementsByClassName("mysubs2")[0]){
-        secondary=true;
-    }
-
-
     if (setting === 'font_size'){
 
             lines.style["font-size"]=window.current_size;
-            if (secondary){
-                try{
-                lines_two[i].style["font-size"]=window.current_size;
-                }
-                catch(e){}
-            }
-
         
     }
     if (setting === "text_color"){
@@ -467,14 +442,6 @@ function update_style(setting){
         //console.log("Color change");
         lines.style['color']=window.text_color;
 
-        if (secondary){
-                try{
-                lines_two[i].style["color"]=window.text_color;
-                }
-                catch(e){}
-            }
-
-        
         //Change button color also
         //document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
         //document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
@@ -485,13 +452,6 @@ function update_style(setting){
     if (setting === "opacity"){
 
             lines.style["opacity"]=window.opacity;
-            if (secondary){
-                try{
-                lines_two[i].style["opacity"]=window.opacity;
-                }
-                catch(e){}
-                
-            }
 
     }
 
