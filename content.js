@@ -253,7 +253,10 @@ function llsubs(){
             else if(mutation.type==='attributes' && mutation.target.className==="player-timedtext" && mutation.target.firstChild && mutation.target.style.inset != window.old_inset){ //For adjusting subtitle style when window is resized
                    // Oh.. now I remember where the bugs were lol
                     //Script breaks sometimes due to this section. Working on a proper fix, but for now a big try/catch should be sufficient 
-                    
+                    //var container_count = document.getElementsByClassName("player-timedtext")[0].childElementCount;
+                    const caption_row = document.getElementsByClassName("player-timedtext")[0];
+                    var container_count = caption_row.childElementCount;
+
                     window.baseFont = parseFloat(mutation.target.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way more often than on nrk so will take basefont after every clear instead (if inset updates, update this as well)
                     window.current_size = window.baseFont*window.current_multiplier+'px';
                     update_style('font_size');
@@ -263,6 +266,13 @@ function llsubs(){
                         window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x)+ (parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025);
                         var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
                         window.my_timedtext_element.style['left']=sub_dist+'px';
+
+                        if (container_count==2){
+                            if (caption_row.firstChild.getBoundingClientRect().width < caption_row.children[1].getBoundingClientRect().width){
+                                var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].children[1].getBoundingClientRect().width)+(window.original_subs_placement)+10);
+                                window.my_timedtext_element.style['left']=sub_dist+'px';
+                            }
+                        }
                     }
                     else{
                         window.original_subs_placement = parseInt(my_timedtext_element.getBoundingClientRect().x)+ parseInt(my_timedtext_element.getBoundingClientRect().width);
@@ -270,12 +280,9 @@ function llsubs(){
                         document.getElementsByClassName("player-timedtext")[0].firstChild.style['left']=sub_dist+'px';
                     }
 
-                    if(window.container_count==2){
-                        window.my_timedtext_element.style['bottom']='20%';
-                    }
                     
-                    var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
-                    window.my_timedtext_element.style['bottom']=sub_bot+'px';
+                    //var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
+                    //window.my_timedtext_element.style['bottom']=sub_bot+'px';
                 
                     //if (child_count==2){
 
@@ -314,10 +321,10 @@ var addSubs = function(caption_row){
 
         if(container_count==2){
 
-            caption_row.firstChild.style['bottom']='20%'; //Dual-container subs are a bit too big so I gotta shift them up a little
-            caption_row.children[1].setAttribute('style','display: inline; text-align: center; position: absolute; left: 2.5%; top: 80%;');
+            caption_row.firstChild.style['bottom']='26%'; //Dual-container subs are a bit too big so I gotta shift them up a little
+            caption_row.children[1].setAttribute('style','display: inline; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
             caption_row.children[1].setAttribute('translate','no'); 
-            window.original_subs+= '\n'+ caption_row.children[1].innerText
+            window.original_subs+= '\n '+ caption_row.children[1].innerText
 
         }
 
@@ -345,6 +352,13 @@ var addSubs = function(caption_row){
             window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x)+ (parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025);
             var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
             window.my_timedtext_element.style['left']=sub_dist+'px';
+
+            if (container_count==2){
+                if (caption_row.firstChild.getBoundingClientRect().width < caption_row.children[1].getBoundingClientRect().width){
+                    var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].children[1].getBoundingClientRect().width)+(window.original_subs_placement)+10);
+                    window.my_timedtext_element.style['left']=sub_dist+'px';
+                }
+            }
         }
         else{
             window.my_timedtext_element.style['left']='2.5%';
@@ -354,13 +368,15 @@ var addSubs = function(caption_row){
             var sub_dist = (window.original_subs_placement)+10 - parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x);
             caption_row.firstChild.style['left']=sub_dist+'px';
 
+            
+
         }
         
         
-        var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
-        
-        window.my_timedtext_element.style['bottom']=sub_bot+'px';
+        //var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
 
+        window.my_timedtext_element.style['bottom']='18%';        
+        
         update_style('text_color');
         update_style('opacity');
         update_style('font_size'); 
@@ -424,25 +440,13 @@ var addSubs = function(caption_row){
 
 function update_style(setting){
 
-
-    /*if (!document.getElementsByClassName("mysubs")[0]){
-        if(setting==="text_color"){
-            //document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
-            //document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
-        }
-        return;
-    }
-    */
-
     var secondary = false; //Some videos use two player-timedtext-container's, this is part of supporting those as well 
-    
 
     const lines = window.my_timedtext_element; //Subtitle lines
     var lines_two=null;
 
     if(document.getElementsByClassName("mysubs2")[0]){
         secondary=true;
-        lines_two=document.getElementsByClassName("mysubs2")[0].children;
     }
 
 
@@ -488,8 +492,6 @@ function update_style(setting){
                 catch(e){}
                 
             }
-
-        
 
     }
 
