@@ -269,6 +269,10 @@ function llsubs(){
                         var sub_dist = (window.original_subs_placement)+10 - parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x);
                         document.getElementsByClassName("player-timedtext")[0].firstChild.style['left']=sub_dist+'px';
                     }
+
+                    if(window.container_count==2){
+                        window.my_timedtext_element.style['bottom']='20%';
+                    }
                     
                     var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
                     window.my_timedtext_element.style['bottom']=sub_bot+'px';
@@ -299,27 +303,29 @@ var addSubs = function(caption_row){
         old_style = caption_row.firstChild.style
         //console.log(old_style);
 
+        caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
         caption_row.firstChild.setAttribute('translate','no'); 
 
-        
-        if (original_text_side == 0){
-            caption_row.firstChild.style['left']='2.5%'; //original_text_side = 0 = Left
-        }
-        else{
-            caption_row.firstChild.style['left']='97.5%';
-        }
         
         //caption_row.firstChild.style['bottom']='10%'; this hardlocks the captiosn there so that on hover the text cant move away from the bottom bar..
         // need to do something like that but without the hardlock because there are shows where the subs appear above
         
+        window.original_subs = caption_row.firstChild.innerText;
+
         if(container_count==2){
 
             caption_row.firstChild.style['bottom']='20%'; //Dual-container subs are a bit too big so I gotta shift them up a little
-            caption_row.children[1].setAttribute('style','display: inline; text-align: center; position: absolute; left: 2.5%; top: 80%;'); 
+            caption_row.children[1].setAttribute('style','display: inline; text-align: center; position: absolute; left: 2.5%; top: 80%;');
+            caption_row.children[1].setAttribute('translate','no'); 
+            window.original_subs+= '\n'+ caption_row.children[1].innerText
 
         }
 
-        window.original_subs = caption_row.firstChild.innerText;
+        if (original_text_side == 1){
+            caption_row.firstChild.style['left']='97.5%';
+        }
+        
+
         //console.log("Original Subs: ",original_subs);
         if (original_subs !== window.last_subs){
             window.last_subs = original_subs;
@@ -355,8 +361,9 @@ var addSubs = function(caption_row){
         
         window.my_timedtext_element.style['bottom']=sub_bot+'px';
 
-        window.my_timedtext_element.style['font-size']=current_size;
-        window.my_timedtext_element.style['color']='yellow';
+        update_style('text_color');
+        update_style('opacity');
+        update_style('font_size'); 
         
         /*
         if (window.cleared === 1){ //If CLEARED subs recently, pull new subs, store, and display
@@ -418,18 +425,19 @@ var addSubs = function(caption_row){
 function update_style(setting){
 
 
-    if (!document.getElementsByClassName("mysubs")[0]){
+    /*if (!document.getElementsByClassName("mysubs")[0]){
         if(setting==="text_color"){
             //document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
             //document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
         }
         return;
     }
+    */
 
     var secondary = false; //Some videos use two player-timedtext-container's, this is part of supporting those as well 
     
 
-    const lines = document.getElementsByClassName("mysubs")[0].children; //Subtitle lines
+    const lines = window.my_timedtext_element; //Subtitle lines
     var lines_two=null;
 
     if(document.getElementsByClassName("mysubs2")[0]){
@@ -440,9 +448,7 @@ function update_style(setting){
 
     if (setting === 'font_size'){
 
-        for (var i = 0; i<lines.length;i++){
-
-            lines[i].style["font-size"]=window.current_size;
+            lines.style["font-size"]=window.current_size;
             if (secondary){
                 try{
                 lines_two[i].style["font-size"]=window.current_size;
@@ -450,22 +456,21 @@ function update_style(setting){
                 catch(e){}
             }
 
-        }
+        
     }
     if (setting === "text_color"){
 
-        
-        for (var i = 0; i<lines.length;i++){
+        //console.log("Color change");
+        lines.style['color']=window.text_color;
 
-            lines[i].style["color"]=window.text_color;
-            if (secondary){
+        if (secondary){
                 try{
                 lines_two[i].style["color"]=window.text_color;
                 }
                 catch(e){}
             }
 
-        }
+        
         //Change button color also
         //document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
         //document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
@@ -475,9 +480,7 @@ function update_style(setting){
 
     if (setting === "opacity"){
 
-        for (var i = 0; i<lines.length;i++){
-
-            lines[i].style["opacity"]=window.opacity;
+            lines.style["opacity"]=window.opacity;
             if (secondary){
                 try{
                 lines_two[i].style["opacity"]=window.opacity;
@@ -486,7 +489,7 @@ function update_style(setting){
                 
             }
 
-        }
+        
 
     }
 
