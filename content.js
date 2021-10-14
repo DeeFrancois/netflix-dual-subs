@@ -431,6 +431,8 @@ var addSubs = function(caption_row){
 }
 
 function update_style(setting){
+    
+    var lines = window.my_timedtext_element;
 
     if (setting === 'font_size'){
 
