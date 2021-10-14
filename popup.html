@@ -72,7 +72,7 @@
     <img src='icons/icon_big.png'></img>
     <p>Make sure the translator is activated! (Right Click, "Translate to ...")</p>
 
-    <p>Sorry for the downtime, the Netflix update broke the extension. <br>Should be fine now though!</p> 
+    <p>New Update! More Customization Options + Microsoft Edge Compatibility</p> 
 
     
     <div id="switchLabel">Enable Dual Subtitles</div>
@@ -85,17 +85,28 @@
     <input id="mySlider" type="range" min=".2" max="2" step=".1">
     <div id="mySliderValue"></div>
     
+    <div id="originalOpacitySliderLabel">Original Text Opacity</div>
+    <input id="originalOpacitySlider" type="range" min="0" max="1" step=".1">
+    <div id ="originalOpacitySliderValue"></div>
 
-    <div id="opacitySliderLabel">Opacity</div>
+    <div id="opacitySliderLabel">Translated Text Opacity</div>
     <input id="opacitySlider" type="range" min="0" max="1" step=".1">
     <div id ="opacitySliderValue"></div>
+    
+    
     
    <!-- <div id="sideSliderLabel">Distance Between Subs</div> Distance is inconsistent for some reason.. but I don't think people would need this option anyways so I'll disable for now
     <input id="sideSlider" type="range" min="0" max="200" step="10">
     <div id ="sideSliderValue"></div>
   -->
-    <div id = "colorPickerLabel">Translation Color</div>
+    <div id = "originalColorPickerLabel">Original Text Color</div>
+    <input id="myOriginalColorPicker" type="color" value="#FFFF00">
+
+    <div id = "colorPickerLabel">Translation Text Color</div>
     <input id="myColorPicker" type="color" value="#FFFF00">
+
+    
+
     <br>
     <br>
     <input type="button" id="resetButton" value="Reset Settings" style="margin:auto; display:block;"></input>

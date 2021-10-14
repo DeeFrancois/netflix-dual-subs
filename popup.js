@@ -12,7 +12,13 @@ document.addEventListener('DOMContentLoaded',function(){
     //var sideSliderValue = document.getElementById('sideSliderValue');
     var opacitySlider = document.getElementById('opacitySlider');
     var opacitySliderValue = document.getElementById('opacitySliderValue');
+
+    var originalOpacitySlider = document.getElementById('originalOpacitySlider');
+    var originalOpacitySliderValue = document.getElementById('originalOpacitySliderValue');
+
     var colorPicker = document.getElementById('myColorPicker');
+    var originalColorPicker = document.getElementById('myOriginalColorPicker');
+
     var resetButton = document.getElementById('resetButton');
     var onSwitch = document.getElementById("switchValue");
 
@@ -35,8 +41,19 @@ document.addEventListener('DOMContentLoaded',function(){
 
     });
 
+    chrome.storage.sync.get('originaltext_opacity',function(data){
+        originalOpacitySlider.value=data.originaltext_opacity;
+        originalOpacitySliderValue.innerHTML=data.originaltext_opacity;
+
+    });
+
     chrome.storage.sync.get('text_color',function(data){
         colorPicker.value=data.text_color;
+
+    });
+
+    chrome.storage.sync.get('originaltext_color',function(data){
+        originalColorPicker.value=data.originaltext_color;
 
     });
 
@@ -81,6 +98,17 @@ document.addEventListener('DOMContentLoaded',function(){
         });
     }, false);
 
+    originalOpacitySlider.addEventListener('change',function() {
+        originalOpacitySliderValue.innerHTML=this.value;
+        originalOpacitySlider.value = this.value;
+
+        //chrome.storage.sync.set({"left_or_right":this.value});
+        chrome.runtime.sendMessage({
+            "message": "update_originaltext_opacity",
+            "value": this.value
+        });
+    }, false);
+
     colorPicker.addEventListener('input',function() {
         console.log("HERE COLOR PICKER");
         colorPicker.value = this.value;
@@ -88,6 +116,17 @@ document.addEventListener('DOMContentLoaded',function(){
         //chrome.storage.sync.set({"left_or_right":this.value});
         chrome.runtime.sendMessage({
             "message": "update_text_color",
+            "value": this.value
+        });
+    }, false);
+
+    originalColorPicker.addEventListener('input',function() {
+        console.log("HERE COLOR PICKER");
+        originalColorPicker.value = this.value;
+
+        //chrome.storage.sync.set({"left_or_right":this.value});
+        chrome.runtime.sendMessage({
+            "message": "update_originaltext_color",
             "value": this.value
         });
     }, false);
@@ -106,10 +145,17 @@ document.addEventListener('DOMContentLoaded',function(){
     resetButton.addEventListener('click',function() {
 
         //chrome.storage.sync.set({"left_or_right":this.value});
-        colorPicker.value='#FFF000';
+        colorPicker.value='#FFFFFF';
         colorPicker.dispatchEvent(new Event('input'));
-        opacitySlider.value=1;
+
+        originalColorPicker.value='#FFF000';
+        originalColorPicker.dispatchEvent(new Event('input'));
+
+        opacitySlider.value=.8;
         opacitySlider.dispatchEvent(new Event('change'));
+        originalOpacitySlider.value=1;
+        originalOpacitySlider.dispatchEvent(new Event('change'));
+
         slider.value=1;
         slider.dispatchEvent(new Event('change'));
         //sideSlider.value=10;

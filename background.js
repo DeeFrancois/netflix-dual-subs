@@ -26,7 +26,7 @@ chrome.storage.sync.get('text_color', function(data){
   }
   else{
     console.log("No Color Preference Found - Setting YELLOW");
-    chrome.storage.sync.set({'text_color': '#FFFF00'});
+    chrome.storage.sync.set({'text_color': '#FFFFFF'});
   }
 });
 
@@ -50,6 +50,26 @@ chrome.storage.sync.get('on_off', function(data){
   else{
     console.log("No Opacity Preference Found - Setting to ON");
     chrome.storage.sync.set({'on_off': 1});
+  }
+});
+
+chrome.storage.sync.get('originaltext_opacity', function(data){
+  if(data.originaltext_opacity){
+    console.log("Preferences: Original Text Opacity : " + data.text_color);
+  }
+  else{
+    console.log("No Original Text Opacity Preference Found - Setting to 1");
+    chrome.storage.sync.set({'originaltext_opacity': 1});
+  }
+});
+
+chrome.storage.sync.get('originaltext_color', function(data){
+  if(data.originaltext_color){
+    console.log("Preferences: OriginalText Color : " + data.text_color);
+  }
+  else{
+    console.log("No OriginalText Color Preference Found - Setting YELLOW");
+    chrome.storage.sync.set({'originaltext_color': '#fff000'});
   }
 });
 
@@ -126,6 +146,34 @@ chrome.runtime.onMessage.addListener(
             "value": request.value});
           });
         
+      }
+
+      if(request.message === "update_originaltext_opacity")
+      {
+
+        console.log("BACKGROUND.JS recieved a message from SIDESELECTOR to update ORIGINALTEXT_OPACITY to " + request.value);
+        chrome.storage.sync.set({'originaltext_opacity': request.value});
+
+        chrome.tabs.query({active:true, currentWindow:true}, function(tabs){
+          chrome.tabs.sendMessage(tabs[0].id, {
+            "message": "update_originaltext_opacity",
+            "value": request.value});
+          });
+        
+      }
+
+      if(request.message === "update_originaltext_color")
+      {
+
+        console.log("Background.js recieved  a message from COLORSELECTOR to update ORIGINALTEXT_COLOR to " + request.value);
+        chrome.storage.sync.set({'originaltext_color':request.value});
+        
+        chrome.tabs.query({active:true, currentWindow:true}, function(tabs){ //Pass message onto Content.js
+          chrome.tabs.sendMessage(tabs[0].id, {
+            "message":"update_originaltext_color",
+            "value":request.value}); 
+        });
+
       }
 
       /*if(request.message === "update_sub_distance") 

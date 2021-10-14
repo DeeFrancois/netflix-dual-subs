@@ -98,6 +98,14 @@ function getSetting(setting){
             window.opacity = data[setting];
             //console.log("Retrieved Opacity From Storage: ",window.opacity);
         }
+        else if (setting === "originaltext_opacity"){
+            window.originaltext_opacity = data[setting];
+            //console.log("Retrieved Opacity From Storage: ",window.opacity);
+        }
+        else if (setting === "originaltext_color"){
+            window.originaltext_color = data[setting];
+            //console.log("Retrieved Opacity From Storage: ",window.opacity);
+        }
 
         else{
             //console.log("Setting: ", setting, " Does Not Exist");
@@ -115,9 +123,11 @@ function wait_for_player(){
         //These usually go with button creation but button creation is currently broken
         getSetting('on_off');
         getSetting('text_color');
+        getSetting('originaltext_color');
         
         //
         getSetting('opacity');
+        getSetting('originaltext_opacity');
         getSetting('font_multiplier');
 
         //getSetting('text_side');
@@ -251,12 +261,10 @@ function llsubs(){
             }
             
             else if(mutation.type==='attributes' && mutation.target.className==="player-timedtext" && mutation.target.firstChild && mutation.target.style.inset != window.old_inset){ //For adjusting subtitle style when window is resized
-                   // Oh.. now I remember where the bugs were lol
-                    //Script breaks sometimes due to this section. Working on a proper fix, but for now a big try/catch should be sufficient 
-                    //var container_count = document.getElementsByClassName("player-timedtext")[0].childElementCount;
+
                     const caption_row = document.getElementsByClassName("player-timedtext")[0];
                     var container_count = caption_row.childElementCount;
-                    if (container_count == 2){
+                    if (container_count == 2){ // Why work around Netflix sometimes using a seperate container for each row when I can just force it back into using one.. wish I'd done this earlier
                         document.getElementsByClassName('player-timedtext-text-container')[0].firstChild.innerText= document.getElementsByClassName('player-timedtext-text-container')[0].firstChild.innerText + '\n '+ document.getElementsByClassName("player-timedtext-text-container")[1].firstChild.innerText;
                         $('.player-timedtext-text-container')[1].remove();    
                         container_count=0;
@@ -266,6 +274,8 @@ function llsubs(){
                     window.baseFont = parseFloat(mutation.target.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way more often than on nrk so will take basefont after every clear instead (if inset updates, update this as well)
                     window.current_size = window.baseFont*window.current_multiplier+'px';
                     update_style('font_size');
+                    //update_style('originaltext_opacity');
+                    //update_style('originaltext_color');
                     
 
                     if (window.original_text_side == 0){
@@ -280,16 +290,6 @@ function llsubs(){
                         document.getElementsByClassName("player-timedtext")[0].firstChild.style['left']=sub_dist+'px';
                     }
 
-                    
-                    //var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
-                    //window.my_timedtext_element.style['bottom']=sub_bot+'px';
-                
-                    //if (child_count==2){
-
-                    //    const test_two = parseInt(document.getElementsByClassName("player-timedtext")[0].children[1].getBoundingClientRect().width)+(window.original_subs_placement)+10;
-                    //    mysubs.children[1].style['left']=test_two+'px';
-
-                    //}
                 
             }
             
@@ -360,8 +360,6 @@ var addSubs = function(caption_row){
             var sub_dist = (window.original_subs_placement)+10 - parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x);
             caption_row.firstChild.style['left']=sub_dist+'px';
 
-            
-
         }
         
         
@@ -371,7 +369,8 @@ var addSubs = function(caption_row){
         
         update_style('text_color');
         update_style('opacity');
-        update_style('font_size'); 
+        update_style('font_size');
+        //update_style('original_font_size');//I'll do this later, currently a bit tricky since the current font size modification is uses the original subs as the base value 
         
         /*
         if (window.cleared === 1){ //If CLEARED subs recently, pull new subs, store, and display
@@ -433,29 +432,37 @@ var addSubs = function(caption_row){
 function update_style(setting){
     
     var lines = window.my_timedtext_element;
+    var original_lines = document.getElementsByClassName("player-timedtext")[0].firstChild;
 
     if (setting === 'font_size'){
 
-            lines.style["font-size"]=window.current_size;
+        lines.style["font-size"]=window.current_size;
         
     }
     if (setting === "text_color"){
 
-        //console.log("Color change");
         lines.style['color']=window.text_color;
+        for (let i =0;i<document.getElementsByClassName("player-timedtext")[0].firstChild.children.length;i++){
+            original_lines.children[i].style['color']=window.originaltext_color;
+        }
+        //original_lines.style["color"]=window.originaltext_color;
 
         //Change button color also
         //document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
         //document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
-
 
     }
 
     if (setting === "opacity"){
 
             lines.style["opacity"]=window.opacity;
+            original_lines.style["opacity"]=window.originaltext_opacity;
 
     }
+
+
+   
+
 
     /*if (setting === "sub_distance"){ //Not quite sure how to pick the color yet..
         var test = parseInt(window.baseOffset)+parseInt(window.sub_distance);
@@ -517,6 +524,22 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
             //console.log("Recieved Message from BACKGROUND.JS to CHANGE opacity to " + request.value);
             window.opacity=parseFloat(request.value);
             update_style('opacity');
+
+        }
+
+        if (request.message ==='update_originaltext_opacity'){
+
+            //console.log("Recieved Message from BACKGROUND.JS to CHANGE opacity to " + request.value);
+            window.originaltext_opacity=parseFloat(request.value);
+            update_style('opacity');
+
+        }
+
+        if (request.message ==='update_originaltext_color'){
+
+            //console.log("Recieved Message from BACKGROUND.JS to CHANGE opacity to " + request.value);
+            window.originaltext_color=request.value;
+            update_style('text_color');
 
         }
 });
