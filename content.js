@@ -90,7 +90,6 @@ function getSetting(setting){
             //document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
             //document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
             
-            
             //console.log("Retrieved Font Multiplier From Storage: ",window.text_color);
         }
 
@@ -363,9 +362,9 @@ var addSubs = function(caption_row){
         }
         
         
-        //var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
+        var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
 
-        window.my_timedtext_element.style['bottom']='18%';        
+        window.my_timedtext_element.style['bottom']=sub_bot+'px';        
         
         update_style('text_color');
         update_style('opacity');
