@@ -4,7 +4,25 @@
 //STORAGE VALUES
 
 //First Run, store default settings
+//onUpdate()
+// Check whether new version is installed
+// callback is optional
+chrome.runtime.onInstalled.addListener(function(details){
+  if(details.reason == "update"){
+      
+    console.log("Updated from: ", details.previousVersion);
 
+      chrome.storage.sync.get('text_color',function(data){ //On update save switch right side color to left
+        if((data.text_color) && (details.previousVersion == '1.2.8.1') ){ //change to 1.2.8 before release
+          console.log("Updating from pre-left side modify version");
+          chrome.storage.sync.set({'originaltext_color':data.text_color});
+          chrome.storage.sync.set({'text_color':'#FFFFFF'});
+        }
+      });
+
+    //chrome.storage.sync.clear(); 
+  }
+});
 //Font Multiplier
 
 chrome.storage.sync.get('font_multiplier',function(data){
