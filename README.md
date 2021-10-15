@@ -50,4 +50,12 @@ Incase you didn't know, you can browse for shows by subtitle/audio language here
 
 Google Translate is not perfect! The accuracy is fine for me, but I'm someone that already knows enough to notice the mistakes. The benefit of using the other dual subs extensions is that you are guaranteed to get sentences that make sense even if they aren't direct translations.
 
+## Past Updates:
+
+v1.2: Extension name change, Removed requirement of User History Permission
+
+v1.2.5: Feedback button
+
+v1.2.8: Netflix Update broke the extension, it's working now but without the bottom bar buttons (will be added back in next update)
+
 Licensed under the [GPL-3.0 License](LICENSE).
