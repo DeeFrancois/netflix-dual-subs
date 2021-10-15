@@ -1,6 +1,8 @@
 # Dual Subtitles for Netflix
 [Now available here on the Chrome Extension Store](https://chrome.google.com/webstore/detail/netflix-language-learning/ljnmedkgcgidbbjhbkdonempgcgdhjfl?hl=en)
 
+<sup> Latest Update: **v1.3.0** Edge compatibility + Customization options for left side text </sup>
+
 Works with the browser's built-in translator to enable dual language subtitles on Netflix
 
 ![demo](https://github.com/DeeFrancois/netflix-dual-subs/blob/master/DocumentImages/demo.gif)
@@ -9,23 +11,25 @@ Works with the browser's built-in translator to enable dual language subtitles o
 #### *Does NOT Work when the original subtitles are inserted with images since the browser can't detect those*
 <sup>(This includes: Arabic, Hebrew, Hindi, Japanese, Korean, Persian, Thai, Traditional Chinese, Vietnamese)</sup>
 
-v1.2: Extension name change, Removed requirement of User History Permission
-
-v1.2.5: Feedback button
-
-v1.2.8: Netflix Update broke the extension, it's working now but without the bottom bar buttons (will be added back in next update)
-
-v1.3.0(Coming soon! It's basically done so you can download the dev branch if you don't want to wait): Edge compatibility + Customize left side text
+However, you can still use the **Alternate Method** mentioned below which works with **any language** but provides a less-than-ideal experience 
 
 ## Motivation
-I'm learning Norwegian and I've found that dual subtitles are a really great language learning tool. Many people tend to watch foreign shows with its native subs on while using a seperate tab to constantly look up words they don't know. Having dual subtitles makes that process more efficient by bringing the translations directly onto the video.
+I'm learning Norwegian and I've found that dual subtitles are a really great language learning tool. Many people tend to watch foreign shows with their native subs on while using a seperate tab to constantly look up words they don't know. Having dual subtitles makes that process more efficient by bringing the translations directly onto the video.
 
 After successfully adding dual subs to NRK TV with my [previous extension](https://chrome.google.com/webstore/detail/nrk-tv-language-learning/lmjfcijpnghdkpnoakgljodpjnimbakp), I figured I'd try making it work for Netflix as well so more people can benefit from this functionality.
 
 ## How to use
-- Turn on the subtitles for your target langauge
-- Right click the page and select "Translate to ____"
-- That's it! You can click the extension button at the top to adjust the text color, font size, and opacity. There are also two added buttons for adjusting font size so you can still do so while in fullscreen.
+
+#### Recommended Method:
+1. Turn on the subtitles for your Target Language
+2. Right Click the page --> "Translate to [Native Language]"
+(Does not work if your Target Language is: Arabic Hebrew Hindi Japanese Korean Persian Thai Chinese Vietnamese)
+
+#### Alternate Method (Works with ALL LANGUAGES):
+1. Turn on the subtitles in your Native Language
+2. Right Click --> Translate to your target language
+
+You can click the extension icon at the top right to customize text color, size, and opacity. 
 
 ![demo](https://github.com/DeeFrancois/netflix-dual-subs/blob/master/DocumentImages/settings.gif)
 
