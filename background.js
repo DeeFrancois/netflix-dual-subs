@@ -13,8 +13,9 @@ chrome.runtime.onInstalled.addListener(function(details){
     console.log("Updated from: ", details.previousVersion);
 
       chrome.storage.sync.get('text_color',function(data){ //On update save switch right side color to left
-        if((data.text_color) && (details.previousVersion == '1.2.8.1') ){ //change to 1.2.8 before release
+        if((data.text_color) && (details.previousVersion == '1.2.8') && (data.text_color!=='#FFFFFF') ){ //change to 1.2.8 before release
           console.log("Updating from pre-left side modify version");
+          console.log("Old color: ",data.text_color);
           chrome.storage.sync.set({'originaltext_color':data.text_color});
           chrome.storage.sync.set({'text_color':'#FFFFFF'});
         }
@@ -56,7 +57,7 @@ chrome.storage.sync.get('opacity', function(data){
   }
   else{
     console.log("No Opacity Preference Found - Setting to 1");
-    chrome.storage.sync.set({'opacity': 1});
+    chrome.storage.sync.set({'opacity': .8});
   }
 });
 
