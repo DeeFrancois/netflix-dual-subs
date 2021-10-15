@@ -153,7 +153,7 @@ var callback = function(mutationsList, observer){
         // The following line was impementing when I used background.js to inject the script manually, but now I use content scripts so this isn't necessary.. I'll try removing it later on, don't want to break anything 
         if (window.player_active===1 && !location.href.includes('netflix.com/watch/') || (location.href.includes('netflix.com/watch/') && location.href != last_url)){ //Constantly checking url during playblack seems demanding, maybe use a timer
             last_url=location.href;
-            //console.log("Video hard exit");
+            console.log("Video hard exit");
             window.player_active=0;
             try{
             window.observer.disconnect();
@@ -163,11 +163,11 @@ var callback = function(mutationsList, observer){
         
         if ( mutation.type === 'childList' && mutation.target.className===" ltr-op8orf" && mutation.removedNodes.length){ //Remove observer when changing video
             window.player_active = 0;
-            //console.log("Soft exit"); //Soft exit means disconnect subs listener, but don't redraw buttons after
+            console.log("Soft exit"); //Soft exit means disconnect subs listener, but don't redraw buttons after
             window.observer.disconnect();
         }
         else if( mutation.type === 'childList' && mutation.target.className===" ltr-op8orf" && mutation.addedNodes.length){ //New video opened, start script
-            //console.log("New video: ",window.player_active);
+            console.log("New video! ");
             if(!window.player_active){
                 //console.log("Video started");
                 window.player_active=1;
@@ -475,11 +475,6 @@ function update_style(setting){
 chrome.runtime.onMessage.addListener( //Listens for messages sent from background script (Preferences Controller)
     function (request, sendRespone, sendResponse){
 
-        if (request.message === "new_update"){
-            console.log("New update");
-            alert("Dual Subtitles for Netflix: Hey guys, it should be working again. Sorry about that, the Netflix update broke the extension. The bottom bar buttons will be back later, just wanted to get this out as fast as possible.");
-        }
-        
         if (request.message === "update_on_off"){
             window.on_off = request.value;
             if (!window.on_off){
