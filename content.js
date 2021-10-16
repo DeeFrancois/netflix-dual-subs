@@ -149,32 +149,62 @@ var callback = function(mutationsList, observer){
 
 
     for (const mutation of mutationsList){
+        //console.log(mutation);
+        try {var current_id = location.href.split('/watch/')[1].split('?')[0];}catch(e){var current_id=0;}
+        //console.log("Target ID: ", mutation.target.id, "  Current ID: ",current_id);
+        //console.log(mutation);
+        /*if (mutation.target.className === " ltr-op8orf" || (mutation.target.id && (mutation.target.id != current_id)) ){
+            //console.log(mutation);
+            if (mutation.removedNodes.length==1 && mutation.removedNodes[0].localName === "video"){
+                //console.log(mutation.removedNodes[0].localName);
+                console.log("Exit Video Caught");
+            }
+        }
+        */
 
+        // New way to determine video changes, way more efficient
+        // To be fair though, this wouldn't have worked before the netflix interface update as the observers would have persisted and caused endless instances to be created  
+        if (mutation.type === 'childList' && mutation.target.className===" ltr-op8orf" && mutation.addedNodes.length){
+            console.log("New Video!");
+            create_buttons();
+        }
+        if (mutation.target.parentNode && mutation.target.parentNode.className=== " ltr-op8orf"){
+            //console.log(mutation);
+            if (mutation.previousSibling && mutation.addedNodes[0].id != mutation.previousSibling.id){
+                console.log("Video Change");
+                create_buttons();
+            }
+        }
+        //addedNodes id previous sibling id
+        
         // The following line was impementing when I used background.js to inject the script manually, but now I use content scripts so this isn't necessary.. I'll try removing it later on, don't want to break anything 
-        if (window.player_active===1 && !location.href.includes('netflix.com/watch/') || (location.href.includes('netflix.com/watch/') && location.href != last_url)){ //Constantly checking url during playblack seems demanding, maybe use a timer
+        /* if (window.player_active===1 && !location.href.includes('netflix.com/watch/') || (location.href.includes('netflix.com/watch/') && location.href != last_url)){ //Constantly checking url during playblack seems demanding, maybe use a timer
             last_url=location.href;
             console.log("Video hard exit");
             window.player_active=0;
             try{
             window.observer.disconnect();
             }
-            catch(e){}
+            catch(e){console.log("Disconnected Observer");}
         }
+        */
         
-        if ( mutation.type === 'childList' && mutation.target.className===" ltr-op8orf" && mutation.removedNodes.length){ //Remove observer when changing video
-            window.player_active = 0;
-            console.log("Soft exit"); //Soft exit means disconnect subs listener, but don't redraw buttons after
-            window.observer.disconnect();
-        }
+        //if ( mutation.type === 'childList' && mutation.target.className===" ltr-op8orf" && mutation.removedNodes.length){ //Remove observer when changing video
+        //    window.player_active = 0;
+        //    console.log("Soft exit"); //Soft exit means disconnect subs listener, but don't redraw buttons after
+        //    //window.observer.disconnect();
+        //}
+        /*
         else if( mutation.type === 'childList' && mutation.target.className===" ltr-op8orf" && mutation.addedNodes.length){ //New video opened, start script
             console.log("New video! ");
             if(!window.player_active){
                 //console.log("Video started");
                 window.player_active=1;
-                create_buttons();
+                //create_buttons();
+                console.log("Call add subs");
             }
 
-        }
+        }*/
         
     }
 }
