@@ -233,7 +233,7 @@ function llsubs(){
                 
             }
             
-            else if(mutation.type==='attributes' && mutation.target.className==="player-timedtext" && mutation.target.firstChild && mutation.target.style.inset != window.old_inset){ //For adjusting subtitle style when window is resized
+            else if(window.on_off && mutation.type==='attributes' && mutation.target.className==="player-timedtext" && mutation.target.firstChild && mutation.target.style.inset != window.old_inset){ //For adjusting subtitle style when window is resized
                     //Netflix constantly refreshes the text so I have to constantly reapply them
 
                     const caption_row = document.getElementsByClassName("player-timedtext")[0];
@@ -395,12 +395,19 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
         if (request.message === "update_on_off"){
             window.on_off = request.value;
             if (!window.on_off){
-                window.last_subs = '';
-                window.my_timedtext_element.innerText ='';
+                
+                window.my_timedtext_element.style['display']='none';
+                for (let i =0;i<document.getElementsByClassName("player-timedtext")[0].firstChild.children.length;i++){
+                    document.getElementsByClassName("player-timedtext")[0].firstChild.children[i].style['color']='#FFFFFF';
+                }
                 //document.getElementById("mybuttonDec").parentElement.style.display='none';
                 //document.getElementById("myButtonInc").parentElement.style.display='none';
             }
             else{
+                window.my_timedtext_element.style['display']='block';
+                for (let i =0;i<document.getElementsByClassName("player-timedtext")[0].firstChild.children.length;i++){
+                    document.getElementsByClassName("player-timedtext")[0].firstChild.children[i].style['color']=window.originaltext_color;
+                }
                 //document.getElementById("mybuttonDec").parentElement.style.display='block';
                 //document.getElementById("myButtonInc").parentElement.style.display='block';
             }
