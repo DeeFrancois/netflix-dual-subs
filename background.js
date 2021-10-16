@@ -4,24 +4,17 @@
 //STORAGE VALUES
 
 //First Run, store default settings
-//onUpdate()
-// Check whether new version is installed
-// callback is optional
+
 chrome.runtime.onInstalled.addListener(function(details){
   if(details.reason == "update"){
-      
-    console.log("Updated from: ", details.previousVersion);
-
       chrome.storage.sync.get('text_color',function(data){ //On update save switch right side color to left
-        if((data.text_color) && (details.previousVersion == '1.2.8') && (data.text_color!=='#FFFFFF') ){ //change to 1.2.8 before release
-          console.log("Updating from pre-left side modify version");
-          console.log("Old color: ",data.text_color);
+        if((data.text_color) && (details.previousVersion == '1.2.8') && (data.text_color!=='#FFFFFF') ){ 
+          chrome.tabs.create({ url: chrome.runtime.getURL("update.html") }); //Update notification page to let people know edge is supported now
           chrome.storage.sync.set({'originaltext_color':data.text_color});
           chrome.storage.sync.set({'text_color':'#FFFFFF'});
         }
       });
 
-    //chrome.storage.sync.clear(); 
   }
 });
 //Font Multiplier

@@ -1,24 +1,6 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
-
-// Emergency Patch since there was a netflix update, no control bar buttons for now
-// I last worked on this almost 2 weeks ago and I can't remember what was wrong with it..
-// but I was correct, using my own container rather than cloning the existing one from the page makes Edge's translator more reliable
-
-// Just need time to find the bugs again and add the buttons back
-
-// Most bugs fixed, what's left is just fixing up initialization
-// off button needs to be updated
-
-// IMPORTANT: Broken for videos that use two containers (example: Community with English subs)
-// Also sub distance is not correct after reaching a certain size window
-
-//BREAKTHROUGH, sub distance ended up being inaccurate because a margin was being added in certain situations,
-// accounting for getBoundingClientRect().x != 0 was the trick. all that work for one line.. isn't programming great 
-
-//10-4-21: This version is now officially working with Edge. Need some time to make sure there aren't any more bugs before I submit for review
-
-//Just added the swap text feature but I don't like it. It makes the untranslated text, which you're suppose to focus on, move too much since it has to adjust the spacing after the translation finishes.
-//I'll leave the code in tho just in case I end up having an idea on how to improve it (fixed spacing with adjust after threshold?)
+// v1.3.0 - Edge Support, Options for left text
+// Most of the commented out code is for when I'm ready to add the control bar buttons back
 
 window.player_active=0;
 
@@ -130,7 +112,8 @@ function wait_for_player(){
         getSetting('font_multiplier');
 
         //getSetting('text_side');
-        window.original_text_side = 0;
+        window.original_text_side = 0; //Can change this to flip the text, don't like the feature since the text moves too much but maybe I can improve it later
+
         //getSetting('sub_distance'); disabled for now, unnecessary imo
 
         llsubs();
@@ -149,62 +132,23 @@ var callback = function(mutationsList, observer){
 
 
     for (const mutation of mutationsList){
-        //console.log(mutation);
+
         try {var current_id = location.href.split('/watch/')[1].split('?')[0];}catch(e){var current_id=0;}
-        //console.log("Target ID: ", mutation.target.id, "  Current ID: ",current_id);
-        //console.log(mutation);
-        /*if (mutation.target.className === " ltr-op8orf" || (mutation.target.id && (mutation.target.id != current_id)) ){
-            //console.log(mutation);
-            if (mutation.removedNodes.length==1 && mutation.removedNodes[0].localName === "video"){
-                //console.log(mutation.removedNodes[0].localName);
-                console.log("Exit Video Caught");
-            }
-        }
-        */
 
         // New way to determine video changes, way more efficient
         // To be fair though, this wouldn't have worked before the netflix interface update as the observers would have persisted and caused endless instances to be created  
         if (mutation.type === 'childList' && mutation.target.className===" ltr-op8orf" && mutation.addedNodes.length){
-            console.log("New Video!");
+            //console.log("New Video!");
             create_buttons();
         }
         if (mutation.target.parentNode && mutation.target.parentNode.className=== " ltr-op8orf"){
             //console.log(mutation);
             if (mutation.previousSibling && mutation.addedNodes[0].id != mutation.previousSibling.id){
-                console.log("Video Change");
+                //console.log("Video Change");
                 create_buttons();
             }
         }
         //addedNodes id previous sibling id
-        
-        // The following line was impementing when I used background.js to inject the script manually, but now I use content scripts so this isn't necessary.. I'll try removing it later on, don't want to break anything 
-        /* if (window.player_active===1 && !location.href.includes('netflix.com/watch/') || (location.href.includes('netflix.com/watch/') && location.href != last_url)){ //Constantly checking url during playblack seems demanding, maybe use a timer
-            last_url=location.href;
-            console.log("Video hard exit");
-            window.player_active=0;
-            try{
-            window.observer.disconnect();
-            }
-            catch(e){console.log("Disconnected Observer");}
-        }
-        */
-        
-        //if ( mutation.type === 'childList' && mutation.target.className===" ltr-op8orf" && mutation.removedNodes.length){ //Remove observer when changing video
-        //    window.player_active = 0;
-        //    console.log("Soft exit"); //Soft exit means disconnect subs listener, but don't redraw buttons after
-        //    //window.observer.disconnect();
-        //}
-        /*
-        else if( mutation.type === 'childList' && mutation.target.className===" ltr-op8orf" && mutation.addedNodes.length){ //New video opened, start script
-            console.log("New video! ");
-            if(!window.player_active){
-                //console.log("Video started");
-                window.player_active=1;
-                //create_buttons();
-                console.log("Call add subs");
-            }
-
-        }*/
         
     }
 }
@@ -290,6 +234,7 @@ function llsubs(){
             }
             
             else if(mutation.type==='attributes' && mutation.target.className==="player-timedtext" && mutation.target.firstChild && mutation.target.style.inset != window.old_inset){ //For adjusting subtitle style when window is resized
+                    //Netflix constantly refreshes the text so I have to constantly reapply them
 
                     const caption_row = document.getElementsByClassName("player-timedtext")[0];
                     var container_count = caption_row.childElementCount;
@@ -348,10 +293,6 @@ var addSubs = function(caption_row){
         caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
         caption_row.firstChild.setAttribute('translate','no'); 
 
-        
-        //caption_row.firstChild.style['bottom']='10%'; this hardlocks the captiosn there so that on hover the text cant move away from the bottom bar..
-        // need to do something like that but without the hardlock because there are shows where the subs appear above
-        
         window.original_subs = caption_row.firstChild.innerText;
 
 
@@ -364,7 +305,7 @@ var addSubs = function(caption_row){
         if (original_subs !== window.last_subs){
             window.last_subs = original_subs;
             window.my_timedtext_element.innerText = original_subs;
-            console.log("CHANGED");
+            //console.log("CHANGED");
         }
         else if (original_subs===''){
             window.my_timedtext_element=original_subs;
@@ -401,56 +342,6 @@ var addSubs = function(caption_row){
         update_style('font_size');
         //update_style('original_font_size');//I'll do this later, currently a bit tricky since the current font size modification is uses the original subs as the base value 
         
-        /*
-        if (window.cleared === 1){ //If CLEARED subs recently, pull new subs, store, and display
-
-            const sub_dist =window.original_subs_placement+caption_row.firstChild.getBoundingClientRect().width+10;
-            var container_count = caption_row.childElementCount;
-            
-            window.stored_subs = caption_row.firstChild.cloneNode(true);
-            stored_subs.setAttribute('class','mysubs');
-            stored_subs.setAttribute('translate','yes');
-            stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${sub_dist+'px'} ;bottom: 15%;`); 
-
-            if(container_count==2){
-
-                const sub_dist_two =window.original_subs_placement+caption_row.children[1].getBoundingClientRect().width+10;
-            
-                window.secondary_stored_subs= caption_row.children[1].cloneNode(true);
-                secondary_stored_subs.setAttribute('class','mysubs2');
-                secondary_stored_subs.setAttribute('translate','yes');
-                stored_subs.style['bottom']='20%';
-                secondary_stored_subs.setAttribute('style',`display: block;text-align: center; position: inherit; left: ${sub_dist_two+'px'} ;top: 80%;`); 
-
-            }
-
-            mysubs.style.inset=caption_row.style.inset;
-            
-            mysubs.appendChild(stored_subs);
-            if(container_count===2){
-                mysubs.appendChild(secondary_stored_subs);
-            }
-
-            window.baseFont = parseFloat(stored_subs.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
-            window.current_size = window.baseFont*window.current_multiplier+'px';
-
-            //Apply changes to onscreen subs
-            update_style('text_color');
-            update_style('opacity');
-            update_style('font_size'); 
-            
-            window.cleared=0;
-            
-        }
-        else{// Just a refresh so place stored instead 
-
-            mysubs.appendChild(stored_subs);
-            if (container_count==2){
-                mysubs.appendChild(secondary_stored_subs);
-            }
-
-        }
-        */
         
     }
 
@@ -488,10 +379,6 @@ function update_style(setting){
             original_lines.style["opacity"]=window.originaltext_opacity;
 
     }
-
-
-   
-
 
     /*if (setting === "sub_distance"){ //Not quite sure how to pick the color yet..
         var test = parseInt(window.baseOffset)+parseInt(window.sub_distance);

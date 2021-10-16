@@ -1,15 +1,17 @@
 document.addEventListener('DOMContentLoaded',function(){
-
+    if (window.location.pathname === "/update.html"){ // to stop popup js from running when update.html is opened and causing errors 
+        return;
+    }
     window.addEventListener('click',function(e){
         if(e.target.href!==undefined){
           chrome.tabs.create({url:e.target.href});
         }
       });
    
+    //I know i know, I really need to fix these variable names. I'll get around to it eventually..)
     var slider = document.getElementById('mySlider');
     var slideValue = document.getElementById('mySliderValue');
-    //var sideSlider = document.getElementById('sideSlider');
-    //var sideSliderValue = document.getElementById('sideSliderValue');
+
     var opacitySlider = document.getElementById('opacitySlider');
     var opacitySliderValue = document.getElementById('opacitySliderValue');
 
