@@ -395,6 +395,8 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
         if (request.message === "update_on_off"){
             window.on_off = request.value;
             if (!window.on_off){
+                window.last_subs = '';
+                window.my_timedtext_element.innerText ='';
                 //document.getElementById("mybuttonDec").parentElement.style.display='none';
                 //document.getElementById("myButtonInc").parentElement.style.display='none';
             }
