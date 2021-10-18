@@ -1,7 +1,7 @@
 # Dual Subtitles for Netflix
 [Now available here on the Chrome Extension Store](https://chrome.google.com/webstore/detail/netflix-language-learning/ljnmedkgcgidbbjhbkdonempgcgdhjfl?hl=en)
 
-<sup> Latest Update (pending publication): **v1.3.0** Edge compatibility + Customization options for left side text </sup>
+<sup> Latest Update: **v1.3.0** Edge compatibility + Customization options for left side text </sup>
 
 Works with the browser's built-in translator to enable dual language subtitles on Netflix
 
