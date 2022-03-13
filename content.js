@@ -133,7 +133,7 @@ var callback = function(mutationsList, observer){
 
         try {var current_id = location.href.split('/watch/')[1].split('?')[0];}catch(e){var current_id=0;}
 
-        console.log(mutation.target.className);
+        //console.log(mutation.target.className);
         // New way to determine video changes, way more efficient
         // To be fair though, this wouldn't have worked before the netflix interface update as the observers would have persisted and caused endless instances to be created  
         if (mutation.type === 'childList' && mutation.target.className===" ltr-1b8gkd7-videoCanvasCss" && mutation.addedNodes.length){
