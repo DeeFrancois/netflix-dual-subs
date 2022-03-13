@@ -1,6 +1,6 @@
-**BROKEN DUE TO RECENT CHROME UPDATES, WILL BE FIXED SOON!** 
+**BROKEN DUE TO NETFLIX CHANGING THEIR CODE, WILL BE FIXED SOON!** 
 
-Sorry everyone, had to abandon this project for a bit. I'm back and yes I am aware recent chrome updates has broken the extension for some. I should be able to fix it by **tomorrow afternoon** (March 13th) and then it'll take an extra day or two for it to be reviewed and pushed out to everyone)
+Sorry everyone, had to abandon this project for a bit. I'm back though and the update to fix the extension has already been submitted for review! It'll probably take like 2 days to get pushed out to you all though.
 
 # Dual Subtitles for Netflix
 [Now available here on the Chrome Extension Store](https://chrome.google.com/webstore/detail/netflix-language-learning/ljnmedkgcgidbbjhbkdonempgcgdhjfl?hl=en)
