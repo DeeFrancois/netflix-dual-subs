@@ -3,7 +3,6 @@
 // Most of the commented out code is for when I'm ready to add the control bar buttons back
 
 window.player_active=0;
-
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
       var element = document.querySelector(selector);
@@ -98,7 +97,6 @@ function getSetting(setting){
 function wait_for_player(){
     
     waitForElement("#appMountPoint > div > div >div > div > div > div:nth-child(1) > div > div > div > div").then(function(element) {
-        //console.log("Player detected");
         //console.log("Subs Detected");
 
         //These usually go with button creation but button creation is currently broken
@@ -130,18 +128,19 @@ var last_url=location.href;
 
 var callback = function(mutationsList, observer){
 
-
+    //console.log("Debug - Waiting for Video");
     for (const mutation of mutationsList){
 
         try {var current_id = location.href.split('/watch/')[1].split('?')[0];}catch(e){var current_id=0;}
 
+        console.log(mutation.target.className);
         // New way to determine video changes, way more efficient
         // To be fair though, this wouldn't have worked before the netflix interface update as the observers would have persisted and caused endless instances to be created  
-        if (mutation.type === 'childList' && mutation.target.className===" ltr-op8orf" && mutation.addedNodes.length){
+        if (mutation.type === 'childList' && mutation.target.className===" ltr-1b8gkd7-videoCanvasCss" && mutation.addedNodes.length){
             //console.log("New Video!");
             create_buttons();
         }
-        if (mutation.target.parentNode && mutation.target.parentNode.className=== " ltr-op8orf"){
+        if (mutation.target.parentNode && mutation.target.parentNode.className=== " ltr-1b8gkd7-videoCanvasCss"){
             //console.log(mutation);
             if (mutation.previousSibling && mutation.addedNodes[0].id != mutation.previousSibling.id){
                 //console.log("Video Change");
@@ -156,17 +155,18 @@ window.initial_observer = new MutationObserver(callback);
 window.initial_observer.observe(document.documentElement,window.initial_config);
 
 function create_buttons(){
-
         //Enables right click
         var elements = document.getElementsByTagName("*");
         for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
 
         wait_for_player();
 
+
 }
 
 function llsubs(){
     //console.log("Starting llsubs");
+
     var elements = document.getElementsByTagName("*");
     for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
 
