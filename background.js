@@ -5,7 +5,7 @@
 
 //First Run, store default settings
 
-chrome.runtime.onInstalled.addListener(function(details){
+/*chrome.runtime.onInstalled.addListener(function(details){
   if(details.reason == "update"){
       chrome.storage.sync.get('text_color',function(data){ //On update save switch right side color to left
         if((data.text_color) && (details.previousVersion == '1.2.8') && (data.text_color!=='#FFFFFF') ){ 
@@ -17,6 +17,7 @@ chrome.runtime.onInstalled.addListener(function(details){
 
   }
 });
+*/
 //Font Multiplier
 
 chrome.storage.sync.get('font_multiplier',function(data){
