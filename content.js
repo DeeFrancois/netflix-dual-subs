@@ -1,6 +1,7 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
 // v1.3.0 - Edge Support, Options for left text
 // Most of the commented out code is for when I'm ready to add the control bar buttons back
+//DEV LOG: there's a problem with the error catching for the buttons, haven't been able to reproduce it yet, probably too many random try/catch's
 window.player_active=0;
 
 function waitForElement(selector) {
@@ -99,7 +100,12 @@ function wait_for_player(){
     waitForElement("#appMountPoint > div > div >div > div > div > div:nth-child(1) > div > div > div > div").then(function(element) {
         console.log("Player detected");
         //console.log("Subs Detected");
-        actual_create_buttons();        
+        try{
+        actual_create_buttons();      
+        }
+        catch(e){
+            console.log("Error creating buttons, likely no bar visible");
+        }  
         
         getSetting('text_color');
         getSetting('opacity');
@@ -173,23 +179,54 @@ function actual_create_buttons(){
     if (document.getElementById('myDecreaseButton') || document.getElementById('myIncreaseButton')){
         return;
     }
+
     let buttonSpacing = document.createElement('DIV');
     buttonSpacing.innerHTML='<div class="ltr-1i33xgl" style="min-width: 3rem; width: 3rem;"></div>';
+    buttonSpacing=buttonSpacing.firstElementChild;
+    try{
     document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonSpacing);
+    }
+    catch(e){
+        console.log("No bar 1");
+        return;
+    }
 
     let buttonOne = document.createElement('DIV');
     buttonOne.innerHTML ='<div class="medium ltr-1dcjcj4" id="myDecreaseButton"><button aria-label="Decrease Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
+    buttonOne=buttonOne.firstElementChild;
+
+    try{
     document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonOne);
+    }
+    catch(e){
+        console.log("No bar 2");
+        return;
+    }
     buttonOne.onmouseenter=function(){buttonOne.firstChild.className='active ltr-1enhvti';}
     buttonOne.onmouseleave=function(){buttonOne.firstChild.className=' ltr-1enhvti';}
 
     buttonSpacing = document.createElement('DIV');
     buttonSpacing.innerHTML='<div class="ltr-1i33xgl" style="min-width: 3rem; width: 3rem;"></div>';
+    buttonSpacing=buttonSpacing.firstElementChild;
+
+    try{
     document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonSpacing);
+    }
+    catch(e){
+        console.log("No bar 3");
+        return;
+    }
 
     let buttonTwo = document.createElement('DIV');
     buttonTwo.innerHTML ='<div class="medium ltr-1dcjcj4" id="myIncreaseButton"><button aria-label="Increase Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
+    buttonTwo=buttonTwo.firstElementChild;
+    try{
     document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonTwo);
+    }
+    catch(e){
+        console.log("No bar 4");
+        return;
+    }
     buttonTwo.onmouseenter=function(){buttonTwo.firstChild.className='active ltr-1enhvti';}
     buttonTwo.onmouseleave=function(){buttonTwo.firstChild.className=' ltr-1enhvti';}
     console.log("Creating buttons with color: " + window.originaltext_color);
@@ -198,8 +235,27 @@ function actual_create_buttons(){
     document.getElementById('myIncreaseButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
     }
     
+    //listeners for clicks
+    buttonTwo.addEventListener("click", function() {
+    
+        window.current_multiplier+=.1;
+        //Save Setting here
+        chrome.storage.sync.set({"font_multiplier":window.current_multiplier.toFixed(2)}); //Save setting into storage on Change
+        window.current_size=window.baseFont*window.current_multiplier+'px';
+        update_style('font_size'); //Live Update the setting change
 
-    //prefs
+    });
+
+    buttonOne.addEventListener("click", function() {
+    
+        window.current_multiplier-=.1;
+        //Save Setting here
+        chrome.storage.sync.set({"font_multiplier":window.current_multiplier.toFixed(2)}); //Save setting into storage on Change
+        window.current_size=window.baseFont*window.current_multiplier+'px';
+        update_style('font_size'); //Live Update the setting change
+
+    });
+
         
 }
 function initialize_button_observer(){
