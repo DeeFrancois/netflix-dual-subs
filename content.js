@@ -98,8 +98,9 @@ function getSetting(setting){
 function wait_for_player(){
     
     waitForElement("#appMountPoint > div > div >div > div > div > div:nth-child(1) > div > div > div > div").then(function(element) {
-        //console.log("Player detected");
+        console.log("Player detected");
         //console.log("Subs Detected");
+        actual_create_buttons();
 
         //These usually go with button creation but button creation is currently broken
         getSetting('on_off');
@@ -213,17 +214,18 @@ function initialize_button_observer(){
     var id = "watch-video--player-view";
     const bottom_bar = document.getElementsByClassName(id)[0];
 
-    window.button_config = {subtree:true,attributes:true,attributeFilter:["class"]};
+    window.button_config = {subtree:true,childList:false,attributes:true,attributeFilter:["class"]};
 
     const callback = function(mutationsList,button_observer){
         for (const mutation of mutationsList){
             //console.log("Button Observer");
             //console.log(mutation.target.className);
-            // console.log(mutation);
-            if (mutation.target.className==='active ltr-fntwn3'){
-                console.log(mutation);
+            //console.log(mutation);
+             if (mutation.target.className==='active ltr-fntwn3'){
+                //console.log(mutation);
                 actual_create_buttons();
-            }
+             }
+           
         }
        
     };
