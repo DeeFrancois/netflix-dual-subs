@@ -452,11 +452,16 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
             window.on_off = request.value;
             if (!window.on_off){
                 
+                try{
                 window.my_timedtext_element.style['display']='none';
-                for (let i =0;i<document.getElementsByClassName("player-timedtext")[0].firstChild.children.length;i++){
+                    for (let i =0;i<document.getElementsByClassName("player-timedtext")[0].firstChild.children.length;i++){
+                        
+                        document.getElementsByClassName("player-timedtext")[0].firstChild.children[i].style['color']='#FFFFFF';
                     
-                    document.getElementsByClassName("player-timedtext")[0].firstChild.children[i].style['color']='#FFFFFF';
-                   
+                    }
+                }
+                catch(e){
+                    console.log(e);
                 }
                 try{
                 document.getElementById("myDecreaseButton").style.display='none';
@@ -467,16 +472,22 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                 }
             }
             else{
+                try{
                 window.my_timedtext_element.style['display']='block';
                 for (let i =0;i<document.getElementsByClassName("player-timedtext")[0].firstChild.children.length;i++){
                     document.getElementsByClassName("player-timedtext")[0].firstChild.children[i].style['color']=window.originaltext_color;
                 }
+            }
+            catch(e){
+                console.log(e);
+            }
                 try{
                 document.getElementById("myDecreaseButton").style.display='block';
                 document.getElementById("myIncreaseButton").style.display='block';
                 }
                 catch(e){
                     console.log(e);
+                    actual_create_buttons();
                 }
             }
         }
