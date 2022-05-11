@@ -115,7 +115,8 @@ function wait_for_player(){
         window.original_text_side = 0; //Can change this to flip the text, don't like the feature since the text moves too much but maybe I can improve it later
 
         //getSetting('sub_distance'); disabled for now, unnecessary imo
-
+        
+        initialize_button_observer();
         llsubs();
     
     });
@@ -161,10 +162,74 @@ function create_buttons(){
         var elements = document.getElementsByTagName("*");
         for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
 
+        // ////Decrease font size
+         $(".PlayerControlsNeo__button-control-row").children().eq(3).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyDecrease PlayerControls--control-element-blurred' tabindex='0' role='button' aria-label='Decrease font size'>\
+         <svg viewBox='0 0 24 24' id='mybuttonDec' width='1.500em' height='1.500em' aria-hidden='true' style='display:block;' focusable='false'>\
+         <path fill='none' d='m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='yellow' stroke-width='2'></path></svg></button>")
+        // //Increase font button
+        // $(".PlayerControlsNeo__button-control-row").children().eq(4).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyIncrease PlayerControls--control-element-blurred' tabindex='0' role='button' aria-label='Increase font size'>\
+        // <svg viewBox='0 0 24 24' id='myButtonInc' width='1.500em' height='1.500em' aria-hidden='true' style='display:block;' focusable='false'>\
+        // <path fill='none' d='m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='yellow' stroke-width='2'></path></svg></button>")
+        '<div class="medium ltr-1dcjcj4"><button aria-label="Seek Forward" class=" ltr-1enhvti" data-uia="control-forward10"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow"></path></svg></div></button></div>'
+        '<div class="medium ltr-1dcjcj4"><button aria-label="Decrease Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow"></path></svg></div></button></div>'
+        //let divv = document.createElement('DIV'); divv.innerHTML ='<div class="medium ltr-1dcjcj4"><button aria-label="Decrease Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow"></path></svg></div></button></div>'; document.getElementsByClassName('ltr-hpbgml')[5].appendChild(divv);
+        //wait_for_bottom_bar();
         wait_for_player();
 
 }
 
+function wait_for_bottom_bar(){ //for now just do after subs but eventually want to create buttons right away for initial video load
+    console.log("waiting.."); //also passive ltr-gwjau2-playerCss
+    waitForElement('#appMountPoint > div>div>div > div >div >div:nth-child(2) > div:nth-child(2)>div>div>div:nth-child(3)>div>div>div').then(function(element) {
+    console.log("OKAYOKAY");
+    });
+
+}
+function actual_create_buttons(){
+
+    let buttonSpacing = document.createElement('DIV');
+    buttonSpacing.innerHTML='<div class="ltr-1i33xgl" style="min-width: 3rem; width: 3rem;"></div>';
+    document.getElementsByClassName('ltr-hpbgml')[5].appendChild(buttonSpacing);
+
+    let buttonOne = document.createElement('DIV');
+    buttonOne.innerHTML ='<div class="medium ltr-1dcjcj4" id="myDecreaseButton"><button aria-label="Decrease Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
+    document.getElementsByClassName('ltr-hpbgml')[5].appendChild(buttonOne);
+    buttonOne.onmouseenter=function(){buttonOne.firstChild.className='active ltr-1enhvti';}
+    buttonOne.onmouseleave=function(){buttonOne.firstChild.className=' ltr-1enhvti';}
+
+    buttonSpacing = document.createElement('DIV');
+    buttonSpacing.innerHTML='<div class="ltr-1i33xgl" style="min-width: 3rem; width: 3rem;"></div>';
+    document.getElementsByClassName('ltr-hpbgml')[5].appendChild(buttonSpacing);
+
+    let buttonTwo = document.createElement('DIV');
+    buttonTwo.innerHTML ='<div class="medium ltr-1dcjcj4" id="myIncreaseButton"><button aria-label="Increase Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
+    document.getElementsByClassName('ltr-hpbgml')[5].appendChild(buttonTwo);
+    buttonTwo.onmouseenter=function(){buttonTwo.firstChild.className='active ltr-1enhvti';}
+    buttonTwo.onmouseleave=function(){buttonTwo.firstChild.className=' ltr-1enhvti';}
+        
+}
+function initialize_button_observer(){
+    console.log("Button Creator Observer HERE");
+    var id = "watch-video--player-view";
+    const bottom_bar = document.getElementsByClassName(id)[0];
+
+    window.button_config = {subtree:true,attributes:true,attributeFilter:["class"]};
+
+    const callback = function(mutationsList,button_observer){
+        for (const mutation of mutationsList){
+            //console.log("Button Observer");
+            //console.log(mutation.target.className);
+            // console.log(mutation);
+            if (mutation.target.className==='active ltr-fntwn3'){
+                console.log(mutation);
+                actual_create_buttons();
+            }
+        }
+       
+    };
+     window.button_observer = new MutationObserver(callback);
+    window.button_observer.observe(bottom_bar,window.button_config);
+}
 function llsubs(){
     //console.log("Starting llsubs");
     var elements = document.getElementsByTagName("*");
@@ -266,7 +331,6 @@ function llsubs(){
 
                 
             }
-            
             
         }
     };
