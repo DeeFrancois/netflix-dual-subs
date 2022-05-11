@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
     var resetButton = document.getElementById('resetButton');
     var onSwitch = document.getElementById("switchValue");
+    var button_onSwitch = document.getElementById("button_switchValue");
 
     chrome.storage.sync.get('font_multiplier',function(data){
             slideValue.innerHTML=data.font_multiplier;
@@ -62,6 +63,12 @@ document.addEventListener('DOMContentLoaded',function(){
     chrome.storage.sync.get('on_off',function(data){
         console.log("Stored value is: ",data.on_off);
         onSwitch.checked=data.on_off;
+
+    });
+
+    chrome.storage.sync.get('button_on_off',function(data){
+        console.log("Stored value is: ",data.button_on_off);
+        button_onSwitch.checked=data.button_on_off;
 
     });
     
@@ -138,6 +145,17 @@ document.addEventListener('DOMContentLoaded',function(){
         //chrome.storage.sync.set({"left_or_right":this.value});
        chrome.runtime.sendMessage({
            "message":"update_on_off",
+           "value": this.checked
+       });
+        
+
+    }, false);
+
+    button_onSwitch.addEventListener('change',function() {
+
+        //chrome.storage.sync.set({"left_or_right":this.value});
+       chrome.runtime.sendMessage({
+           "message":"update_button_on_off",
            "value": this.checked
        });
         

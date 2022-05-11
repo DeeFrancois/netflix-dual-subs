@@ -1,6 +1,5 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
-// v1.3.0 - Edge Support, Options for left text
-// Most of the commented out code is for when I'm ready to add the control bar buttons back
+// v1.4 - Bottom Bar buttons are back!
 //DEV LOG: there's a problem with the error catching for the buttons, haven't been able to reproduce it yet, probably too many random try/catch's
 window.player_active=0;
 
@@ -56,6 +55,10 @@ function getSetting(setting){
             
         }
 
+        else if (setting === "button_on_off"){
+            window.button_on_off = data[setting];
+        }
+
         else if (setting === "font_multiplier"){
             window.current_multiplier = parseFloat(data[setting]);
             //console.log("Retrieved Font Multiplier From Storage: ",window.current_multiplier);
@@ -100,6 +103,7 @@ function wait_for_player(){
     waitForElement("#appMountPoint > div > div >div > div > div > div:nth-child(1) > div > div > div > div").then(function(element) {
         console.log("Player detected");
         //console.log("Subs Detected");
+        
         try{
         actual_create_buttons();      
         }
@@ -165,6 +169,7 @@ function create_buttons(){
 
         getSetting('on_off');
         getSetting('originaltext_color');
+        getSetting('button_on_off');
         //Use to be able to create buttons before bottom bar was visible, can't anymore so button creation
         //is moved to after player is detected now
 
@@ -173,7 +178,7 @@ function create_buttons(){
 }
 
 function actual_create_buttons(){
-    if (!window.on_off){
+    if (!window.on_off || !window.button_on_off){
         return;
     }
     if (document.getElementById('myDecreaseButton') || document.getElementById('myIncreaseButton')){
@@ -537,6 +542,31 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
             catch(e){
                 console.log(e);
             }
+                try{
+                document.getElementById("myDecreaseButton").style.display='block';
+                document.getElementById("myIncreaseButton").style.display='block';
+                }
+                catch(e){
+                    console.log(e);
+                    actual_create_buttons();
+                }
+            }
+        }
+
+        if (request.message === "update_button_on_off"){
+            window.button_on_off = request.value;
+            if (!window.button_on_off){
+                
+                try{
+                document.getElementById("myDecreaseButton").style.display='none';
+                document.getElementById("myIncreaseButton").style.display='none';
+                }
+                catch(e){
+                    console.log(e);
+                }
+            }
+            else{
+                
                 try{
                 document.getElementById("myDecreaseButton").style.display='block';
                 document.getElementById("myIncreaseButton").style.display='block';
