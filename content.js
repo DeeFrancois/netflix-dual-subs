@@ -1,6 +1,8 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
 // v1.4 - Bottom Bar buttons are back!
 //DEV LOG: there's a problem with the error catching for the buttons, haven't been able to reproduce it yet, probably too many random try/catch's
+//TODO: Button creation would feel more polished if it was done right away, doing it after "player detected" feels too late
+
 window.player_active=0;
 
 function waitForElement(selector) {
