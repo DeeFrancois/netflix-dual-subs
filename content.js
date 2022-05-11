@@ -171,23 +171,26 @@ function actual_create_buttons(){
     if (!window.on_off){
         return;
     }
+    if (document.getElementById('myDecreaseButton') || document.getElementById('myIncreaseButton')){
+        return;
+    }
     let buttonSpacing = document.createElement('DIV');
     buttonSpacing.innerHTML='<div class="ltr-1i33xgl" style="min-width: 3rem; width: 3rem;"></div>';
-    document.getElementsByClassName('ltr-hpbgml')[5].appendChild(buttonSpacing);
+    document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonSpacing);
 
     let buttonOne = document.createElement('DIV');
     buttonOne.innerHTML ='<div class="medium ltr-1dcjcj4" id="myDecreaseButton"><button aria-label="Decrease Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
-    document.getElementsByClassName('ltr-hpbgml')[5].appendChild(buttonOne);
+    document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonOne);
     buttonOne.onmouseenter=function(){buttonOne.firstChild.className='active ltr-1enhvti';}
     buttonOne.onmouseleave=function(){buttonOne.firstChild.className=' ltr-1enhvti';}
 
     buttonSpacing = document.createElement('DIV');
     buttonSpacing.innerHTML='<div class="ltr-1i33xgl" style="min-width: 3rem; width: 3rem;"></div>';
-    document.getElementsByClassName('ltr-hpbgml')[5].appendChild(buttonSpacing);
+    document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonSpacing);
 
     let buttonTwo = document.createElement('DIV');
     buttonTwo.innerHTML ='<div class="medium ltr-1dcjcj4" id="myIncreaseButton"><button aria-label="Increase Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
-    document.getElementsByClassName('ltr-hpbgml')[5].appendChild(buttonTwo);
+    document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonTwo);
     buttonTwo.onmouseenter=function(){buttonTwo.firstChild.className='active ltr-1enhvti';}
     buttonTwo.onmouseleave=function(){buttonTwo.firstChild.className=' ltr-1enhvti';}
     console.log("Creating buttons with color: " + window.originaltext_color);
