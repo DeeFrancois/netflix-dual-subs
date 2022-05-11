@@ -1,7 +1,7 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
 // v1.3.0 - Edge Support, Options for left text
 // Most of the commented out code is for when I'm ready to add the control bar buttons back
-
+//DEV LOG: current issues: open a video and switch before subs pop up (player detected), then click next.. multiple button pairs are created on first creation
 window.player_active=0;
 
 function waitForElement(selector) {
@@ -100,14 +100,9 @@ function wait_for_player(){
     waitForElement("#appMountPoint > div > div >div > div > div > div:nth-child(1) > div > div > div > div").then(function(element) {
         console.log("Player detected");
         //console.log("Subs Detected");
-        actual_create_buttons();
-
-        //These usually go with button creation but button creation is currently broken
-        getSetting('on_off');
-        getSetting('text_color');
-        getSetting('originaltext_color');
+        actual_create_buttons();        
         
-        //
+        getSetting('text_color');
         getSetting('opacity');
         getSetting('originaltext_opacity');
         getSetting('font_multiplier');
@@ -163,31 +158,19 @@ function create_buttons(){
         var elements = document.getElementsByTagName("*");
         for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
 
-        // ////Decrease font size
-         $(".PlayerControlsNeo__button-control-row").children().eq(3).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyDecrease PlayerControls--control-element-blurred' tabindex='0' role='button' aria-label='Decrease font size'>\
-         <svg viewBox='0 0 24 24' id='mybuttonDec' width='1.500em' height='1.500em' aria-hidden='true' style='display:block;' focusable='false'>\
-         <path fill='none' d='m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='yellow' stroke-width='2'></path></svg></button>")
-        // //Increase font button
-        // $(".PlayerControlsNeo__button-control-row").children().eq(4).after("<button class='touchable PlayerControls--control-element nfp-button-control default-control-button button-nfplayerMyIncrease PlayerControls--control-element-blurred' tabindex='0' role='button' aria-label='Increase font size'>\
-        // <svg viewBox='0 0 24 24' id='myButtonInc' width='1.500em' height='1.500em' aria-hidden='true' style='display:block;' focusable='false'>\
-        // <path fill='none' d='m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0' stroke='yellow' stroke-width='2'></path></svg></button>")
-        '<div class="medium ltr-1dcjcj4"><button aria-label="Seek Forward" class=" ltr-1enhvti" data-uia="control-forward10"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow"></path></svg></div></button></div>'
-        '<div class="medium ltr-1dcjcj4"><button aria-label="Decrease Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow"></path></svg></div></button></div>'
-        //let divv = document.createElement('DIV'); divv.innerHTML ='<div class="medium ltr-1dcjcj4"><button aria-label="Decrease Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow"></path></svg></div></button></div>'; document.getElementsByClassName('ltr-hpbgml')[5].appendChild(divv);
-        //wait_for_bottom_bar();
+        getSetting('on_off');
+        getSetting('originaltext_color');
+        //Use to be able to create buttons before bottom bar was visible, can't anymore so button creation
+        //is moved to after player is detected now
+
         wait_for_player();
 
 }
 
-function wait_for_bottom_bar(){ //for now just do after subs but eventually want to create buttons right away for initial video load
-    console.log("waiting.."); //also passive ltr-gwjau2-playerCss
-    waitForElement('#appMountPoint > div>div>div > div >div >div:nth-child(2) > div:nth-child(2)>div>div>div:nth-child(3)>div>div>div').then(function(element) {
-    console.log("OKAYOKAY");
-    });
-
-}
 function actual_create_buttons(){
-
+    if (!window.on_off){
+        return;
+    }
     let buttonSpacing = document.createElement('DIV');
     buttonSpacing.innerHTML='<div class="ltr-1i33xgl" style="min-width: 3rem; width: 3rem;"></div>';
     document.getElementsByClassName('ltr-hpbgml')[5].appendChild(buttonSpacing);
@@ -207,6 +190,14 @@ function actual_create_buttons(){
     document.getElementsByClassName('ltr-hpbgml')[5].appendChild(buttonTwo);
     buttonTwo.onmouseenter=function(){buttonTwo.firstChild.className='active ltr-1enhvti';}
     buttonTwo.onmouseleave=function(){buttonTwo.firstChild.className=' ltr-1enhvti';}
+    console.log("Creating buttons with color: " + window.originaltext_color);
+    if (window.originaltext_color){
+    document.getElementById('myDecreaseButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
+    document.getElementById('myIncreaseButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
+    }
+    
+
+    //prefs
         
 }
 function initialize_button_observer(){
@@ -218,11 +209,8 @@ function initialize_button_observer(){
 
     const callback = function(mutationsList,button_observer){
         for (const mutation of mutationsList){
-            //console.log("Button Observer");
-            //console.log(mutation.target.className);
-            //console.log(mutation);
+           
              if (mutation.target.className==='active ltr-fntwn3'){
-                //console.log(mutation);
                 actual_create_buttons();
              }
            
@@ -464,18 +452,30 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                 
                 window.my_timedtext_element.style['display']='none';
                 for (let i =0;i<document.getElementsByClassName("player-timedtext")[0].firstChild.children.length;i++){
+                    
                     document.getElementsByClassName("player-timedtext")[0].firstChild.children[i].style['color']='#FFFFFF';
+                   
                 }
-                //document.getElementById("mybuttonDec").parentElement.style.display='none';
-                //document.getElementById("myButtonInc").parentElement.style.display='none';
+                try{
+                document.getElementById("myDecreaseButton").style.display='none';
+                document.getElementById("myIncreaseButton").style.display='none';
+                }
+                catch(e){
+                    console.log(e);
+                }
             }
             else{
                 window.my_timedtext_element.style['display']='block';
                 for (let i =0;i<document.getElementsByClassName("player-timedtext")[0].firstChild.children.length;i++){
                     document.getElementsByClassName("player-timedtext")[0].firstChild.children[i].style['color']=window.originaltext_color;
                 }
-                //document.getElementById("mybuttonDec").parentElement.style.display='block';
-                //document.getElementById("myButtonInc").parentElement.style.display='block';
+                try{
+                document.getElementById("myDecreaseButton").style.display='block';
+                document.getElementById("myIncreaseButton").style.display='block';
+                }
+                catch(e){
+                    console.log(e);
+                }
             }
         }
         
@@ -525,6 +525,8 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
 
             //console.log("Recieved Message from BACKGROUND.JS to CHANGE opacity to " + request.value);
             window.originaltext_color=request.value;
+            document.getElementById('myDecreaseButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
+            document.getElementById('myIncreaseButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
             update_style('text_color');
 
         }
