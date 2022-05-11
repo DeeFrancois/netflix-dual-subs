@@ -1,7 +1,6 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
 // v1.3.0 - Edge Support, Options for left text
 // Most of the commented out code is for when I'm ready to add the control bar buttons back
-//DEV LOG: current issues: open a video and switch before subs pop up (player detected), then click next.. multiple button pairs are created on first creation
 window.player_active=0;
 
 function waitForElement(selector) {
