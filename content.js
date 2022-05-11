@@ -139,7 +139,7 @@ var callback = function(mutationsList, observer){
 
         // New way to determine video changes, way more efficient
         // To be fair though, this wouldn't have worked before the netflix interface update as the observers would have persisted and caused endless instances to be created  
-        if (mutation.type === 'childList' && (mutation.target.parentNode.className=== " ltr-1b8gkd7-videoCanvasCss"|| mutation.target.className== " ltr-op8orf") && mutation.addedNodes.length){
+        if (mutation.type === 'childList' && (mutation.target.className===" ltr-1b8gkd7-videoCanvasCss" || mutation.target.className== " ltr-op8orf") && mutation.addedNodes.length){
             //console.log("New Video!");
             create_buttons();
         }
