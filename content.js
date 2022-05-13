@@ -2,8 +2,13 @@
 // v1.4 - Bottom Bar buttons are back!
 //DEV LOG: there's a problem with the error catching for the buttons, haven't been able to reproduce it yet, probably too many random try/catch's
 //TODO: Button creation would feel more polished if it was done right away, doing it after "player detected" feels too late
+//5-13 Netflix update again.. changed it so subtitle styles are placed one element deeper (just had to add another .firstChild at every "captionRow"/"player-timedtext" retrieval)
+//Also, there seems to be two possible "classname modes", one that is normal and one that has everything ending with "Css"..
+//Compensating for both these changes has led to a ton of sloppy code just in an effort ot get everythign to work finally (which it does, at least for the "weird mode") will have to go back to cleanup code tomorrow
+// Will also need to test more on the non "weird classname mode", not sure if everythign works for that as well
 
 window.player_active=0;
+window.weird_classname_mode=0;
 
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -147,12 +152,22 @@ var callback = function(mutationsList, observer){
         // To be fair though, this wouldn't have worked before the netflix interface update as the observers would have persisted and caused endless instances to be created  
         if (mutation.type === 'childList' && (mutation.target.className===" ltr-1b8gkd7-videoCanvasCss" || mutation.target.className== " ltr-op8orf") && mutation.addedNodes.length){
             //console.log("New Video!");
+            if(mutation.target.className===" ltr-1b8gkd7-videoCanvasCss"){
+                window.weird_classname_mode=1;
+                console.log("WEIRD MODE NOW");
+            }
+            console.log(mutation.target.className);
             create_buttons();
         }
         if (mutation.target.parentNode && (mutation.target.parentNode.className=== " ltr-1b8gkd7-videoCanvasCss"|| mutation.target.className== " ltr-op8orf")){
             //console.log(mutation);
             if (mutation.previousSibling && mutation.addedNodes[0].id != mutation.previousSibling.id){
                 //console.log("Video Change");
+                if(mutation.target.parentNode.className===" ltr-1b8gkd7-videoCanvasCss"){
+                    window.weird_classname_mode=1;
+                    console.log("WEIRD MODE NOW");
+                }
+                console.log(mutation.target.className+" *");
                 create_buttons();
             }
         }
@@ -180,10 +195,12 @@ function create_buttons(){
 }
 
 function actual_create_buttons(){
+    console.log("Creating buttons..");
     if (!window.on_off || !window.button_on_off){
         return;
     }
     if (document.getElementById('myDecreaseButton') || document.getElementById('myIncreaseButton')){
+        console.log("Buttons alreayd made");
         return;
     }
 
@@ -200,6 +217,11 @@ function actual_create_buttons(){
 
     let buttonOne = document.createElement('DIV');
     buttonOne.innerHTML ='<div class="medium ltr-1dcjcj4" id="myDecreaseButton"><button aria-label="Decrease Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
+    
+    if (window.weird_classname_mode){
+        buttonOne.innerHTML='<div class="medium ltr-7s9m83-controlContainerCss" id="myDecreaseButton"><button aria-label="Increase Font Size" class=" ltr-1njvkwl-controlButtonCss" data-uia="control-fontsize-minus"><div class="control-medium ltr-ae5w18-baseCss" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stoke="yellow" stroke-width="2"></path></svg></div></button></div>';
+
+    }
     buttonOne=buttonOne.firstElementChild;
 
     try{
@@ -209,8 +231,22 @@ function actual_create_buttons(){
         console.log("No bar 2");
         return;
     }
-    buttonOne.onmouseenter=function(){buttonOne.firstChild.className='active ltr-1enhvti';}
-    buttonOne.onmouseleave=function(){buttonOne.firstChild.className=' ltr-1enhvti';}
+    buttonOne.onmouseenter=function(){
+        if (window.weird_classname_mode){
+            buttonOne.firstChild.className='active ltr-1njvkwl-controlButtonCss';
+        }
+        else{
+            buttonOne.firstChild.className='active ltr-1enhvti';
+        }
+    }
+    buttonOne.onmouseleave=function(){
+        if (window.weird_classname_mode){
+        buttonOne.firstChild.className=' ltr-1njvkwl-controlButtonCss';
+    }
+    else{
+        buttonOne.firstChild.className=' ltr-1enhvti';
+    }
+    }
 
     buttonSpacing = document.createElement('DIV');
     buttonSpacing.innerHTML='<div class="ltr-1i33xgl" style="min-width: 3rem; width: 3rem;"></div>';
@@ -226,7 +262,13 @@ function actual_create_buttons(){
 
     let buttonTwo = document.createElement('DIV');
     buttonTwo.innerHTML ='<div class="medium ltr-1dcjcj4" id="myIncreaseButton"><button aria-label="Increase Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
+    
+    if (window.weird_classname_mode){
+        buttonTwo.innerHTML='<div class="medium ltr-7s9m83-controlContainerCss" id="myIncreaseButton"><button aria-label="Increase Font Size" class=" ltr-1njvkwl-controlButtonCss" data-uia="control-fontsize-minus"><div class="control-medium ltr-ae5w18-baseCss" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stoke="yellow" stroke-width="2"></path></svg></div></button></div>';
+
+    }
     buttonTwo=buttonTwo.firstElementChild;
+    
     try{
     document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonTwo);
     }
@@ -234,8 +276,23 @@ function actual_create_buttons(){
         console.log("No bar 4");
         return;
     }
-    buttonTwo.onmouseenter=function(){buttonTwo.firstChild.className='active ltr-1enhvti';}
-    buttonTwo.onmouseleave=function(){buttonTwo.firstChild.className=' ltr-1enhvti';}
+    buttonTwo.onmouseenter=function(){
+        if (window.weird_classname_mode){
+            buttonTwo.firstChild.className='active ltr-1njvkwl-controlButtonCss';
+        }
+        else{
+            buttonTwo.firstChild.className='active ltr-1enhvti';
+        }
+    }
+
+    buttonTwo.onmouseleave=function(){
+        if (window.weird_classname_mode){
+        buttonTwo.firstChild.className=' ltr-1njvkwl-controlButtonCss';
+     }
+    else{
+        buttonTwo.firstChild.className=' ltr-1enhvti';
+        }
+    }
     console.log("Creating buttons with color: " + window.originaltext_color);
     if (window.originaltext_color){
     document.getElementById('myDecreaseButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
@@ -275,7 +332,11 @@ function initialize_button_observer(){
     const callback = function(mutationsList,button_observer){
         for (const mutation of mutationsList){
            
-             if (mutation.target.className==='active ltr-fntwn3'){
+             if (mutation.target.className==='active ltr-fntwn3' || mutation.target.className==='active ltr-gwjau2-playerCss'){
+                 //console.log("Bottom bar visible");
+                if (mutation.target.className==='active ltr-gwjau2-playerCss'){
+                    window.netflix_mode = 2;
+                }
                 actual_create_buttons();
              }
            
@@ -365,7 +426,7 @@ function llsubs(){
                     }
 
 
-                    window.baseFont = parseFloat(mutation.target.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way more often than on nrk so will take basefont after every clear instead (if inset updates, update this as well)
+                    window.baseFont = parseFloat(mutation.target.firstChild.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way more often than on nrk so will take basefont after every clear instead (if inset updates, update this as well)
                     window.current_size = window.baseFont*window.current_multiplier+'px';
                     update_style('font_size');
                     //update_style('originaltext_opacity');
@@ -430,7 +491,7 @@ var addSubs = function(caption_row){
             window.my_timedtext_element=original_subs;
         }
 
-        window.baseFont = parseFloat(caption_row.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
+        window.baseFont = parseFloat(caption_row.firstChild.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
         window.current_size = window.baseFont*window.current_multiplier+'px';
 
 
@@ -471,7 +532,7 @@ var addSubs = function(caption_row){
 function update_style(setting){
     
     var lines = window.my_timedtext_element;
-    var original_lines = document.getElementsByClassName("player-timedtext")[0].firstChild;
+    var original_lines = document.getElementsByClassName("player-timedtext")[0].firstChild.firstChild;
 
     if (setting === 'font_size'){
 
@@ -481,7 +542,7 @@ function update_style(setting){
     if (setting === "text_color"){
 
         lines.style['color']=window.text_color;
-        for (let i =0;i<document.getElementsByClassName("player-timedtext")[0].firstChild.children.length;i++){
+        for (let i =0;i<document.getElementsByClassName("player-timedtext")[0].firstChild.firstChild.children.length;i++){
             original_lines.children[i].style['color']=window.originaltext_color;
         }
         //original_lines.style["color"]=window.originaltext_color;
@@ -626,9 +687,14 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
 
             //console.log("Recieved Message from BACKGROUND.JS to CHANGE opacity to " + request.value);
             window.originaltext_color=request.value;
+            
+            update_style('text_color');
+            try{
             document.getElementById('myDecreaseButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
             document.getElementById('myIncreaseButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
-            update_style('text_color');
-
+            }
+            catch(e){
+                console.log(e);
+            }
         }
 });
