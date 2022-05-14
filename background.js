@@ -66,6 +66,17 @@ chrome.storage.sync.get('on_off', function(data){
   }
 });
 
+chrome.storage.sync.get('button_on_off', function(data){
+  if(data.button_on_off!=null){
+    console.log("Preferences: button_on_off : " + data.button_on_off);
+  }
+  else{
+    console.log("No Opacity Preference Found - Setting to ON");
+    chrome.storage.sync.set({'button_on_off': 1});
+  }
+});
+//
+
 chrome.storage.sync.get('originaltext_opacity', function(data){
   if(data.originaltext_opacity){
     console.log("Preferences: Original Text Opacity : " + data.text_color);
@@ -118,6 +129,21 @@ chrome.runtime.onMessage.addListener(
         });
 
       }
+
+      if( request.message === "update_button_on_off" ) 
+      {
+
+        console.log("Background.js recieved message from SLIDER to update button_on_off to " + request.value);
+        chrome.storage.sync.set({'button_on_off':request.value});           //Store into local variables
+        
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs){ //Pass message onto Content.js
+          chrome.tabs.sendMessage(tabs[0].id, {
+            "message":"update_button_on_off",
+            "value":request.value});
+        });
+
+      }
+
 
       if( request.message === "update_font_multiplier" ) 
       {
