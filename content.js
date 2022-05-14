@@ -73,7 +73,7 @@ function getSetting(setting){
 
         /*else if (setting === "sub_distance"){
             window.sub_distance= data[setting];
-            console.log("Retrieved Sub Distance From Storage: ",window.sub_distance);
+           // console.log("Retrieved Sub Distance From Storage: ",window.sub_distance);
         }*/
 
         else if (setting === "text_color"){
@@ -108,14 +108,14 @@ function getSetting(setting){
 function wait_for_player(){
     
     waitForElement("#appMountPoint > div > div >div > div > div > div:nth-child(1) > div > div > div > div").then(function(element) {
-        console.log("Player detected");
+       // console.log("Player detected");
         //console.log("Subs Detected");
         
         try{
         actual_create_buttons();      
         }
         catch(e){
-            console.log("Error creating buttons, likely no bar visible");
+           // console.log("Error creating buttons, likely no bar visible");
         }  
         
         getSetting('text_color');
@@ -154,9 +154,9 @@ var callback = function(mutationsList, observer){
             //console.log("New Video!");
             if(mutation.target.className===" ltr-1b8gkd7-videoCanvasCss"){
                 window.weird_classname_mode=1;
-                console.log("WEIRD MODE NOW");
+               // console.log("WEIRD MODE NOW");
             }
-            console.log(mutation.target.className);
+           // console.log(mutation.target.className);
             create_buttons();
         }
         if (mutation.target.parentNode && (mutation.target.parentNode.className=== " ltr-1b8gkd7-videoCanvasCss"|| mutation.target.className== " ltr-op8orf")){
@@ -165,9 +165,9 @@ var callback = function(mutationsList, observer){
                 //console.log("Video Change");
                 if(mutation.target.parentNode.className===" ltr-1b8gkd7-videoCanvasCss"){
                     window.weird_classname_mode=1;
-                    console.log("WEIRD MODE NOW");
+                   // console.log("WEIRD MODE NOW");
                 }
-                console.log(mutation.target.className+" *");
+               // console.log(mutation.target.className+" *");
                 create_buttons();
             }
         }
@@ -195,12 +195,12 @@ function create_buttons(){
 }
 
 function actual_create_buttons(){
-    console.log("Creating buttons..");
+   // console.log("Creating buttons..");
     if (!window.on_off || !window.button_on_off){
         return;
     }
     if (document.getElementById('myDecreaseButton') || document.getElementById('myIncreaseButton')){
-        console.log("Buttons alreayd made");
+       // console.log("Buttons alreayd made");
         return;
     }
 
@@ -211,7 +211,7 @@ function actual_create_buttons(){
     document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonSpacing);
     }
     catch(e){
-        console.log("No bar 1");
+       // console.log("No bar 1");
         return;
     }
 
@@ -228,7 +228,7 @@ function actual_create_buttons(){
     document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonOne);
     }
     catch(e){
-        console.log("No bar 2");
+       // console.log("No bar 2");
         return;
     }
     buttonOne.onmouseenter=function(){
@@ -256,7 +256,7 @@ function actual_create_buttons(){
     document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonSpacing);
     }
     catch(e){
-        console.log("No bar 3");
+       // console.log("No bar 3");
         return;
     }
 
@@ -273,7 +273,7 @@ function actual_create_buttons(){
     document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonTwo);
     }
     catch(e){
-        console.log("No bar 4");
+       // console.log("No bar 4");
         return;
     }
     buttonTwo.onmouseenter=function(){
@@ -293,7 +293,7 @@ function actual_create_buttons(){
         buttonTwo.firstChild.className=' ltr-1enhvti';
         }
     }
-    console.log("Creating buttons with color: " + window.originaltext_color);
+   // console.log("Creating buttons with color: " + window.originaltext_color);
     if (window.originaltext_color){
     document.getElementById('myDecreaseButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
     document.getElementById('myIncreaseButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
@@ -323,7 +323,7 @@ function actual_create_buttons(){
         
 }
 function initialize_button_observer(){
-    console.log("Button Creator Observer HERE");
+   // console.log("Button Creator Observer HERE");
     var id = "watch-video--player-view";
     const bottom_bar = document.getElementsByClassName(id)[0];
 
@@ -563,7 +563,7 @@ function update_style(setting){
     /*if (setting === "sub_distance"){ //Not quite sure how to pick the color yet..
         var test = parseInt(window.baseOffset)+parseInt(window.sub_distance);
         document.getElementsByClassName("mysubs")[0].style.left=test+'px';
-        console.log("Set sub distance");
+       // console.log("Set sub distance");
     }
     */
 
@@ -585,14 +585,14 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                     }
                 }
                 catch(e){
-                    console.log(e);
+                   // console.log(e);
                 }
                 try{
                 document.getElementById("myDecreaseButton").style.display='none';
                 document.getElementById("myIncreaseButton").style.display='none';
                 }
                 catch(e){
-                    console.log(e);
+                   // console.log(e);
                 }
             }
             else{
@@ -603,14 +603,14 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                 }
             }
             catch(e){
-                console.log(e);
+               // console.log(e);
             }
                 try{
                 document.getElementById("myDecreaseButton").style.display='block';
                 document.getElementById("myIncreaseButton").style.display='block';
                 }
                 catch(e){
-                    console.log(e);
+                   // console.log(e);
                     actual_create_buttons();
                 }
             }
@@ -625,7 +625,7 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                 document.getElementById("myIncreaseButton").style.display='none';
                 }
                 catch(e){
-                    console.log(e);
+                   // console.log(e);
                 }
             }
             else{
@@ -635,7 +635,7 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                 document.getElementById("myIncreaseButton").style.display='block';
                 }
                 catch(e){
-                    console.log(e);
+                   // console.log(e);
                     actual_create_buttons();
                 }
             }
@@ -652,7 +652,7 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
         }
 
         /*if (request.message ==='update_sub_distance'){ inconsistent functionality for some reason.. but I don't think people would need this option anyways so I'll disable for now
-            console.log("Recieved Message from BACKGROUND.JS to CHANGE side to " + request.value);
+           // console.log("Recieved Message from BACKGROUND.JS to CHANGE side to " + request.value);
             window.sub_distance=parseInt(request.value);
             //StoreSetting('current_size',window.current_size)
             update_style('sub_distance');
@@ -694,7 +694,7 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
             document.getElementById('myIncreaseButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
             }
             catch(e){
-                console.log(e);
+               // console.log(e);
             }
         }
 });
