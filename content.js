@@ -6,7 +6,7 @@
 //Also, there seems to be two possible "classname modes", one that is normal and one that has everything ending with "Css"..
 //Compensating for both these changes has led to a ton of sloppy code just in an effort ot get everythign to work finally (which it does, at least for the "weird mode") will have to go back to cleanup code tomorrow
 // Will also need to test more on the non "weird classname mode", not sure if everythign works for that as well
-
+//5-17 - Fixed english subs, very sloppy code since I want to get this update out fast, will clean up later
 window.player_active=0;
 window.weird_classname_mode=0;
 
