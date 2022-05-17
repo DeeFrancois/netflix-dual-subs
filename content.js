@@ -9,6 +9,7 @@
 //5-17 - Fixed english subs, very sloppy code since I want to get this update out fast, will clean up later
 window.player_active=0;
 window.weird_classname_mode=0;
+window.first_run = 1;
 
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -488,6 +489,7 @@ function llsubs(){
 var addSubs = function(caption_row){ 
 
    if(caption_row.firstChild!=null && window.on_off){ // Ensures Subs were added rather than removed, probably redundant
+        
         var container_count = caption_row.childElementCount; 
         try{
         window.baseFont = parseFloat(caption_row.firstChild.firstChild.firstChild.style.fontSize.replace('px',''));
@@ -578,6 +580,11 @@ var addSubs = function(caption_row){
 
         window.my_timedtext_element.style['bottom']=sub_bot+'px';        
         
+        if (window.first_run){
+            actual_create_buttons;
+            window.first_run=0;
+        }
+
         update_style('text_color');
         update_style('opacity');
         update_style('font_size');
