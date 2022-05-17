@@ -553,7 +553,7 @@ var addSubs = function(caption_row){
         else if (original_subs===''){
             window.my_timedtext_element=original_subs;
         }
-        console.log(caption_row);
+        //console.log(caption_row);
         //window.baseFont = parseFloat(caption_row.firstChild.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
         window.current_size = window.baseFont*window.current_multiplier+'px';
 
