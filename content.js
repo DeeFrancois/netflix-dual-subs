@@ -6,9 +6,10 @@
 //Also, there seems to be two possible "classname modes", one that is normal and one that has everything ending with "Css"..
 //Compensating for both these changes has led to a ton of sloppy code just in an effort ot get everythign to work finally (which it does, at least for the "weird mode") will have to go back to cleanup code tomorrow
 // Will also need to test more on the non "weird classname mode", not sure if everythign works for that as well
-
+//5-17 - Fixed english subs, very sloppy code since I want to get this update out fast, will clean up later
 window.player_active=0;
 window.weird_classname_mode=0;
+window.first_run = 1;
 
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -458,15 +459,75 @@ function llsubs(){
 
 }
 
+// var coalesce_containers = function(caption_row){
+
+//     return new Promise((resolve,reject)=>{
+//          //new netflix update, can use many containers New girl 17:48
+//     let count = caption_row.childElementCount;
+//     let final_innerText = '';
+    
+//     //let caption_row = document.getElementsByClassName('player-timedtext')[0];
+//     let final_style = caption_row.firstChild.firstChild.firstChild.getAttribute('style');
+
+//     for (let i = 0; i<caption_row.childElementCount;i++){
+        
+//         final_innerText+=document.getElementsByClassName('player-timedtext-text-container')[i].firstChild.innerText;
+//         if (i<caption_row.childElementCount-1){
+//             final_innerText+='\n';
+//         }
+//     }
+//     document.getElementsByClassName('player-timedtext-text-container')[0].firstChild.innerText=final_innerText;
+
+//     for (let j = 0; j<caption_row.childElementCount;j++){
+//         document.getElementsByClassName('player-timedtext-text-container')[1].remove();
+//     }
+//     document.getElementsByClassName('player-timedtext-text-container')[0].firstChild.setAttribute('style',final_style);
+//     console.log('Coalesced ' + count + ' rows');
+//     });
+   
+// }
 var addSubs = function(caption_row){ 
 
    if(caption_row.firstChild!=null && window.on_off){ // Ensures Subs were added rather than removed, probably redundant
+        
         var container_count = caption_row.childElementCount; 
-        if (container_count == 2){ // Why work around Netflix sometimes using a seperate container for each row when I can just force it back into using one.. wish I'd done this earlier
+        try{
+        window.baseFont = parseFloat(caption_row.firstChild.firstChild.firstChild.style.fontSize.replace('px',''));
+        }
+        catch(e){
+            window.baseFont = parseFloat(caption_row.firstChild.firstChild.style.fontSize.replace('px',''));
+            //console.log('error getting font');
+        }
+        if (container_count >1){ // Why work around Netflix sometimes using a seperate container for each row when I can just force it back into using one.. wish I'd done this earlier
             
-            document.getElementsByClassName('player-timedtext-text-container')[0].firstChild.innerText= document.getElementsByClassName('player-timedtext-text-container')[0].firstChild.innerText + '\n '+ document.getElementsByClassName("player-timedtext-text-container")[1].firstChild.innerText;
-            $('.player-timedtext-text-container')[1].remove();    
-            container_count=0;
+    // Coalesce Function - didn't bother with actually making it its own function since that would involve incorporating async/await or Promise stuff.. can do that later
+            //let caption_row = document.getElementsByClassName('player-timedtext')[0];
+            let count = caption_row.childElementCount;
+            let final_innerText = '';
+            
+            //let caption_row = document.getElementsByClassName('player-timedtext')[0];
+            let final_style = caption_row.firstChild.firstChild.firstChild.getAttribute('style');
+
+            for (let i = 0; i<count;i++){
+                
+                final_innerText+=document.getElementsByClassName('player-timedtext-text-container')[i].firstChild.innerText;
+                if (i<caption_row.childElementCount-1){
+                    final_innerText+='\n';
+                }
+            }
+            document.getElementsByClassName('player-timedtext-text-container')[0].firstChild.innerText=final_innerText;
+
+            for (let j = 0; j<caption_row.childElementCount;j++){
+                document.getElementsByClassName('player-timedtext-text-container')[1].remove();
+            }
+            document.getElementsByClassName('player-timedtext-text-container')[0].firstChild.setAttribute('style',final_style);
+            //console.log('Coalesced ' + count + ' rows');
+            //console.log(caption_row);
+
+
+
+    //
+            
         }
 
         old_style = caption_row.firstChild.style
@@ -492,8 +553,8 @@ var addSubs = function(caption_row){
         else if (original_subs===''){
             window.my_timedtext_element=original_subs;
         }
-
-        window.baseFont = parseFloat(caption_row.firstChild.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
+        //console.log(caption_row);
+        //window.baseFont = parseFloat(caption_row.firstChild.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
         window.current_size = window.baseFont*window.current_multiplier+'px';
 
 
@@ -519,6 +580,11 @@ var addSubs = function(caption_row){
 
         window.my_timedtext_element.style['bottom']=sub_bot+'px';        
         
+        if (window.first_run){
+            actual_create_buttons;
+            window.first_run=0;
+        }
+
         update_style('text_color');
         update_style('opacity');
         update_style('font_size');
@@ -544,6 +610,10 @@ function update_style(setting){
     if (setting === "text_color"){
 
         lines.style['color']=window.text_color;
+        
+        //following line is for multi-container support, but doesn't affect single container mode so I didn't bother with an if(container_count)
+        document.getElementsByClassName('player-timedtext')[0].firstChild.firstChild.style['color']=window.originaltext_color;
+
         for (let i =0;i<document.getElementsByClassName("player-timedtext")[0].firstChild.firstChild.children.length;i++){
             original_lines.children[i].style['color']=window.originaltext_color;
         }
