@@ -1,4 +1,4 @@
-_Sorry everyone, had to abandon this project for a bit. I'm back though and the extension should be working again! More updates coming soon._
+8/27 - Minor netflix interface update broke the extension, will be fixed by tomorrow. 
 
 # Dual Subtitles for Netflix
 [Now available here on the Chrome Extension Store](https://chrome.google.com/webstore/detail/netflix-language-learning/ljnmedkgcgidbbjhbkdonempgcgdhjfl?hl=en)
