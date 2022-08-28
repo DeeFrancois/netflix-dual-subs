@@ -152,7 +152,7 @@ var callback = function(mutationsList, observer){
         //console.log(mutation.target.className);
         // New way to determine video changes, way more efficient
         // To be fair though, this wouldn't have worked before the netflix interface update as the observers would have persisted and caused endless instances to be created  
-        if (mutation.type === 'childList' && (mutation.target.className===" ltr-1b8gkd7-videoCanvasCss" || mutation.target.className== " ltr-op8orf") && mutation.addedNodes.length){
+        if (mutation.type === 'childList' && (mutation.target.className===" ltr-1b8gkd7-videoCanvasCss" || mutation.target.className== " ltr-op8orf" || mutation.target.className==" ltr-1212o1j") && mutation.addedNodes.length){
             //console.log("New Video!");
             if(mutation.target.className===" ltr-1b8gkd7-videoCanvasCss"){
                 window.weird_classname_mode=1;
@@ -161,7 +161,7 @@ var callback = function(mutationsList, observer){
            // console.log(mutation.target.className);
             create_buttons();
         }
-        if (mutation.target.parentNode && (mutation.target.parentNode.className=== " ltr-1b8gkd7-videoCanvasCss"|| mutation.target.className== " ltr-op8orf")){
+        if (mutation.target.parentNode && (mutation.target.parentNode.className=== " ltr-1b8gkd7-videoCanvasCss"|| mutation.target.className== " ltr-op8orf" || mutation.target.className==" ltr-1212o1j")){
             //console.log(mutation);
             if (mutation.previousSibling && mutation.addedNodes[0].id != mutation.previousSibling.id){
                 //console.log("Video Change");
