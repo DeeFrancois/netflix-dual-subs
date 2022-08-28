@@ -198,7 +198,7 @@ function create_buttons(){
 
 function actual_create_buttons(){
    // console.log("Creating buttons..");
-    if (!window.on_off || !window.button_on_off){
+    if (1 || !window.on_off || !window.button_on_off){
         return;
     }
     if (document.getElementById('myDecreaseButton') || document.getElementById('myIncreaseButton')){
