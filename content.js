@@ -338,6 +338,13 @@ function actual_create_buttons(){
 
         
 }
+function open_browser_action(){
+    chrome.runtime.sendMessage({
+        "message":"open_popup",
+        "value": this.checked
+        });
+
+}
 function initialize_button_observer(){
    // console.log("Button Creator Observer HERE");
     var id = "watch-video--player-view";
