@@ -198,7 +198,7 @@ function create_buttons(){
 
 function actual_create_buttons(){
    // console.log("Creating buttons..");
-    if (1 || !window.on_off || !window.button_on_off){ //Buttons disabled for now so I can get working subs out as fast as possible
+    if (!window.on_off || !window.button_on_off){ //Buttons disabled for now so I can get working subs out as fast as possible
         return;
     }
     if (document.getElementById('myDecreaseButton') || document.getElementById('myIncreaseButton')){
@@ -207,7 +207,7 @@ function actual_create_buttons(){
     }
 
     let buttonSpacing = document.createElement('DIV');
-    buttonSpacing.innerHTML='<div class="ltr-1i33xgl" style="min-width: 3rem; width: 3rem;"></div>';
+    buttonSpacing.innerHTML='<div class="ltr-14rufaj" style="min-width: 3rem; width: 3rem;"></div>';
     buttonSpacing=buttonSpacing.firstElementChild;
     try{
     document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonSpacing);
@@ -217,12 +217,20 @@ function actual_create_buttons(){
         return;
     }
 
+    // '<div class="medium ltr-my293h" id="myDecreaseButton"><button aria-label="Decrease Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard">\
+    // <path clip-rule="evenodd" \
+    // d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z" \
+    // fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
     let buttonOne = document.createElement('DIV');
-    buttonOne.innerHTML ='<div class="medium ltr-1dcjcj4" id="myDecreaseButton"><button aria-label="Decrease Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
-    
+    buttonOne.innerHTML ='<div class="medium ltr-my293h" id="myDecreaseButton"><button aria-label="Decrease Font Size" class=" ltr-14ph5iy" data-uia="control-fontsize-minus"><div class="control-medium ltr-1evcx25" role="presentation"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="Hawkins-Icon Hawkins-Icon-Standard" viewBox="0 0 24 16">\
+    <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z\
+    fill="none" stroke="yellow" stroke-width=".5""/>\
+    </svg></div></button></div>'; 
     if (window.weird_classname_mode){
-        buttonOne.innerHTML='<div class="medium ltr-7s9m83-controlContainerCss" id="myDecreaseButton"><button aria-label="Increase Font Size" class=" ltr-1njvkwl-controlButtonCss" data-uia="control-fontsize-minus"><div class="control-medium ltr-ae5w18-baseCss" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.4 0 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stoke="yellow" stroke-width="2"></path></svg></div></button></div>';
-
+        buttonOne.innerHTML='<div class="medium ltr-my293h" id="myDecreaseButton"><button aria-label="Decrease Font Size" class=" ltr-14ph5iy" data-uia="control-fontsize-minus"><div class="control-medium ltr-1evcx25" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard">\
+        <path fill-rule="evenodd" clip-rule="evenodd" \
+        d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z" \
+        fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
     }
     buttonOne=buttonOne.firstElementChild;
 
@@ -235,23 +243,23 @@ function actual_create_buttons(){
     }
     buttonOne.onmouseenter=function(){
         if (window.weird_classname_mode){
-            buttonOne.firstChild.className='active ltr-1njvkwl-controlButtonCss';
+            buttonOne.firstChild.className='active ltr-14ph5iy-controlButtonCss';
         }
         else{
-            buttonOne.firstChild.className='active ltr-1enhvti';
+            buttonOne.firstChild.className='active ltr-14ph5iy';
         }
     }
     buttonOne.onmouseleave=function(){
         if (window.weird_classname_mode){
-        buttonOne.firstChild.className=' ltr-1njvkwl-controlButtonCss';
+        buttonOne.firstChild.className=' ltr-14ph5iy-controlButtonCss';
     }
     else{
-        buttonOne.firstChild.className=' ltr-1enhvti';
+        buttonOne.firstChild.className=' ltr-14ph5iy';
     }
     }
 
     buttonSpacing = document.createElement('DIV');
-    buttonSpacing.innerHTML='<div class="ltr-1i33xgl" style="min-width: 3rem; width: 3rem;"></div>';
+    buttonSpacing.innerHTML='<div class="ltr-14rufaj" style="min-width: 3rem; width: 3rem;"></div>';
     buttonSpacing=buttonSpacing.firstElementChild;
 
     try{
@@ -261,64 +269,70 @@ function actual_create_buttons(){
        // console.log("No bar 3");
         return;
     }
-
-    let buttonTwo = document.createElement('DIV');
-    buttonTwo.innerHTML ='<div class="medium ltr-1dcjcj4" id="myIncreaseButton"><button aria-label="Increase Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
+    // 8/29/22 removing double buttons for now, replacing with a settings button since many people dont know about button up top
+    // let buttonTwo = document.createElement('DIV');
+    // buttonTwo.innerHTML ='<div class="medium ltr-1dcjcj4" id="myIncreaseButton"><button aria-label="Increase Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
     
-    if (window.weird_classname_mode){
-        buttonTwo.innerHTML='<div class="medium ltr-7s9m83-controlContainerCss" id="myIncreaseButton"><button aria-label="Increase Font Size" class=" ltr-1njvkwl-controlButtonCss" data-uia="control-fontsize-minus"><div class="control-medium ltr-ae5w18-baseCss" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stoke="yellow" stroke-width="2"></path></svg></div></button></div>';
+    // if (window.weird_classname_mode){
+    //     buttonTwo.innerHTML='<div class="medium ltr-7s9m83-controlContainerCss" id="myIncreaseButton"><button aria-label="Increase Font Size" class=" ltr-1njvkwl-controlButtonCss" data-uia="control-fontsize-minus"><div class="control-medium ltr-ae5w18-baseCss" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stoke="yellow" stroke-width="2"></path></svg></div></button></div>';
 
-    }
-    buttonTwo=buttonTwo.firstElementChild;
+    // }
+    // buttonTwo=buttonTwo.firstElementChild;
     
-    try{
-    document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonTwo);
-    }
-    catch(e){
-       // console.log("No bar 4");
-        return;
-    }
-    buttonTwo.onmouseenter=function(){
-        if (window.weird_classname_mode){
-            buttonTwo.firstChild.className='active ltr-1njvkwl-controlButtonCss';
-        }
-        else{
-            buttonTwo.firstChild.className='active ltr-1enhvti';
-        }
-    }
+    // try{
+    // document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonTwo);
+    // }
+    // catch(e){
+    //    // console.log("No bar 4");
+    //     return;
+    // }
+    // buttonTwo.onmouseenter=function(){
+    //     if (window.weird_classname_mode){
+    //         buttonTwo.firstChild.className='active ltr-1njvkwl-controlButtonCss';
+    //     }
+    //     else{
+    //         buttonTwo.firstChild.className='active ltr-1enhvti';
+    //     }
+    // }
 
-    buttonTwo.onmouseleave=function(){
-        if (window.weird_classname_mode){
-        buttonTwo.firstChild.className=' ltr-1njvkwl-controlButtonCss';
-     }
-    else{
-        buttonTwo.firstChild.className=' ltr-1enhvti';
-        }
-    }
+    // buttonTwo.onmouseleave=function(){
+    //     if (window.weird_classname_mode){
+    //     buttonTwo.firstChild.className=' ltr-1njvkwl-controlButtonCss';
+    //  }
+    // else{
+    //     buttonTwo.firstChild.className=' ltr-1enhvti';
+    //     }
+    // }
+    // ... 8/29/22
+
    // console.log("Creating buttons with color: " + window.originaltext_color);
     if (window.originaltext_color){
     document.getElementById('myDecreaseButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
-    document.getElementById('myIncreaseButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
+    //document.getElementById('myIncreaseButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
     }
     
     //listeners for clicks
-    buttonTwo.addEventListener("click", function() {
+    //*
+    // buttonTwo.addEventListener("click", function() {
     
-        window.current_multiplier+=.1;
-        //Save Setting here
-        chrome.storage.sync.set({"font_multiplier":window.current_multiplier.toFixed(2)}); //Save setting into storage on Change
-        window.current_size=window.baseFont*window.current_multiplier+'px';
-        update_style('font_size'); //Live Update the setting change
+    //     window.current_multiplier+=.1;
+    //     //Save Setting here
+    //     chrome.storage.sync.set({"font_multiplier":window.current_multiplier.toFixed(2)}); //Save setting into storage on Change
+    //     window.current_size=window.baseFont*window.current_multiplier+'px';
+    //     update_style('font_size'); //Live Update the setting change
 
-    });
+    // });
+    //*
 
     buttonOne.addEventListener("click", function() {
-    
-        window.current_multiplier-=.1;
-        //Save Setting here
-        chrome.storage.sync.set({"font_multiplier":window.current_multiplier.toFixed(2)}); //Save setting into storage on Change
-        window.current_size=window.baseFont*window.current_multiplier+'px';
-        update_style('font_size'); //Live Update the setting change
+    //*old functionality
+        // window.current_multiplier-=.1;
+        // //Save Setting here
+        // chrome.storage.sync.set({"font_multiplier":window.current_multiplier.toFixed(2)}); //Save setting into storage on Change
+        // window.current_size=window.baseFont*window.current_multiplier+'px';
+        // update_style('font_size'); //Live Update the setting change
+    //
+        open_browser_action();
 
     });
 
@@ -334,7 +348,7 @@ function initialize_button_observer(){
     const callback = function(mutationsList,button_observer){
         for (const mutation of mutationsList){
            
-             if (mutation.target.className==='active ltr-fntwn3' || mutation.target.className==='active ltr-gwjau2-playerCss'){
+             if (mutation.target.className==='active ltr-omkt8s' || mutation.target.className==='active ltr-gwjau2-playerCss'){
                  //console.log("Bottom bar visible");
                 if (mutation.target.className==='active ltr-gwjau2-playerCss'){
                     window.netflix_mode = 2;
