@@ -117,9 +117,9 @@ chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
 
       if (request.message === "open_popup"){ // - 8/29/22 - decide between a settings window or a page with tutorial gifs
-        //chrome.tabs.create({ url: chrome.runtime.getURL("tutorial.html") });
-        chrome.windows.create({'url': 'popup.html', 'type': 'popup', 'focused':true, 'height':100,'width':100  }, function(window) {
-        });
+        chrome.tabs.create({ url: chrome.runtime.getURL("tutorial.html") });
+        //chrome.windows.create({'url': 'popup.html', 'type': 'popup', 'focused':true, 'height':100,'width':100  }, function(window) {
+        //});
       }
 
       if( request.message === "update_on_off" ) 
