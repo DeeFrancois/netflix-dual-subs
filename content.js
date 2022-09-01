@@ -617,8 +617,12 @@ var addSubs = function(caption_row){
 function update_style(setting){
     
     var lines = window.my_timedtext_element;
+    try{
     var original_lines = document.getElementsByClassName("player-timedtext")[0].firstChild.firstChild; //8/30/22 bug here
-
+    }
+    catch (e){
+        return;
+    }
     if (setting === 'font_size'){
 
         lines.style["font-size"]=window.current_size;
