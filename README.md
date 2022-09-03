@@ -1,9 +1,7 @@
-8/27 - Minor netflix interface update broke the extension, will be fixed by tomorrow. 
-
 # Dual Subtitles for Netflix
 [Now available here on the Chrome Extension Store](https://chrome.google.com/webstore/detail/netflix-language-learning/ljnmedkgcgidbbjhbkdonempgcgdhjfl?hl=en)
 
-<sup> Latest Update: **v1.4.0** Bottom Bar Buttons + Preference/classname patch </sup>
+<sup> Latest Update: **v1.5.0** Tutorial button + major bug fixes </sup>
 
 Works with the browser's built-in translator to enable dual language subtitles on Netflix
 
@@ -62,6 +60,10 @@ v1.2.8: Netflix Update broke the extension, it's working now but without the bot
 
 v1.3.0: Edge compatibility
 
-v1.3.5-v1.3.7: classname hotfixes (Netflix keeps adjusting the class names which breaks the extension) 
+v1.3.5-v1.3.7: classname hotfixes (Netflix keeps adjusting the class names which breaks the extension)
+
+v1.4.0: Bottom Bar Buttons + Preference/classname patches
+
+v1.4.5: classname patch
 
 Licensed under the [GPL-3.0 License](LICENSE).
