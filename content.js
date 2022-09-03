@@ -149,7 +149,10 @@ var callback = function(mutationsList, observer){
 
         try {var current_id = location.href.split('/watch/')[1].split('?')[0];}catch(e){var current_id=0;}
 
-        //console.log(mutation.target.className);
+        //console.log(mutation);
+        if(mutation.target.className=="player-timedtext"){
+            //console.log(mutation);
+        }
         // New way to determine video changes, way more efficient
         // To be fair though, this wouldn't have worked before the netflix interface update as the observers would have persisted and caused endless instances to be created  
         if (mutation.type === 'childList' && (mutation.target.className===" ltr-1b8gkd7-videoCanvasCss" || mutation.target.className== " ltr-op8orf" || mutation.target.className==" ltr-1212o1j") && mutation.addedNodes.length){
@@ -173,6 +176,16 @@ var callback = function(mutationsList, observer){
                 create_buttons();
             }
         }
+        if (mutation.addedNodes.length==1 && mutation.previousSibling && mutation.addedNodes[0].id===(''+(parseInt(mutation.previousSibling.id)+1))){ //9/3/22 - bug fix, observer wasnt being renewed on autoplay
+            if(mutation.target.parentNode.className===" ltr-1b8gkd7-videoCanvasCss"){
+                window.weird_classname_mode=1;
+               // console.log("WEIRD MODE NOW");
+            }
+            create_buttons();
+        }
+        // if (mutation.addedNodes && mutation.previousSibling && mutation.addedNodes[0].id===(''+(parseInt(previousSibling.id)+1))){
+        //     console.log("VIDEO SWITCH!!");
+        // }
         //addedNodes id previous sibling id
         
     }
@@ -399,6 +412,7 @@ function llsubs(){
 
     const callback = function(mutationsList, observer){ //Observes original text box for changes
         for (const mutation of mutationsList){
+            //console.log(mutation);
             if (mutation.type === 'childList' && mutation.target.className && mutation.target.className==="player-timedtext"){ //track removal/addition to subtitle container
                 
                 if (mutation.addedNodes.length===1){ //If added rather than removed..

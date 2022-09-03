@@ -4,7 +4,14 @@
 //STORAGE VALUES
 
 //First Run, store default settings
-
+chrome.runtime.onInstalled.addListener(function(details){
+  if(details.reason == "update"){
+    chrome.storage.sync.set({'button_on_off':1});
+  }
+  else{
+    chrome.tabs.create({ url: chrome.runtime.getURL("tutorial.html") });
+  }
+});
 /*chrome.runtime.onInstalled.addListener(function(details){
   if(details.reason == "update"){
       chrome.storage.sync.get('text_color',function(data){ //On update save switch right side color to left
