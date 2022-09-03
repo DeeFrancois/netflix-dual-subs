@@ -176,12 +176,21 @@ var callback = function(mutationsList, observer){
                 create_buttons();
             }
         }
-        if (mutation.addedNodes.length==1 && mutation.previousSibling && mutation.addedNodes[0].id===(''+(parseInt(mutation.previousSibling.id)+1))){ //9/3/22 - bug fix, observer wasnt being renewed on autoplay
-            if(mutation.target.parentNode.className===" ltr-1b8gkd7-videoCanvasCss"){
-                window.weird_classname_mode=1;
-               // console.log("WEIRD MODE NOW");
+        if (mutation.addedNodes.length==1 && mutation.previousSibling){ //9/3/22 - bug fix, observer wasnt being renewed on autoplay
+            if(parseInt(mutation.addedNodes[0].id),parseInt(mutation.previousSibling.id)){
+                if(parseInt(current_id)!=parseInt(mutation.previousSibling.id)){
+                    
+                    if(mutation.target.parentNode.className===" ltr-1b8gkd7-videoCanvasCss"){
+                        window.weird_classname_mode=1;
+                       // console.log("WEIRD MODE NOW");
+                    }
+                    create_buttons();
+
+
+                }
+                
             }
-            create_buttons();
+            
         }
         // if (mutation.addedNodes && mutation.previousSibling && mutation.addedNodes[0].id===(''+(parseInt(previousSibling.id)+1))){
         //     console.log("VIDEO SWITCH!!");
