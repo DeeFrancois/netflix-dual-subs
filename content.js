@@ -574,7 +574,8 @@ var addSubs = function(caption_row){
         //console.log(old_style);
 
         caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
-        caption_row.firstChild.setAttribute('translate','no'); 
+        //caption_row.firstChild.setAttribute('translate','no'); //stopped working for edge
+        caption_row.firstChild.className+=' notranslate'; //dont think multi-class will break the rest of the code but we'll see
 
         window.original_subs = caption_row.firstChild.innerText;
 
