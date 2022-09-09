@@ -5,12 +5,12 @@
 
 //First Run, store default settings
 chrome.runtime.onInstalled.addListener(function(details){
-  if(details.reason == "update"){
-    chrome.storage.sync.set({'button_on_off':1});
-  }
-  else{
+  if(details.reason == "install"){
     chrome.tabs.create({ url: chrome.runtime.getURL("tutorial.html") });
   }
+  // if(details.reason == "update"){
+  //   return;
+  // }
 });
 /*chrome.runtime.onInstalled.addListener(function(details){
   if(details.reason == "update"){
