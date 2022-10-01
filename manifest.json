@@ -3,7 +3,7 @@
   
     "name": "Dual Subtitles for Netflix",
     "description": "Helps you learn languages using Netflix. Uses your browser's Auto-Translator to ensure direct translations.",
-    "version": "1.5.2",
+    "version": "1.5.20",
 
     "icons": {
       "128":"icons/icon128.png",
@@ -16,7 +16,7 @@
     "background": {
         "service_worker": "background.js"
     },
-  
+
     "permissions": [
         "storage"
       ],

@@ -1,12 +1,6 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
-// v1.4 - Bottom Bar buttons are back!
-//DEV LOG: there's a problem with the error catching for the buttons, haven't been able to reproduce it yet, probably too many random try/catch's
-//TODO: Button creation would feel more polished if it was done right away, doing it after "player detected" feels too late
-//5-13 Netflix update again.. changed it so subtitle styles are placed one element deeper (just had to add another .firstChild at every "captionRow"/"player-timedtext" retrieval)
-//Also, there seems to be two possible "classname modes", one that is normal and one that has everything ending with "Css"..
-//Compensating for both these changes has led to a ton of sloppy code just in an effort ot get everythign to work finally (which it does, at least for the "weird mode") will have to go back to cleanup code tomorrow
-// Will also need to test more on the non "weird classname mode", not sure if everythign works for that as well
-//5-17 - Fixed english subs, very sloppy code since I want to get this update out fast, will clean up later
+//10-1-2022 - setting nostranslate attribute desnt work for Chrome anymore. Notranslate as a classname does but it slows down the chrome version.
+// So now we need seperate versions.. will have to figure out how to detect edge users and link them to the Edge store version 
 window.player_active=0;
 window.weird_classname_mode=0;
 window.first_run = 1;
@@ -574,8 +568,8 @@ var addSubs = function(caption_row){
         //console.log(old_style);
 
         caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
-        caption_row.firstChild.setAttribute('translate','no'); //stopped working for edge
-        //caption_row.firstChild.className+=' notranslate'; //dont think multi-class will break the rest of the code but we'll see
+        // caption_row.firstChild.setAttribute('translate','no'); //stopped working for edge
+        caption_row.firstChild.className+=' notranslate'; //dont think multi-class will break the rest of the code but we'll see
         //This actually slows down the chrome translation time for some reason, will have to implement modes for each browser
 
         window.original_subs = caption_row.firstChild.innerText;
