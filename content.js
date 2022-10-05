@@ -568,8 +568,12 @@ var addSubs = function(caption_row){
         //console.log(old_style);
 
         caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
-        // caption_row.firstChild.setAttribute('translate','no'); //stopped working for edge
-        caption_row.firstChild.className+=' notranslate'; //dont think multi-class will break the rest of the code but we'll see
+        caption_row.firstChild.setAttribute('translate','no'); //stopped working for edge
+        caption_row.firstChild.setAttribute('_istranslated','1'); //MIGHT WORK FOR DUAL COMPATIBILITY!!!! (spoofs edge translator to skip since translate tag doesnt work)
+        // caption_row.firstChild.setAttribute('skiptranslate');
+
+
+        // caption_row.firstChild.className+=' notranslate'; //dont think multi-class will break the rest of the code but we'll see
         //This actually slows down the chrome translation time for some reason, will have to implement modes for each browser
 
         window.original_subs = caption_row.firstChild.innerText;
