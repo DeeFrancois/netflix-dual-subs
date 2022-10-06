@@ -10,6 +10,7 @@
 window.player_active=0;
 window.weird_classname_mode=0;
 window.first_run = 1;
+window.up_down_mode=1;
 
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -286,69 +287,16 @@ function actual_create_buttons(){
        // console.log("No bar 3");
         return;
     }
-    // 8/29/22 removing double buttons for now, replacing with a settings button since many people dont know about button up top
-    // let buttonTwo = document.createElement('DIV');
-    // buttonTwo.innerHTML ='<div class="medium ltr-1dcjcj4" id="myIncreaseButton"><button aria-label="Increase Font Size" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-18dhnor" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
-    
-    // if (window.weird_classname_mode){
-    //     buttonTwo.innerHTML='<div class="medium ltr-7s9m83-controlContainerCss" id="myIncreaseButton"><button aria-label="Increase Font Size" class=" ltr-1njvkwl-controlButtonCss" data-uia="control-fontsize-minus"><div class="control-medium ltr-ae5w18-baseCss" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path clip-rule="evenodd" d="m 6.8 12 l 10.2 0 M 12 6.8 l 0 10.2 M 2.4 12 a 1 1 0 0 1 19.2 0 a 1 1 1 0 1 -19.2 0" fill="none" stoke="yellow" stroke-width="2"></path></svg></div></button></div>';
-
-    // }
-    // buttonTwo=buttonTwo.firstElementChild;
-    
-    // try{
-    // document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonTwo);
-    // }
-    // catch(e){
-    //    // console.log("No bar 4");
-    //     return;
-    // }
-    // buttonTwo.onmouseenter=function(){
-    //     if (window.weird_classname_mode){
-    //         buttonTwo.firstChild.className='active ltr-1njvkwl-controlButtonCss';
-    //     }
-    //     else{
-    //         buttonTwo.firstChild.className='active ltr-1enhvti';
-    //     }
-    // }
-
-    // buttonTwo.onmouseleave=function(){
-    //     if (window.weird_classname_mode){
-    //     buttonTwo.firstChild.className=' ltr-1njvkwl-controlButtonCss';
-    //  }
-    // else{
-    //     buttonTwo.firstChild.className=' ltr-1enhvti';
-    //     }
-    // }
-    // ... 8/29/22
-
    // console.log("Creating buttons with color: " + window.originaltext_color);
     if (window.originaltext_color){
     document.getElementById('myTutorialButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
     //document.getElementById('myIncreaseButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
     }
     
-    //listeners for clicks
-    //*
-    // buttonTwo.addEventListener("click", function() {
-    
-    //     window.current_multiplier+=.1;
-    //     //Save Setting here
-    //     chrome.storage.sync.set({"font_multiplier":window.current_multiplier.toFixed(2)}); //Save setting into storage on Change
-    //     window.current_size=window.baseFont*window.current_multiplier+'px';
-    //     update_style('font_size'); //Live Update the setting change
-
-    // });
-    //*
+  
 
     buttonOne.addEventListener("click", function() {
-    //*old functionality
-        // window.current_multiplier-=.1;
-        // //Save Setting here
-        // chrome.storage.sync.set({"font_multiplier":window.current_multiplier.toFixed(2)}); //Save setting into storage on Change
-        // window.current_size=window.baseFont*window.current_multiplier+'px';
-        // update_style('font_size'); //Live Update the setting change
-    //
+
         open_browser_action();
 
     });
@@ -356,11 +304,11 @@ function actual_create_buttons(){
         
 }
 function open_browser_action(){
+
     chrome.runtime.sendMessage({
         "message":"open_popup",
         "value": this.checked
         });
-
 
 }
 function initialize_button_observer(){
@@ -401,11 +349,21 @@ function llsubs(){
 
     $(".my-timedtext-container").remove(); // should actually do this after video exit rather than before video start since it will fix the text lingering a bit on exit
 
-    $(".watch-video").append(`<div class='my-timedtext-container' style='display: block; white-space: pre-wrap; text-align: center; position: absolute; font-size:21px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'><span id=my_subs_innertext></span></div>`)
+    $(".watch-video").append(`<div class='my-timedtext-container' style='display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 50%; bottom: 18%;-webkit-transform: translateX(-50%); transform: translateX(-50%); font-size:21px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'><span id=my_subs_innertext></span></div>`)
     window.my_timedtext_element= document.getElementsByClassName('my-timedtext-container')[0];
     
     my_timedtext_element.setAttribute('translate','yes');
 
+    //uhh I didn't realize I could just inject css like this lmao.. for now using it for vertical text feature but will try to apply this to everything else later for cleaner code
+    let st = document.createElement('style'); 
+    let st2 = document.createElement('style');
+    st.innerText='.player-timedtext br{display:none;}';
+    st2.innerText='.my-timedtext-container br{display:none;}'; 
+    document.head.appendChild(st);
+    document.head.appendChild(st2);
+    // Hides <br>'s to keep things on one line
+    
+    
     window.last_subs = '';
 
     
@@ -474,18 +432,24 @@ function llsubs(){
                     update_style('font_size');
                     //update_style('originaltext_opacity');
                     //update_style('originaltext_color');
-                    
 
-                    if (window.original_text_side == 0){
-                        window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x)+ (parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025);
-                        var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
-                        window.my_timedtext_element.style['left']=sub_dist+'px';
+                    if (window.up_down_mode){
+                        // window.my_timedtext_element.style['left']='2.5%';
+
 
                     }
                     else{
-                        window.original_subs_placement = parseInt(my_timedtext_element.getBoundingClientRect().x)+ parseInt(my_timedtext_element.getBoundingClientRect().width);
-                        var sub_dist = (window.original_subs_placement)+10 - parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x);
-                        document.getElementsByClassName("player-timedtext")[0].firstChild.style['left']=sub_dist+'px';
+                        if (window.original_text_side == 0){
+                            window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x)+ (parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025);
+                            var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
+                            window.my_timedtext_element.style['left']=sub_dist+'px';
+
+                        }
+                        else{
+                            window.original_subs_placement = parseInt(my_timedtext_element.getBoundingClientRect().x)+ parseInt(my_timedtext_element.getBoundingClientRect().width);
+                            var sub_dist = (window.original_subs_placement)+10 - parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x);
+                            document.getElementsByClassName("player-timedtext")[0].firstChild.style['left']=sub_dist+'px';
+                        }
                     }
 
                 
@@ -572,8 +536,12 @@ var addSubs = function(caption_row){
 
         old_style = caption_row.firstChild.style
         //console.log(old_style);
-
+        if(up_down_mode){
+            caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; bottom: 25%;left: 50%;-webkit-transform: translateX(-50%); transform: translateX(-50%);');   
+        }
+        else{
         caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
+        }
         caption_row.firstChild.setAttribute('translate','no'); //stopped working for edge
         caption_row.firstChild.setAttribute('_istranslated','1'); //MIGHT WORK FOR DUAL COMPATIBILITY!!!! (spoofs edge translator to skip since translate tag doesnt work)
 
@@ -601,29 +569,36 @@ var addSubs = function(caption_row){
         //window.baseFont = parseFloat(caption_row.firstChild.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
         window.current_size = window.baseFont*window.current_multiplier+'px';
 
-
-        
-        if(window.original_text_side == 0){
-            window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x)+ (parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025);
-            var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
-            window.my_timedtext_element.style['left']=sub_dist+'px';
-
+    
+        if(window.up_down_mode){
+            // window.my_timedtext_element.style['left']='2.5%';
         }
         else{
-            window.my_timedtext_element.style['left']='2.5%';
+            if(window.original_text_side == 0){
+                window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x)+ (parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025);
+                var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
+                window.my_timedtext_element.style['left']=sub_dist+'px';
 
-            //Same but applied to my element instead
-            window.original_subs_placement = parseInt(my_timedtext_element.getBoundingClientRect().x) + parseInt(my_timedtext_element.getBoundingClientRect().width);
-            var sub_dist = (window.original_subs_placement)+10 - parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x);
-            caption_row.firstChild.style['left']=sub_dist+'px';
+            }
+            else{
+                window.my_timedtext_element.style['left']='2.5%';
 
+                //Same but applied to my element instead
+                window.original_subs_placement = parseInt(my_timedtext_element.getBoundingClientRect().x) + parseInt(my_timedtext_element.getBoundingClientRect().width);
+                var sub_dist = (window.original_subs_placement)+10 - parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x);
+                caption_row.firstChild.style['left']=sub_dist+'px';
+
+            }
         }
-        
         
         var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
 
+        if(window.up_down_mode){
+            window.my_timedtext_element.style['bottom']='18%';
+        }
+        else{
         window.my_timedtext_element.style['bottom']=sub_bot+'px';        
-        
+        }
         if (window.first_run){
             actual_create_buttons;
             window.first_run=0;
