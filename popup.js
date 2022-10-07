@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var resetButton = document.getElementById('resetButton');
     var onSwitch = document.getElementById("switchValue");
     var button_onSwitch = document.getElementById("button_switchValue");
+    var button_upDownMode = document.getElementById("button_upDownValue");
 
     chrome.storage.sync.get('font_multiplier',function(data){
             slideValue.innerHTML=data.font_multiplier;
@@ -69,6 +70,12 @@ document.addEventListener('DOMContentLoaded',function(){
     chrome.storage.sync.get('button_on_off',function(data){
         console.log("Stored value is: ",data.button_on_off);
         button_onSwitch.checked=data.button_on_off;
+
+    });
+
+    chrome.storage.sync.get('button_up_down_mode',function(data){
+        console.log("Stored value is: ",data.button_up_down_mode);
+        button_upDownMode.checked=data.button_up_down_mode;
 
     });
     
@@ -156,6 +163,17 @@ document.addEventListener('DOMContentLoaded',function(){
         //chrome.storage.sync.set({"left_or_right":this.value});
        chrome.runtime.sendMessage({
            "message":"update_button_on_off",
+           "value": this.checked
+       });
+        
+
+    }, false);
+
+    button_upDownMode.addEventListener('change',function() {
+
+        //chrome.storage.sync.set({"left_or_right":this.value});
+       chrome.runtime.sendMessage({
+           "message":"update_button_up_down_mode",
            "value": this.checked
        });
         

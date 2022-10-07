@@ -10,7 +10,7 @@
 window.player_active=0;
 window.weird_classname_mode=0;
 window.first_run = 1;
-window.up_down_mode=1;
+// window.up_down_mode=1;
 
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -98,6 +98,10 @@ function getSetting(setting){
         else if (setting === "originaltext_color"){
             window.originaltext_color = data[setting];
             //console.log("Retrieved Opacity From Storage: ",window.opacity);
+        }
+        else if (setting ==="button_up_down_mode"){
+            window.up_down_mode=data[setting];
+            console.log('RETRIEVED SETTING ',window.up_down_mode);
         }
 
         else{
@@ -211,6 +215,7 @@ function create_buttons(){
         getSetting('on_off');
         getSetting('originaltext_color');
         getSetting('button_on_off');
+        getSetting('button_up_down_mode');
         //Use to be able to create buttons before bottom bar was visible, can't anymore so button creation
         //is moved to after player is detected now
 
@@ -349,20 +354,31 @@ function llsubs(){
 
     $(".my-timedtext-container").remove(); // should actually do this after video exit rather than before video start since it will fix the text lingering a bit on exit
 
-    $(".watch-video").append(`<div class='my-timedtext-container' style='display: block; white-space: nowrap; text-align: center; position: absolute; left: 50%; bottom: 18%;-webkit-transform: translateX(-50%); transform: translateX(-50%); font-size:21px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'><span id=my_subs_innertext></span></div>`)
+    if (window.up_down_mode){
+        
+        $(".watch-video").append(`<div class='my-timedtext-container' style='display: block; white-space: nowrap; text-align: center; position: absolute; left: 50%; bottom: 18%;-webkit-transform: translateX(-50%); transform: translateX(-50%); font-size:21px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'><span id=my_subs_innertext></span></div>`)
+        let st = document.createElement('style'); 
+        let st2 = document.createElement('style');
+        let st_after = document.createElement('style'); 
+        let st2_after = document.createElement('style');
+        st.innerText='.player-timedtext br{content: "";}';
+        st2.innerText='.my-timedtext-container br{content: "";}'; 
+        st_after.innerText='.player-timedtext br:after{content: " ";}';
+        st2_after.innerText='.my-timedtext-container br:after{content: " ";}'; 
+
+        document.head.appendChild(st);
+        document.head.appendChild(st2);
+        document.head.appendChild(st_after);
+        document.head.appendChild(st2_after);
+
+        //uhh I didn't realize I could just inject css like this lmao.. for now using it for vertical text feature but will try to apply this to everything else later for cleaner code
+        //it hides <br>'s to keep things on one line
+    } else{
+    $(".watch-video").append(`<div class='my-timedtext-container' style='display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%; font-size:21px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'><span id=my_subs_innertext></span></div>`)
+    }
     window.my_timedtext_element= document.getElementsByClassName('my-timedtext-container')[0];
     
     my_timedtext_element.setAttribute('translate','yes');
-
-    //uhh I didn't realize I could just inject css like this lmao.. for now using it for vertical text feature but will try to apply this to everything else later for cleaner code
-    let st = document.createElement('style'); 
-    let st2 = document.createElement('style');
-    st.innerText='.player-timedtext br{display:none;}';
-    st2.innerText='.my-timedtext-container br{display:none;}'; 
-    document.head.appendChild(st);
-    document.head.appendChild(st2);
-    // Hides <br>'s to keep things on one line
-    
     
     window.last_subs = '';
 
@@ -435,7 +451,9 @@ function llsubs(){
 
                     if (window.up_down_mode){
                         // window.my_timedtext_element.style['left']='2.5%';
-
+                        window.my_timedtext_element.left='50%';
+                        window.my_timedtext_element.transform='translate(-50%)';
+                        window.my_timedtext_element.webkitTransform='translateX(-50%)'; 
 
                     }
                     else{
@@ -536,11 +554,11 @@ var addSubs = function(caption_row){
 
         old_style = caption_row.firstChild.style
         //console.log(old_style);
-        if(up_down_mode){
+        if(window.up_down_mode){
             caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; bottom: 25%;left: 50%;-webkit-transform: translateX(-50%); transform: translateX(-50%);');   
         }
         else{
-        caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
+        caption_row.firstChild.setAttribute('style','display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
         }
         caption_row.firstChild.setAttribute('translate','no'); //stopped working for edge
         caption_row.firstChild.setAttribute('_istranslated','1'); //MIGHT WORK FOR DUAL COMPATIBILITY!!!! (spoofs edge translator to skip since translate tag doesnt work)
@@ -741,7 +759,7 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
             //console.log("Recieved Message from BACKGROUND.JS to CHANGE font_multiplier to " + request.value);
 
             window.current_multiplier=parseFloat(request.value);
-            window.current_size=window.baseFont*request.value+'px'
+            window.current_size=window.baseFont*request.value+'px';
             update_style('font_size');
 
         }
@@ -792,4 +810,54 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                // console.log(e);
             }
         }
+
+        if (request.message ==='update_up_down_mode'){
+
+            //console.log("Recieved Message from BACKGROUND.JS to CHANGE opacity to " + request.value);
+            window.up_down_mode=request.value;
+
+            if (!window.up_down_mode){ //turning off
+                
+                try{
+                document.querySelector('.injected-style').remove();
+                document.querySelector('.second-injected-style').remove();
+                window.my_timedtext_element.style['left']='';
+                window.my_timedtext_element.style['transform']='';
+                window.my_timedtext_element.style['-webkit-transform']=''; 
+                window.my_timedtext_element.style['white-space']='pre-wrap'; 
+                //document.getElementById("myIncreaseButton").style.display='none';
+                }
+                catch(e){
+                   console.log(e);
+                }
+            }
+            else{
+                
+                try{
+                    let st = document.createElement('style'); 
+                    let st2 = document.createElement('style');
+                    let st_after = document.createElement('style'); 
+                    let st2_after = document.createElement('style');
+                    st.innerText='.player-timedtext br{content: "";}';
+                    st2.innerText='.my-timedtext-container br{content: "";}'; 
+                    st_after.innerText='.player-timedtext br:after{content: " ";}';
+                    st2_after.innerText='.my-timedtext-container br:after{content: " ";}'; 
+            
+                    document.head.appendChild(st);
+                    document.head.appendChild(st2);
+                    document.head.appendChild(st_after);
+                    document.head.appendChild(st2_after);
+
+                    window.my_timedtext_element.style['left']='50%';
+                    window.my_timedtext_element.style['transform']='translate(-50%)';
+                    window.my_timedtext_element.style['-webkit-transform']='translateX(-50%)'; 
+                    window.my_timedtext_element.style['white-space']='nowrap'; 
+                }
+                catch(e){
+                   console.log(e);
+                }
+            }
+
+        }
+
 });

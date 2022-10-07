@@ -86,7 +86,7 @@ chrome.storage.sync.get('button_on_off', function(data){
 
 chrome.storage.sync.get('originaltext_opacity', function(data){
   if(data.originaltext_opacity){
-    console.log("Preferences: Original Text Opacity : " + data.text_color);
+    console.log("Preferences: Original Text Opacity : " + data.originaltext_color);
   }
   else{
     console.log("No Original Text Opacity Preference Found - Setting to 1");
@@ -96,11 +96,21 @@ chrome.storage.sync.get('originaltext_opacity', function(data){
 
 chrome.storage.sync.get('originaltext_color', function(data){
   if(data.originaltext_color){
-    console.log("Preferences: OriginalText Color : " + data.text_color);
+    console.log("Preferences: OriginalText Color : " + data.originaltext_color);
   }
   else{
     console.log("No OriginalText Color Preference Found - Setting YELLOW");
     chrome.storage.sync.set({'originaltext_color': '#fff000'});
+  }
+});
+
+chrome.storage.sync.get('originaltext_color', function(data){
+  if(data.up_down_mode){
+    console.log("Preferences: up_down_mode: " + data.up_down_mode);
+  }
+  else{
+    console.log("No up_down_mode Preference Found - Setting 0");
+    chrome.storage.sync.set({'button_up_down_mode': 0});
   }
 });
 
@@ -223,6 +233,20 @@ chrome.runtime.onMessage.addListener(
         chrome.tabs.query({active:true, currentWindow:true}, function(tabs){ //Pass message onto Content.js
           chrome.tabs.sendMessage(tabs[0].id, {
             "message":"update_originaltext_color",
+            "value":request.value}); 
+        });
+
+      }
+
+      if(request.message === "update_button_up_down_mode")
+      {
+
+        console.log("Background.js recieved  a message from SLIDER to update up_down_mode to " + request.value);
+        chrome.storage.sync.set({'button_up_down_mode':request.value});
+        
+        chrome.tabs.query({active:true, currentWindow:true}, function(tabs){ //Pass message onto Content.js
+          chrome.tabs.sendMessage(tabs[0].id, {
+            "message":"update_up_down_mode",
             "value":request.value}); 
         });
 
