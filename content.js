@@ -832,6 +832,17 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                 document.querySelector('.second-injected-style').remove();
                 document.querySelector('.after-injected-style').remove();
                 document.querySelector('.after-second-injected-style').remove();
+
+                window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x)+ (parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025);
+                var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
+                window.my_timedtext_element.style['left']=sub_dist+'px';
+                try{
+                document.querySelector('.player-timedtext-text-container').setAttribute('style','display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
+                }
+                catch(e){
+
+                }
+
                 //document.getElementById("myIncreaseButton").style.display='none';
                 }
                 catch(e){
@@ -841,6 +852,7 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
             else{
                 
                 try{
+                    
                     let st = document.createElement('style'); 
                     let st2 = document.createElement('style');
                     let st_after = document.createElement('style'); 
@@ -864,6 +876,13 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                     window.my_timedtext_element.style['transform']='translate(-50%)';
                     window.my_timedtext_element.style['-webkit-transform']='translateX(-50%)'; 
                     window.my_timedtext_element.style['white-space']='nowrap'; 
+                    try{
+                    document.querySelector('.player-timedtext-text-container').setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; bottom: 25%;left: 50%;-webkit-transform: translateX(-50%); transform: translateX(-50%);');   
+                    }
+                    catch(e){
+
+                    }
+
                 }
                 catch(e){
                    console.log(e);
