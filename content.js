@@ -361,11 +361,15 @@ function llsubs(){
         let st2 = document.createElement('style');
         let st_after = document.createElement('style'); 
         let st2_after = document.createElement('style');
+        
         st.innerText='.player-timedtext br{content: "";}';
         st2.innerText='.my-timedtext-container br{content: "";}'; 
         st_after.innerText='.player-timedtext br:after{content: " ";}';
         st2_after.innerText='.my-timedtext-container br:after{content: " ";}'; 
-
+        st.className='injected-style';
+        st2.className='second-injected-style';
+        st_after.className='after-injected-style';
+        st2_after.className='after-second-injected-style';
         document.head.appendChild(st);
         document.head.appendChild(st2);
         document.head.appendChild(st_after);
@@ -819,12 +823,15 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
             if (!window.up_down_mode){ //turning off
                 
                 try{
-                document.querySelector('.injected-style').remove();
-                document.querySelector('.second-injected-style').remove();
+                
                 window.my_timedtext_element.style['left']='';
                 window.my_timedtext_element.style['transform']='';
                 window.my_timedtext_element.style['-webkit-transform']=''; 
                 window.my_timedtext_element.style['white-space']='pre-wrap'; 
+                document.querySelector('.injected-style').remove();
+                document.querySelector('.second-injected-style').remove();
+                document.querySelector('.after-injected-style').remove();
+                document.querySelector('.after-second-injected-style').remove();
                 //document.getElementById("myIncreaseButton").style.display='none';
                 }
                 catch(e){
@@ -838,10 +845,15 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                     let st2 = document.createElement('style');
                     let st_after = document.createElement('style'); 
                     let st2_after = document.createElement('style');
+                    
                     st.innerText='.player-timedtext br{content: "";}';
                     st2.innerText='.my-timedtext-container br{content: "";}'; 
                     st_after.innerText='.player-timedtext br:after{content: " ";}';
                     st2_after.innerText='.my-timedtext-container br:after{content: " ";}'; 
+                    st.className='injected-style';
+                    st2.className='second-injected-style';
+                    st_after.className='after-injected-style';
+                    st2_after.className='after-second-injected-style';
             
                     document.head.appendChild(st);
                     document.head.appendChild(st2);
