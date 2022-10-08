@@ -110,7 +110,7 @@ chrome.storage.sync.get('originaltext_color', function(data){
   }
   else{
     console.log("No up_down_mode Preference Found - Setting 0");
-    chrome.storage.sync.set({'button_up_down_mode': 0});
+    chrome.storage.sync.set({'button_up_down_mode': 1});
   }
 });
 
