@@ -1,16 +1,14 @@
 //Life Before Death, Strength Before Weakness, Journey Before Destination
-// v1.4 - Bottom Bar buttons are back!
-//DEV LOG: there's a problem with the error catching for the buttons, haven't been able to reproduce it yet, probably too many random try/catch's
-//TODO: Button creation would feel more polished if it was done right away, doing it after "player detected" feels too late
-//5-13 Netflix update again.. changed it so subtitle styles are placed one element deeper (just had to add another .firstChild at every "captionRow"/"player-timedtext" retrieval)
+// v1.5.5 - Stacked Subtitles will become default
+//DEV LOG: 
 //Also, there seems to be two possible "classname modes", one that is normal and one that has everything ending with "Css"..
 //Compensating for both these changes has led to a ton of sloppy code just in an effort ot get everythign to work finally (which it does, at least for the "weird mode") will have to go back to cleanup code tomorrow
 // Will also need to test more on the non "weird classname mode", not sure if everythign works for that as well
-//5-17 - Fixed english subs, very sloppy code since I want to get this update out fast, will clean up later
+
+// TODO: Code cleanup and reformat some things for readability (more functions), Keep looking for bugs with stacked subs
 window.player_active=0;
 window.weird_classname_mode=0;
 window.first_run = 1;
-// window.up_down_mode=1;
 
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -51,17 +49,6 @@ function getSetting(setting){
         if (setting === "on_off"){
             window.on_off = data[setting];
             
-            /* Broken for now
-            if (!window.on_off){
-                document.getElementById("mybuttonDec").parentElement.style.display='none';
-                document.getElementById("myButtonInc").parentElement.style.display='none';
-            }
-            else{
-                document.getElementById("mybuttonDec").parentElement.style.display='block';
-                document.getElementById("myButtonInc").parentElement.style.display='block';
-            }
-            */
-            
         }
 
         else if (setting === "button_on_off"){
@@ -70,7 +57,6 @@ function getSetting(setting){
 
         else if (setting === "font_multiplier"){
             window.current_multiplier = parseFloat(data[setting]);
-            //console.log("Retrieved Font Multiplier From Storage: ",window.current_multiplier);
         }
 
         /*else if (setting === "sub_distance"){
@@ -84,7 +70,6 @@ function getSetting(setting){
             //document.getElementById("mybuttonDec").firstElementChild.setAttribute('stroke',window.text_color);
             //document.getElementById("myButtonInc").firstElementChild.setAttribute('stroke',window.text_color);
             
-            //console.log("Retrieved Font Multiplier From Storage: ",window.text_color);
         }
 
         else if (setting === "opacity"){
@@ -101,11 +86,9 @@ function getSetting(setting){
         }
         else if (setting ==="button_up_down_mode"){
             window.up_down_mode=data[setting];
-            console.log('RETRIEVED SETTING ',window.up_down_mode);
         }
-
         else{
-            //console.log("Setting: ", setting, " Does Not Exist");
+            // console.log("No setting")
         }
 
     });
@@ -115,7 +98,6 @@ function wait_for_player(){
     
     waitForElement("#appMountPoint > div > div >div > div > div > div:nth-child(1) > div > div > div > div").then(function(element) {
        // console.log("Player detected");
-        //console.log("Subs Detected");
         
         try{
         actual_create_buttons();      
@@ -128,8 +110,8 @@ function wait_for_player(){
         getSetting('opacity');
         getSetting('originaltext_opacity');
         getSetting('font_multiplier');
-
         //getSetting('text_side');
+
         window.original_text_side = 0; //Can change this to flip the text, don't like the feature since the text moves too much but maybe I can improve it later
 
         //getSetting('sub_distance'); disabled for now, unnecessary imo
@@ -355,8 +337,8 @@ function llsubs(){
     $(".my-timedtext-container").remove(); // should actually do this after video exit rather than before video start since it will fix the text lingering a bit on exit
 
     if (window.up_down_mode){
-        
-        $(".watch-video").append(`<div class='my-timedtext-container' style='display: block; white-space: nowrap; text-align: center; position: absolute; left: 50%; bottom: 18%;-webkit-transform: translateX(-50%); transform: translateX(-50%); font-size:21px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'><span id=my_subs_innertext></span></div>`)
+        console.log("Up Down Mode");
+        $(".watch-video").append(`<div class='my-timedtext-container' style='display: block; white-space: nowrap; text-align: center; position: absolute; left: 50%; bottom: 20%;-webkit-transform: translateX(-50%); transform: translateX(-50%); font-size:21px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'><span id=my_subs_innertext></span></div>`)
         let st = document.createElement('style'); 
         let st2 = document.createElement('style');
         let st_after = document.createElement('style'); 
@@ -378,6 +360,7 @@ function llsubs(){
         //uhh I didn't realize I could just inject css like this lmao.. for now using it for vertical text feature but will try to apply this to everything else later for cleaner code
         //it hides <br>'s to keep things on one line
     } else{
+        console.log("Left Right Mode");
     $(".watch-video").append(`<div class='my-timedtext-container' style='display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%; font-size:21px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'><span id=my_subs_innertext></span></div>`)
     }
     window.my_timedtext_element= document.getElementsByClassName('my-timedtext-container')[0];
@@ -559,9 +542,9 @@ var addSubs = function(caption_row){
         old_style = caption_row.firstChild.style
         //console.log(old_style);
         if(window.up_down_mode){
-            caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; bottom: 25%;left: 50%;-webkit-transform: translateX(-50%); transform: translateX(-50%);');   
+            caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 50%; bottom:16.0523%; -webkit-transform: translateX(-50%); transform: translateX(-50%);');   
         }
-        else{
+        else{ //Left - Right subs
         caption_row.firstChild.setAttribute('style','display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
         }
         caption_row.firstChild.setAttribute('translate','no'); //stopped working for edge
@@ -587,15 +570,19 @@ var addSubs = function(caption_row){
         else if (original_subs===''){
             window.my_timedtext_element=original_subs;
         }
-        //console.log(caption_row);
         //window.baseFont = parseFloat(caption_row.firstChild.firstChild.firstChild.style.fontSize.replace('px','')); //font size changes way easily than on nrk so will take basefont after every clear instead (if change inset update, change this as well)
         window.current_size = window.baseFont*window.current_multiplier+'px';
 
     
         if(window.up_down_mode){
             // window.my_timedtext_element.style['left']='2.5%';
+            window.my_timedtext_element.style['bottom']='20%';
         }
         else{
+
+            var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
+            window.my_timedtext_element.style['bottom']=sub_bot+'px';      
+            
             if(window.original_text_side == 0){
                 window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x)+ (parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025);
                 var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
@@ -613,14 +600,6 @@ var addSubs = function(caption_row){
             }
         }
         
-        var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
-
-        if(window.up_down_mode){
-            window.my_timedtext_element.style['bottom']='18%';
-        }
-        else{
-        window.my_timedtext_element.style['bottom']=sub_bot+'px';        
-        }
         if (window.first_run){
             actual_create_buttons;
             window.first_run=0;
@@ -630,7 +609,6 @@ var addSubs = function(caption_row){
         update_style('opacity');
         update_style('font_size');
         //update_style('original_font_size');//I'll do this later, currently a bit tricky since the current font size modification is uses the original subs as the base value 
-        
         
     }
 
@@ -642,7 +620,9 @@ function update_style(setting){
     
     var lines = window.my_timedtext_element;
     try{
-    var original_lines = document.getElementsByClassName("player-timedtext")[0].firstChild.firstChild; //8/30/22 bug here
+    
+        var original_lines = document.getElementsByClassName("player-timedtext")[0].firstChild.firstChild; //8/30/22 bug here
+
     }
     catch (e){
         return;
@@ -817,12 +797,10 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
 
         if (request.message ==='update_up_down_mode'){
 
-            //console.log("Recieved Message from BACKGROUND.JS to CHANGE opacity to " + request.value);
+            console.log("Recieved Message from BACKGROUND.JS to change up_down" + request.value);
             window.up_down_mode=request.value;
 
             if (!window.up_down_mode){ //turning off
-                
-                try{
                 
                 window.my_timedtext_element.style['left']='';
                 window.my_timedtext_element.style['transform']='';
@@ -832,61 +810,63 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                 document.querySelector('.second-injected-style').remove();
                 document.querySelector('.after-injected-style').remove();
                 document.querySelector('.after-second-injected-style').remove();
-
-                window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x)+ (parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025);
-                var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
-                window.my_timedtext_element.style['left']=sub_dist+'px';
                 try{
-                document.querySelector('.player-timedtext-text-container').setAttribute('style','display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
-                }
-                catch(e){
 
-                }
+                    window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x)+ (parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025);
+                    var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
+                    window.my_timedtext_element.style['left']=sub_dist+'px';
+                    try{
+                    document.querySelector('.player-timedtext-text-container').setAttribute('style','display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
+                    }
+                    catch(e){
+                        //console.log("No subs onscreen");
+                    }
 
                 //document.getElementById("myIncreaseButton").style.display='none';
                 }
                 catch(e){
                    console.log(e);
                 }
+
             }
             else{
                 
-                try{
-                    
-                    let st = document.createElement('style'); 
-                    let st2 = document.createElement('style');
-                    let st_after = document.createElement('style'); 
-                    let st2_after = document.createElement('style');
-                    
-                    st.innerText='.player-timedtext br{content: "";}';
-                    st2.innerText='.my-timedtext-container br{content: "";}'; 
-                    st_after.innerText='.player-timedtext br:after{content: " ";}';
-                    st2_after.innerText='.my-timedtext-container br:after{content: " ";}'; 
-                    st.className='injected-style';
-                    st2.className='second-injected-style';
-                    st_after.className='after-injected-style';
-                    st2_after.className='after-second-injected-style';
-            
-                    document.head.appendChild(st);
-                    document.head.appendChild(st2);
-                    document.head.appendChild(st_after);
-                    document.head.appendChild(st2_after);
+                let st = document.createElement('style'); 
+                let st2 = document.createElement('style');
+                let st_after = document.createElement('style'); 
+                let st2_after = document.createElement('style');
+                
+                st.innerText='.player-timedtext br{content: "";}';
+                st2.innerText='.my-timedtext-container br{content: "";}'; 
+                st_after.innerText='.player-timedtext br:after{content: " ";}';
+                st2_after.innerText='.my-timedtext-container br:after{content: " ";}'; 
+                st.className='injected-style';
+                st2.className='second-injected-style';
+                st_after.className='after-injected-style';
+                st2_after.className='after-second-injected-style';
+        
+                document.head.appendChild(st);
+                document.head.appendChild(st2);
+                document.head.appendChild(st_after);
+                document.head.appendChild(st2_after);
 
+                try{
                     window.my_timedtext_element.style['left']='50%';
                     window.my_timedtext_element.style['transform']='translate(-50%)';
                     window.my_timedtext_element.style['-webkit-transform']='translateX(-50%)'; 
                     window.my_timedtext_element.style['white-space']='nowrap'; 
                     try{
-                    document.querySelector('.player-timedtext-text-container').setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; bottom: 25%;left: 50%;-webkit-transform: translateX(-50%); transform: translateX(-50%);');   
+                    document.querySelector('.player-timedtext-text-container').setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute;left: 50%; bottom:16.0523%; -webkit-transform: translateX(-50%); transform: translateX(-50%);');   
                     }
                     catch(e){
-
+                        // console.log("No subs on the screen");
                     }
 
                 }
                 catch(e){
                    console.log(e);
                 }
+
             }
 
         }
