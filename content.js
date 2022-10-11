@@ -6,9 +6,11 @@
 // Will also need to test more on the non "weird classname mode", not sure if everythign works for that as well
 
 // TODO: Code cleanup and reformat some things for readability (more functions), Keep looking for bugs with stacked subs
+// TODO: functions, bottom stacked subs variable
 window.player_active=0;
 window.weird_classname_mode=0;
-window.first_run = 1;
+// window.first_run = 1;
+getSetting('button_up_down_mode'); //I don't like putting this here but need to for now, the retrieval happens takes too long for first run
 
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -54,6 +56,10 @@ function getSetting(setting){
         else if (setting === "button_on_off"){
             window.button_on_off = data[setting];
         }
+        else if (setting ==="button_up_down_mode"){
+            window.up_down_mode=data[setting];
+            console.log("RECIEVED UP DOWN", data[setting]);
+        }
 
         else if (setting === "font_multiplier"){
             window.current_multiplier = parseFloat(data[setting]);
@@ -84,11 +90,8 @@ function getSetting(setting){
             window.originaltext_color = data[setting];
             //console.log("Retrieved Opacity From Storage: ",window.opacity);
         }
-        else if (setting ==="button_up_down_mode"){
-            window.up_down_mode=data[setting];
-        }
         else{
-            // console.log("No setting")
+            console.log("No setting:",setting);
         }
 
     });
@@ -193,11 +196,13 @@ function create_buttons(){
         //Enables right click
         var elements = document.getElementsByTagName("*");
         for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
-
+        // getSetting('button_up_down_mode');
         getSetting('on_off');
+        
         getSetting('originaltext_color');
         getSetting('button_on_off');
-        getSetting('button_up_down_mode');
+        
+        
         //Use to be able to create buttons before bottom bar was visible, can't anymore so button creation
         //is moved to after player is detected now
 
@@ -468,33 +473,6 @@ function llsubs(){
 
 }
 
-// var coalesce_containers = function(caption_row){
-
-//     return new Promise((resolve,reject)=>{
-//          //new netflix update, can use many containers New girl 17:48
-//     let count = caption_row.childElementCount;
-//     let final_innerText = '';
-    
-//     //let caption_row = document.getElementsByClassName('player-timedtext')[0];
-//     let final_style = caption_row.firstChild.firstChild.firstChild.getAttribute('style');
-
-//     for (let i = 0; i<caption_row.childElementCount;i++){
-        
-//         final_innerText+=document.getElementsByClassName('player-timedtext-text-container')[i].firstChild.innerText;
-//         if (i<caption_row.childElementCount-1){
-//             final_innerText+='\n';
-//         }
-//     }
-//     document.getElementsByClassName('player-timedtext-text-container')[0].firstChild.innerText=final_innerText;
-
-//     for (let j = 0; j<caption_row.childElementCount;j++){
-//         document.getElementsByClassName('player-timedtext-text-container')[1].remove();
-//     }
-//     document.getElementsByClassName('player-timedtext-text-container')[0].firstChild.setAttribute('style',final_style);
-//     console.log('Coalesced ' + count + ' rows');
-//     });
-   
-// }
 var addSubs = function(caption_row){ 
 
    if(caption_row.firstChild!=null && window.on_off){ // Ensures Subs were added rather than removed, probably redundant
@@ -542,7 +520,8 @@ var addSubs = function(caption_row){
         old_style = caption_row.firstChild.style
         //console.log(old_style);
         if(window.up_down_mode){
-            caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 50%; bottom:16.0523%; -webkit-transform: translateX(-50%); transform: translateX(-50%);');   
+            console.log("UPDOWN");
+            caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 50%; bottom:20%; -webkit-transform: translateX(-50%); transform: translateX(-50%);');   
         }
         else{ //Left - Right subs
         caption_row.firstChild.setAttribute('style','display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
@@ -576,7 +555,8 @@ var addSubs = function(caption_row){
     
         if(window.up_down_mode){
             // window.my_timedtext_element.style['left']='2.5%';
-            window.my_timedtext_element.style['bottom']='20%';
+            var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
+            window.my_timedtext_element.style['bottom']=(sub_bot-window.baseFont-10)+'px';    
         }
         else{
 
@@ -795,7 +775,7 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
             }
         }
 
-        if (request.message ==='update_up_down_mode'){
+        if (request.message ==='update_button_up_down_mode'){
 
             console.log("Recieved Message from BACKGROUND.JS to change up_down" + request.value);
             window.up_down_mode=request.value;
@@ -806,15 +786,22 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                 window.my_timedtext_element.style['transform']='';
                 window.my_timedtext_element.style['-webkit-transform']=''; 
                 window.my_timedtext_element.style['white-space']='pre-wrap'; 
-                document.querySelector('.injected-style').remove();
-                document.querySelector('.second-injected-style').remove();
-                document.querySelector('.after-injected-style').remove();
-                document.querySelector('.after-second-injected-style').remove();
+                try{
+                    document.querySelector('.injected-style').remove();
+                    document.querySelector('.second-injected-style').remove();
+                    document.querySelector('.after-injected-style').remove();
+                    document.querySelector('.after-second-injected-style').remove();
+                }
+                catch(e){
+                    console.log("No injected css");
+                }
+
                 try{
 
                     window.original_subs_placement = parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().x)+ (parseInt(document.getElementsByClassName("player-timedtext")[0].getBoundingClientRect().width)*.025);
                     var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
                     window.my_timedtext_element.style['left']=sub_dist+'px';
+                    
                     try{
                     document.querySelector('.player-timedtext-text-container').setAttribute('style','display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
                     }
@@ -856,7 +843,7 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                     window.my_timedtext_element.style['-webkit-transform']='translateX(-50%)'; 
                     window.my_timedtext_element.style['white-space']='nowrap'; 
                     try{
-                    document.querySelector('.player-timedtext-text-container').setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute;left: 50%; bottom:16.0523%; -webkit-transform: translateX(-50%); transform: translateX(-50%);');   
+                    document.querySelector('.player-timedtext-text-container').setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute;left: 50%; bottom:20%; -webkit-transform: translateX(-50%); transform: translateX(-50%);');   
                     }
                     catch(e){
                         // console.log("No subs on the screen");

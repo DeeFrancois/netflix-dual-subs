@@ -104,12 +104,12 @@ chrome.storage.sync.get('originaltext_color', function(data){
   }
 });
 
-chrome.storage.sync.get('originaltext_color', function(data){
-  if(data.up_down_mode){
-    console.log("Preferences: up_down_mode: " + data.up_down_mode);
+chrome.storage.sync.get('button_up_down_mode', function(data){
+  if(data.button_up_down_mode){
+    console.log("Preferences: up_down_mode: " + data.button_up_down_mode);
   }
   else{
-    console.log("No up_down_mode Preference Found - Setting 0");
+    console.log("No up_down_mode Preference Found - Setting 1");
     chrome.storage.sync.set({'button_up_down_mode': 1});
   }
 });
@@ -163,6 +163,20 @@ chrome.runtime.onMessage.addListener(
           chrome.tabs.sendMessage(tabs[0].id, {
             "message":"update_button_on_off",
             "value":request.value});
+        });
+
+      }
+
+      if(request.message === "update_button_up_down_mode")
+      {
+
+        console.log("Background.js recieved  a message from SLIDER to update up_down_mode to " + request.value);
+        chrome.storage.sync.set({'button_up_down_mode':request.value});
+        
+        chrome.tabs.query({active:true, currentWindow:true}, function(tabs){ //Pass message onto Content.js
+          chrome.tabs.sendMessage(tabs[0].id, {
+            "message":"update_button_up_down_mode",
+            "value":request.value}); 
         });
 
       }
@@ -233,20 +247,6 @@ chrome.runtime.onMessage.addListener(
         chrome.tabs.query({active:true, currentWindow:true}, function(tabs){ //Pass message onto Content.js
           chrome.tabs.sendMessage(tabs[0].id, {
             "message":"update_originaltext_color",
-            "value":request.value}); 
-        });
-
-      }
-
-      if(request.message === "update_button_up_down_mode")
-      {
-
-        console.log("Background.js recieved  a message from SLIDER to update up_down_mode to " + request.value);
-        chrome.storage.sync.set({'button_up_down_mode':request.value});
-        
-        chrome.tabs.query({active:true, currentWindow:true}, function(tabs){ //Pass message onto Content.js
-          chrome.tabs.sendMessage(tabs[0].id, {
-            "message":"update_up_down_mode",
             "value":request.value}); 
         });
 
