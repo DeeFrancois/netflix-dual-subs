@@ -11,11 +11,11 @@ window.player_active=0;
 window.weird_classname_mode=0;
 window.edge=0;
 if (window.navigator.userAgent.includes('Edg/')){
-    console.log("EDGE VERSION");
+    // console.log("EDGE VERSION");
     window.edge=1;
 }
 else{
-    console.log("CHROME VERSION");
+    // console.log("CHROME VERSION");
     window.edge=0;
 }
 // window.first_run = 1;
