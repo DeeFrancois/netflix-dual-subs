@@ -446,6 +446,7 @@ function llsubs(){
                         window.my_timedtext_element.left='50%';
                         window.my_timedtext_element.transform='translate(-50%)';
                         window.my_timedtext_element.webkitTransform='translateX(-50%)'; 
+                        
 
                     }
                     else{
@@ -556,7 +557,7 @@ var addSubs = function(caption_row){
         if(window.up_down_mode){
             // window.my_timedtext_element.style['left']='2.5%';
             var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
-            window.my_timedtext_element.style['bottom']=(sub_bot-window.baseFont-10)+'px';    
+            window.my_timedtext_element.style['bottom']=(sub_bot-(window.baseFont*window.current_multiplier)-10)+'px';    
         }
         else{
 
@@ -802,12 +803,15 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                     var sub_dist = (parseInt(document.getElementsByClassName("player-timedtext")[0].firstChild.getBoundingClientRect().width)+(window.original_subs_placement)+10);
                     window.my_timedtext_element.style['left']=sub_dist+'px';
                     
+                    
                     try{
                     document.querySelector('.player-timedtext-text-container').setAttribute('style','display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
                     }
                     catch(e){
                         //console.log("No subs onscreen");
                     }
+                    var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
+                    window.my_timedtext_element.style['bottom']=sub_bot+'px';    
 
                 //document.getElementById("myIncreaseButton").style.display='none';
                 }
@@ -844,9 +848,11 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                     window.my_timedtext_element.style['white-space']='nowrap'; 
                     try{
                     document.querySelector('.player-timedtext-text-container').setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute;left: 50%; bottom:20%; -webkit-transform: translateX(-50%); transform: translateX(-50%);');   
+                    var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
+                    window.my_timedtext_element.style['bottom']=(sub_bot-(window.baseFont*window.current_multiplier)-10)+'px';    
                     }
                     catch(e){
-                        // console.log("No subs on the screen");
+                        console.log("No subs on the screen");
                     }
 
                 }

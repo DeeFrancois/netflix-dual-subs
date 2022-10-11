@@ -53,11 +53,11 @@ chrome.storage.sync.get('text_color', function(data){
 // Opacity
 
 chrome.storage.sync.get('opacity', function(data){
-  if(data.text_color){
-    console.log("Preferences: Opacity : " + data.text_color);
+  if(data.opacity){
+    console.log("Preferences: Opacity : " + data.opacity);
   }
   else{
-    console.log("No Opacity Preference Found - Setting to 1");
+    console.log("No Opacity Preference Found - Setting to .8");
     chrome.storage.sync.set({'opacity': .8});
   }
 });
