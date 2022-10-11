@@ -6,11 +6,18 @@
 // Will also need to test more on the non "weird classname mode", not sure if everythign works for that as well
 
 // TODO: Code cleanup and reformat some things for readability (more functions), Keep looking for bugs with stacked subs
-// TODO: functions, bottom stacked subs variable
+// TODO: functions
 window.player_active=0;
 window.weird_classname_mode=0;
 // window.first_run = 1;
-getSetting('button_up_down_mode'); //I don't like putting this here but need to for now, the retrieval happens takes too long for first run
+try{
+    getSetting('button_up_down_mode'); //I don't like putting this here but need to for now, the retrieval happens takes too long for first run
+}
+catch(e){
+    // console.log("Error retrieving Stacked Subs preference, setting to default");
+    window.up_down_mode=1;
+}
+
 
 function waitForElement(selector) {
     return new Promise(function(resolve, reject) {
@@ -58,7 +65,7 @@ function getSetting(setting){
         }
         else if (setting ==="button_up_down_mode"){
             window.up_down_mode=data[setting];
-            console.log("RECIEVED UP DOWN", data[setting]);
+            // console.log("RECIEVED UP DOWN", data[setting]);
         }
 
         else if (setting === "font_multiplier"){
@@ -103,8 +110,7 @@ function wait_for_player(){
        // console.log("Player detected");
         
         try{
-        actual_create_buttons();      
-        }
+            actual_create_buttons();}
         catch(e){
            // console.log("Error creating buttons, likely no bar visible");
         }  
@@ -340,9 +346,19 @@ function llsubs(){
     //My container creation my-timedtext-container
 
     $(".my-timedtext-container").remove(); // should actually do this after video exit rather than before video start since it will fix the text lingering a bit on exit
+    try{ //for lingering injected css
+        document.querySelector('.injected-style').remove();
+        document.querySelector('.second-injected-style').remove();
+        document.querySelector('.after-injected-style').remove();
+        document.querySelector('.after-second-injected-style').remove();
+    }
+    catch(e){
+        // console.log("No injected css");
+        // console.log(e);
+    }
 
     if (window.up_down_mode){
-        console.log("Up Down Mode");
+        // console.log("Up Down Mode");
         $(".watch-video").append(`<div class='my-timedtext-container' style='display: block; white-space: nowrap; text-align: center; position: absolute; left: 50%; bottom: 20%;-webkit-transform: translateX(-50%); transform: translateX(-50%); font-size:21px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'><span id=my_subs_innertext></span></div>`)
         let st = document.createElement('style'); 
         let st2 = document.createElement('style');
@@ -365,7 +381,7 @@ function llsubs(){
         //uhh I didn't realize I could just inject css like this lmao.. for now using it for vertical text feature but will try to apply this to everything else later for cleaner code
         //it hides <br>'s to keep things on one line
     } else{
-        console.log("Left Right Mode");
+        // console.log("Left Right Mode");
     $(".watch-video").append(`<div class='my-timedtext-container' style='display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%; font-size:21px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'><span id=my_subs_innertext></span></div>`)
     }
     window.my_timedtext_element= document.getElementsByClassName('my-timedtext-container')[0];
@@ -373,7 +389,6 @@ function llsubs(){
     my_timedtext_element.setAttribute('translate','yes');
     
     window.last_subs = '';
-
     
     //For Placement
     window.old_inset = timedtext.style.inset;
@@ -425,6 +440,12 @@ function llsubs(){
             
             else if(window.on_off && mutation.type==='attributes' && mutation.target.className==="player-timedtext" && mutation.target.firstChild && mutation.target.style.inset != window.old_inset){ //For adjusting subtitle style when window is resized
                     //Netflix constantly refreshes the text so I have to constantly reapply them
+                    try{ //Reapplying edge translator skip just in case. this thing is stubborn
+                        Array.from(document.querySelector('.player-timedtext').children).forEach(e=>e.setAttribute('_istranslated','1')); //MIGHT WORK FOR DUAL COMPATIBILITY!!!! (spoofs edge translator to skip since translate tag doesnt work)
+                        }
+                        catch(e){
+                            console.log("No subs");
+                        }
 
                     const caption_row = document.getElementsByClassName("player-timedtext")[0];
                     var container_count = caption_row.childElementCount;
@@ -521,15 +542,26 @@ var addSubs = function(caption_row){
         old_style = caption_row.firstChild.style
         //console.log(old_style);
         if(window.up_down_mode){
-            console.log("UPDOWN");
+            // console.log("UPDOWN");
             caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 50%; bottom:20%; -webkit-transform: translateX(-50%); transform: translateX(-50%);');   
         }
         else{ //Left - Right subs
         caption_row.firstChild.setAttribute('style','display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
         }
         caption_row.firstChild.setAttribute('translate','no'); //stopped working for edge
-        caption_row.firstChild.setAttribute('_istranslated','1'); //MIGHT WORK FOR DUAL COMPATIBILITY!!!! (spoofs edge translator to skip since translate tag doesnt work)
-
+        // 
+        caption_row.firstChild.setAttribute('_istranslated',1);
+        caption_row.firstChild.setAttribute('_mstTextHash',123);
+        caption_row.firstChild.setAttribute('skiptranslate',1);
+        caption_row.firstChild.setAttribute('mstnotranslate',1);
+        caption_row.firstChild.setAttribute('_mstHidden',1);
+        caption_row.firstChild.setAttribute('_mstHiddenAttr',1); //One of these worked.. but not consistently
+        // try{ //Edge translator so annoying.. This should work for now
+        // Array.from(document.querySelector('.player-timedtext-text-container').querySelectorAll('*')).forEach(function(e){e.setAttribute('_istranslated',1);}); 
+        // }
+        // catch(e){
+        //     // console.log("No subs");
+        // }
         //caption_row.firstChild.className+=' notranslate'; //dont think multi-class will break the rest of the code but we'll see
         //This actually slows down the chrome translation time for some reason, will have to implement modes for each browser
 
@@ -778,7 +810,7 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
 
         if (request.message ==='update_button_up_down_mode'){
 
-            console.log("Recieved Message from BACKGROUND.JS to change up_down" + request.value);
+            // console.log("Recieved Message from BACKGROUND.JS to change up_down" + request.value);
             window.up_down_mode=request.value;
 
             if (!window.up_down_mode){ //turning off
@@ -795,6 +827,7 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                 }
                 catch(e){
                     console.log("No injected css");
+                    console.log(e);
                 }
 
                 try{
@@ -816,7 +849,7 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                 //document.getElementById("myIncreaseButton").style.display='none';
                 }
                 catch(e){
-                   console.log(e);
+                //    console.log(e);
                 }
 
             }
@@ -852,12 +885,12 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                     window.my_timedtext_element.style['bottom']=(sub_bot-(window.baseFont*window.current_multiplier)-10)+'px';    
                     }
                     catch(e){
-                        console.log("No subs on the screen");
+                        // console.log("No subs on the screen");
                     }
 
                 }
                 catch(e){
-                   console.log(e);
+                //    console.log(e);
                 }
 
             }
