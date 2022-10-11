@@ -9,6 +9,15 @@
 // TODO: functions
 window.player_active=0;
 window.weird_classname_mode=0;
+window.edge=0;
+if (window.navigator.userAgent.includes('Edg/')){
+    console.log("EDGE VERSION");
+    window.edge=1;
+}
+else{
+    console.log("CHROME VERSION");
+    window.edge=0;
+}
 // window.first_run = 1;
 try{
     getSetting('button_up_down_mode'); //I don't like putting this here but need to for now, the retrieval happens takes too long for first run
@@ -359,7 +368,7 @@ function llsubs(){
 
     if (window.up_down_mode){
         // console.log("Up Down Mode");
-        $(".watch-video").append(`<div class='my-timedtext-container' style='display: block; white-space: nowrap; text-align: center; position: absolute; left: 50%; bottom: 20%;-webkit-transform: translateX(-50%); transform: translateX(-50%); font-size:21px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'><span id=my_subs_innertext></span></div>`)
+        $(".watch-video").append(`<div class='my-timedtext-container' style='display: block; white-space: nowrap; max-width:100%; text-align: center; position: absolute; left: 50%; bottom: 20%;-webkit-transform: translateX(-50%); transform: translateX(-50%); font-size:21px;line-height:normal;font-weight:normal;color:#ffffff;text-shadow:#000000 0px 0px 7px;font-family:Netflix Sans,Helvetica Nueue,Helvetica,Arial,sans-serif;font-weight:bolder'><span id=my_subs_innertext></span></div>`)
         let st = document.createElement('style'); 
         let st2 = document.createElement('style');
         let st_after = document.createElement('style'); 
@@ -543,25 +552,31 @@ var addSubs = function(caption_row){
         //console.log(old_style);
         if(window.up_down_mode){
             // console.log("UPDOWN");
-            caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute; left: 50%; bottom:20%; -webkit-transform: translateX(-50%); transform: translateX(-50%);');   
+            caption_row.firstChild.setAttribute('style','display: block; white-space: nowrap; max-width:100%;text-align: center; position: absolute; left: 50%; bottom:20%; -webkit-transform: translateX(-50%); transform: translateX(-50%);');   
         }
         else{ //Left - Right subs
         caption_row.firstChild.setAttribute('style','display: block; white-space: pre-wrap; text-align: center; position: absolute; left: 2.5%; bottom: 18%;');
         }
         caption_row.firstChild.setAttribute('translate','no'); //stopped working for edge
         // 
-        caption_row.firstChild.setAttribute('_istranslated',1);
-        caption_row.firstChild.setAttribute('_mstTextHash',123);
-        caption_row.firstChild.setAttribute('skiptranslate',1);
-        caption_row.firstChild.setAttribute('mstnotranslate',1);
-        caption_row.firstChild.setAttribute('_mstHidden',1);
-        caption_row.firstChild.setAttribute('_mstHiddenAttr',1); //One of these worked.. but not consistently
+        
+        if(window.edge){ //This seems to be the best option for now, keep an eye on it though
+            caption_row.firstChild.className+=' notranslate';
+        }
+        
+        //Graveyard of attempts to block edge translation
+        // caption_row.firstChild.setAttribute('_isTranslated',1);
+        // caption_row.firstChild.setAttribute('skiptranslate',1);
+        // caption_row.firstChild.setAttribute('mstnotranslate',1);
+        // caption_row.firstChild.setAttribute('_mstHidden',1);
+        // caption_row.firstChild.setAttribute('_mstHiddenAttr',1); //One of these worked.. but not consistently
         // try{ //Edge translator so annoying.. This should work for now
-        // Array.from(document.querySelector('.player-timedtext-text-container').querySelectorAll('*')).forEach(function(e){e.setAttribute('_istranslated',1);}); 
+        // Array.from(document.querySelector('.player-timedtext-text-container').querySelectorAll('*')).forEach(function(e){e.setAttribute('_isTranslated',1);e.setAttribute('_mstMutation','1')}); 
         // }
         // catch(e){
         //     // console.log("No subs");
         // }
+
         //caption_row.firstChild.className+=' notranslate'; //dont think multi-class will break the rest of the code but we'll see
         //This actually slows down the chrome translation time for some reason, will have to implement modes for each browser
 
@@ -688,14 +703,18 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                 
                 try{
                 window.my_timedtext_element.style['display']='none';
-                    for (let i =0;i<document.getElementsByClassName("player-timedtext")[0].firstChild.children.length;i++){
+                Array.from(document.querySelector('.player-timedtext').querySelectorAll('*')).forEach(e=>e.style['color']='#FFFFFF');
+                document.querySelector('.player-timedtext-text-container').style['left']='50%';
+                document.querySelector('.player-timedtext-text-container').style['transform']='translate(-50%)';
+                document.querySelector('.player-timedtext-text-container').style['-webkit-transform']='translateX(-50%)'; 
+                    // for (let i =0;i<document.querySelector('.player-timedtext').querySelectorAll('*').length;i++){
                         
-                        document.getElementsByClassName("player-timedtext")[0].firstChild.children[i].style['color']='#FFFFFF';
+                    //     document.getElementsByClassName("player-timedtext")[0].firstChild.children[i].style['color']='#FFFFFF';
                     
-                    }
+                    // }
                 }
                 catch(e){
-                   // console.log(e);
+                   console.log(e);
                 }
                 try{
                 document.getElementById("myTutorialButton").style.display='none';
@@ -708,6 +727,7 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
             else{
                 try{
                 window.my_timedtext_element.style['display']='block';
+                
                 for (let i =0;i<document.getElementsByClassName("player-timedtext")[0].firstChild.children.length;i++){
                     document.getElementsByClassName("player-timedtext")[0].firstChild.children[i].style['color']=window.originaltext_color;
                 }
@@ -880,7 +900,7 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                     window.my_timedtext_element.style['-webkit-transform']='translateX(-50%)'; 
                     window.my_timedtext_element.style['white-space']='nowrap'; 
                     try{
-                    document.querySelector('.player-timedtext-text-container').setAttribute('style','display: block; white-space: nowrap; text-align: center; position: absolute;left: 50%; bottom:20%; -webkit-transform: translateX(-50%); transform: translateX(-50%);');   
+                    document.querySelector('.player-timedtext-text-container').setAttribute('style','display: block; white-space: nowrap; max-width:100%; text-align: center; position: absolute;left: 50%; bottom:20%; -webkit-transform: translateX(-50%); transform: translateX(-50%);');   
                     var sub_bot = parseFloat(document.getElementsByClassName('player-timedtext')[0].style.inset.split(' ')[0].replace('px','')) + parseFloat('.'+document.getElementsByClassName('player-timedtext')[0].firstChild.style['bottom'])*document.getElementsByClassName('player-timedtext')[0].getBoundingClientRect().height;
                     window.my_timedtext_element.style['bottom']=(sub_bot-(window.baseFont*window.current_multiplier)-10)+'px';    
                     }
