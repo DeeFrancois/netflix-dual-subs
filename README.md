@@ -1,7 +1,7 @@
 # Dual Subtitles for Netflix
 [Now available here on the Chrome Extension Store](https://chrome.google.com/webstore/detail/netflix-language-learning/ljnmedkgcgidbbjhbkdonempgcgdhjfl?hl=en)
 
-<sup> Latest Update: **v1.6.0** Stacked subtitles + Edge compatibility fixed for real this time  </sup>
+<sup> Upcoming Update: **v1.8.0** Resize text instead of going offscreen, subs no longer prevents clicking the seekbar, subs are no longer annoyingly close to seekbar, and some other bug fixes</sup>
 
 Works with the browser's built-in translator to enable dual language subtitles on Netflix
 
@@ -69,5 +69,7 @@ v1.4.5: classname patch
 v1.5.2: Tutorial button + major bug fixes
 
 v1.5.4: Edge compatibility fixed (yay! won't actually need seperate Edge Version) <-- I was wrong lol
+
+v1.6.0: Stacked subtitles + Edge compatibility fixed for real this time 
 
 Licensed under the [GPL-3.0 License](LICENSE).
