@@ -380,7 +380,7 @@ function llsubs(){
         document.head.appendChild(st);
         }
         else{
-            console.log("DIDNT INJECT");
+            // console.log("DIDNT INJECT");
         }
 
         //uhh I didn't realize I could just inject css like this lmao.. for now using it for vertical text feature but will try to apply this to everything else later for cleaner code
@@ -393,38 +393,31 @@ function llsubs(){
     
     }
     window.counter=1
-    //Create an observer to track when a translation happens. Need for dealing with overflow
+    //Create an observer to track when a translation happens. Need for dealing with text going offscreen
     const translation_tracker_callback = function(mutationsList,observer){
         for (const mutation of mutationsList){
             if(mutation.target.className==='my-timedtext-container' && mutation.type==='attributes' && mutation.attributeName==='_msttexthash'){
             //edge
             window.counter+=1;
-            console.log("TRANSLATION DETECTED");
-            console.log(window.counter);
             let lines = document.querySelector('.my-timedtext-container'); 
             
-            while(lines.offsetWidth > lines.parentNode.clientWidth-50){
-                console.log('OVERLAPPING');
-                let temp_size=parseFloat(lines.style['font-size'].replace('px',''));
+            let temp_size=parseFloat(lines.style['font-size'].replace('px',''));
+            while(lines.offsetWidth > lines.parentNode.clientWidth-50 && temp_size > 8){
                 temp_size-=2;
-                if (temp_size<15) break;
                 lines.style['font-size']=temp_size+'px';
-                console.log("Changing from: "+window.current_size+ ' To: '+temp_size+'px');
+                // console.log("Changing from: "+window.current_size+ ' To: '+temp_size+'px');
     
             }
 
             }
             else if(mutation.target.className==='my-timedtext-container' && mutation.addedNodes.length==1 && mutation.addedNodes[0].nodeName==='FONT'){ //Chrome
                 window.counter+=1;
-                console.log("TRANSLATION DETECTED");
-                console.log(window.counter);
                 let lines = document.querySelector('.my-timedtext-container'); 
-                while(lines.offsetWidth > lines.parentNode.clientWidth-15){
-                    console.log('OVERLAPPING');
-                    let temp_size=parseFloat(lines.style['font-size'].replace('px',''));
-                    temp_size-=1;
+                let temp_size=parseFloat(lines.style['font-size'].replace('px',''));
+                while(lines.offsetWidth > lines.parentNode.clientWidth-50 && temp_size > 8){
+                    temp_size-=2;
                     lines.style['font-size']=temp_size+'px';
-                    console.log("Changing from: "+window.current_size+ ' To: '+temp_size+'px');
+                    // console.log("Changing from: "+window.current_size+ ' To: '+temp_size+'px');
         
                 }
 
@@ -668,7 +661,7 @@ var addSubs = function(caption_row){
                     }
                     orig.firstChild.children[i].style.fontSize=temp_size+'px';
                 }
-                console.log("Changing orig from: "+window.current_size+ ' To: '+temp_size+'px');
+                // console.log("Changing orig from: "+window.current_size+ ' To: '+temp_size+'px');
 
             }
 
@@ -727,9 +720,9 @@ function update_style(setting){
 
         lines.style["font-size"]=window.current_size;
         //Deal with overflowing text
-        while(lines.offsetWidth > lines.parentNode.clientWidth-15){
-            let temp_size=parseFloat(lines.style['font-size'].replace('px',''));
-            temp_size-=1;
+        let temp_size=parseFloat(lines.style['font-size'].replace('px',''));
+        while(lines.offsetWidth > lines.parentNode.clientWidth-50 && temp_size > 8){
+            temp_size-=2;
             lines.style['font-size']=temp_size+'px';
             // console.log("Changing from: "+window.current_size+ ' To: '+temp_size+'px');
 
@@ -929,8 +922,8 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                     
                 }
                 catch(e){
-                    console.log("No injected css");
-                    console.log(e);
+                    // console.log("No injected css");
+                    // console.log(e);
                 }
 
                 try{
