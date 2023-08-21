@@ -1,16 +1,15 @@
-//Life Before Death, Strength Before Weakness, Journey Before Destination
-// v1.6.0 - Stacked subtitles
+// v1.8.5 - Stacked subtitles
 //DEV LOG: 
 // THINGS TO REMEMBER: 
 // 1. There seems to be two possible "classname modes", one that is normal and one that has everything ending with "Css"..
-    // Compensating for both these changes has led to a ton of sloppy code just in an effort ot get everythign to work finally (which it does, at least for the "weird mode") will have to go back to cleanup code tomorrow
-    // Will also need to test more on the non "weird classname mode", not sure if everythign works for that as well
+    // Compensating for both these changes has led to a ton of sloppy code just in an effort ot get everything to work finally (which it does, at least for the "weird mode") will have to go back to cleanup code tomorrow
+    // Will also need to test more on the non "weird classname mode", not sure if everything works for that as well
 
 // 2. Edge and Chrome have slightly different translators, instead of creating an actual edge extension I just handle both here.
     // Current bug is that the method for blocking an element from the translator works in one browser but causes slow translation in the other
     
-// 3. This code is UGLY. I started this project without knowing anything AT ALL about javascript.I just learned it on the fly. 
-    // Overtime I will clean things up to make this code more efficient and readable, but to be honest it's not a priority. 
+// 3. This code is UGLY. I started this project without knowing anything AT ALL about javascript. I just learned it on the fly. 
+    // Over time I will clean things up to make this code more efficient and readable, but to be honest it's not a priority. 
     // So if anyone is actually reading this and is looking to help contribute to the code, just let me know so I have a reason 
     // to stop procrastinating the code cleanup.
     
@@ -20,6 +19,8 @@
     // and some code cleanup (but bug fixes introduce more spaghetti.. oh well)   
 
 //TODO: Test bugfixes in Chrome
+
+//8/21/2023 - Bugfix: Classname recalibration. TODO: Change tutorial button to be On/Off button 
     
 window.player_active=0;
 window.weird_classname_mode=0;
@@ -168,14 +169,14 @@ var callback = function(mutationsList, observer){ //The main observer to check f
 
         // New way to determine video changes, way more efficient
         // To be fair though, this wouldn't have worked before the netflix interface update as the observers would have persisted and caused endless instances to be created  
-        if (mutation.type === 'childList' && (mutation.target.className===" ltr-1b8gkd7-videoCanvasCss" || mutation.target.className== " ltr-op8orf" || mutation.target.className==" ltr-1212o1j") && mutation.addedNodes.length){
+        if (mutation.type === 'childList' && (mutation.target.className===" ltr-18tyyic" || mutation.target.className===" ltr-1b8gkd7-videoCanvasCss" || mutation.target.className== " ltr-op8orf" || mutation.target.className==" ltr-1212o1j") && mutation.addedNodes.length){
             //console.log("New Video!");
             if(mutation.target.className===" ltr-1b8gkd7-videoCanvasCss"){
                 window.weird_classname_mode=1;
             }
             prepare_for_dual_subs();
         }
-        if (mutation.target.parentNode && (mutation.target.parentNode.className=== " ltr-1b8gkd7-videoCanvasCss"|| mutation.target.className== " ltr-op8orf" || mutation.target.className==" ltr-1212o1j")){
+        if (mutation.target.parentNode && (mutation.target.parentNode.className===" ltr-18tyyic" || mutation.target.parentNode.className=== " ltr-1b8gkd7-videoCanvasCss"|| mutation.target.className== " ltr-op8orf" || mutation.target.className==" ltr-1212o1j")){
             if (mutation.previousSibling && mutation.addedNodes[0].id != mutation.previousSibling.id){
                 //console.log("Video Change");
                 if(mutation.target.parentNode.className===" ltr-1b8gkd7-videoCanvasCss"){
@@ -205,6 +206,7 @@ window.video_change_observer.observe(document.documentElement,window.video_chang
 
 function prepare_for_dual_subs(){ //Starts the observer that waits for the video player to finish loading after a page/video change
         //Enables right click
+        console.log("PREPARING FOR DUALSUBS")
         var elements = document.getElementsByTagName("*");
         for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
         
@@ -221,7 +223,7 @@ function prepare_for_dual_subs(){ //Starts the observer that waits for the video
 }
 
 function actual_create_buttons(){
-   // console.log("Creating buttons..");
+   console.log("Creating buttons..");
     if (!window.on_off || !window.button_on_off){ //Buttons disabled for now so I can get working subs out as fast as possible
         return;
     }
@@ -231,7 +233,7 @@ function actual_create_buttons(){
     }
 
     let buttonSpacing = document.createElement('DIV');
-    buttonSpacing.innerHTML='<div class="ltr-14rufaj" style="min-width: 3rem; width: 3rem;"></div>';
+    buttonSpacing.innerHTML='<div class="ltr-1npqywr" style="min-width: 3rem; width: 3rem;"></div>';
     buttonSpacing=buttonSpacing.firstElementChild;
     try{
     document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonSpacing);
@@ -247,9 +249,9 @@ function actual_create_buttons(){
     // fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
 
     let buttonOne = document.createElement('DIV');
-    buttonOne.innerHTML ='<div class="medium ltr-my293h" id="myTutorialButton"><button aria-label="Open Tutorial" class=" ltr-14ph5iy" data-uia="control-fontsize-minus"><div class="control-medium ltr-1evcx25" role="presentation"><svg width="24" height="24" viewBox="-1 0 24 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z" fill="none" stroke="yellow" stroke-width=".7"></path></svg></div></button></div>'; 
+    buttonOne.innerHTML ='<div class="medium ltr-1dcjcj4" id="myTutorialButton"><button aria-label="Open Tutorial" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-iyulz3" role="presentation"><svg width="24" height="24" viewBox="-1 0 24 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z" fill="none" stroke="yellow" stroke-width="1"></path></svg></div></button></div>'; 
     if (window.weird_classname_mode){
-        buttonOne.innerHTML ='<div class="medium ltr-my293h" id="myTutorialButton"><button aria-label="Open Tutorial" class=" ltr-14ph5iy" data-uia="control-fontsize-minus"><div class="control-medium ltr-1evcx25" role="presentation"><svg width="24" height="24" viewBox="-1 0 24 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z" fill="none" stroke="yellow" stroke-width=".7"></path></svg></div></button></div>'; 
+        buttonOne.innerHTML ='<div class="medium ltr-1dcjcj4" id="myTutorialButton"><button aria-label="Open Tutorial" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-iyulz3" role="presentation"><svg width="24" height="24" viewBox="-1 0 24 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z" fill="none" stroke="yellow" stroke-width="1"></path></svg></div></button></div>'; 
 
     }
     buttonOne=buttonOne.firstElementChild;
@@ -263,23 +265,23 @@ function actual_create_buttons(){
     }
     buttonOne.onmouseenter=function(){
         if (window.weird_classname_mode){
-            buttonOne.firstChild.className='active ltr-14ph5iy-controlButtonCss';
+            buttonOne.firstChild.className='active ltr-1enhvti-controlButtonCss';
         }
         else{
-            buttonOne.firstChild.className='active ltr-14ph5iy';
+            buttonOne.firstChild.className='active ltr-1enhvti';
         }
     }
     buttonOne.onmouseleave=function(){
         if (window.weird_classname_mode){
-        buttonOne.firstChild.className=' ltr-14ph5iy-controlButtonCss';
+        buttonOne.firstChild.className=' ltr-1enhvti-controlButtonCss';
     }
     else{
-        buttonOne.firstChild.className=' ltr-14ph5iy';
+        buttonOne.firstChild.className=' ltr-1enhvti';
     }
     }
 
     buttonSpacing = document.createElement('DIV');
-    buttonSpacing.innerHTML='<div class="ltr-14rufaj" style="min-width: 3rem; width: 3rem;"></div>';
+    buttonSpacing.innerHTML='<div class="ltr-1npqywr" style="min-width: 3rem; width: 3rem;"></div>';
     buttonSpacing=buttonSpacing.firstElementChild;
 
     try{
@@ -325,7 +327,7 @@ function initialize_button_observer(){
     const callback = function(mutationsList,button_observer){
         for (const mutation of mutationsList){
            
-             if (mutation.target.className==='active ltr-omkt8s' || mutation.target.className==='active ltr-gwjau2-playerCss'){
+             if (mutation.target.className==='active ltr-fntwn3' || mutation.target.className==='active ltr-omkt8s' || mutation.target.className==='active ltr-gwjau2-playerCss'){
                  //console.log("Bottom bar visible");
                 if (mutation.target.className==='active ltr-gwjau2-playerCss'){
                     window.netflix_mode = 2;
