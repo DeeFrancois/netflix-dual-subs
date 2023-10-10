@@ -2,6 +2,7 @@
 [Now available here on the Chrome Extension Store](https://chrome.google.com/webstore/detail/netflix-language-learning/ljnmedkgcgidbbjhbkdonempgcgdhjfl?hl=en)
 
 <sup> Upcoming Update: **v1.9** Persistent extension button in playback bar for convenience (an actual settings menu) </sup>
+
 <sup> Released Version: **v1.8.5** Recalibrated to work with new Netflix UI code changes</sup>
 
 Works with the browser's built-in translator to enable dual language subtitles on Netflix
