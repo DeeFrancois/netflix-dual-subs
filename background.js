@@ -134,6 +134,14 @@ chrome.storage.sync.get('button_up_down_mode', function(data){
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
 
+      if(request.message === 'open_settings_menu'){
+        chrome.tabs.query({active:true, currentWindow:true}, function(tabs){ //Pass message onto Content.js
+          chrome.tabs.sendMessage(tabs[0].id, {
+            "message":"open_settings_menu",
+            "value":'0'}); 
+        });
+      }
+
       if (request.message === "open_popup"){ // - 8/29/22 - decide between a settings window or a page with tutorial gifs
         chrome.tabs.create({ url: chrome.runtime.getURL("tutorial.html") });
         //chrome.windows.create({'url': 'popup.html', 'type': 'popup', 'focused':true, 'height':100,'width':100  }, function(window) {

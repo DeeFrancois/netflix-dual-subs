@@ -1,3 +1,8 @@
+chrome.runtime.sendMessage({
+    "message":"open_settings_menu",
+    "value": 'hm'
+});
+
 document.addEventListener('DOMContentLoaded',function(){
     if (window.location.pathname === "/update.html"){ // to stop popup js from running when update.html is opened and causing errors 
         return;
@@ -91,17 +96,6 @@ document.addEventListener('DOMContentLoaded',function(){
         });
         
     }, false);
-
-    /*sideSlider.addEventListener('change',function() {
-        sideSliderValue.innerHTML=this.value;
-        sideSlider.value = this.value;
-
-        //chrome.storage.sync.set({"left_or_right":this.value});
-        chrome.runtime.sendMessage({
-            "message": "update_sub_distance",
-            "value": this.value
-        });
-    }, false);*/
 
     opacitySlider.addEventListener('change',function() {
         opacitySliderValue.innerHTML=this.value;

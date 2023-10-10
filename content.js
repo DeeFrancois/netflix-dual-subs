@@ -213,6 +213,14 @@ function prepare_for_dual_subs(){ //Starts the observer that waits for the video
         // getSetting('button_up_down_mode');
         getSetting('originaltext_color');
         getSetting('button_on_off');
+
+        try{
+            actual_create_buttons();
+            }
+            catch(e){
+               // console.log("No bar 1");
+                return;
+            }
         
         //Use to be able to create buttons before bottom bar was visible, can't anymore so button creation
         //is moved to after player is detected now
@@ -224,9 +232,9 @@ function prepare_for_dual_subs(){ //Starts the observer that waits for the video
 
 function actual_create_buttons(){
    console.log("Creating buttons..");
-    if (!window.on_off || !window.button_on_off){ //Buttons disabled for now so I can get working subs out as fast as possible
-        return;
-    }
+    // if (!window.on_off || !window.button_on_off){ //Buttons disabled for now so I can get working subs out as fast as possible
+    //     return;
+    // }
     if (document.getElementById('myTutorialButton')){
        // console.log("Buttons alreayd made");
         return;
@@ -249,9 +257,9 @@ function actual_create_buttons(){
     // fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
 
     let buttonOne = document.createElement('DIV');
-    buttonOne.innerHTML ='<div class="medium ltr-1dcjcj4" id="myTutorialButton"><button aria-label="Open Tutorial" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-iyulz3" role="presentation"><svg width="24" height="24" viewBox="-1 0 24 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z" fill="none" stroke="yellow" stroke-width="1"></path></svg></div></button></div>'; 
+    buttonOne.innerHTML ='<div class="medium ltr-1dcjcj4" id="myTutorialButton"><button aria-label="Open Tutorial" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-iyulz3" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><g xmlns="http://www.w3.org/2000/svg"><rect stroke-width="2" stroke="white" id="svg_2" height="14" width="22" y="4.93751" x="1" fill="transparent"></rect><path stroke="#000" id="svg_9" d="m3.01532,8.13163l9.68748,0l0,2.5l-9.68748,0l0,-2.5z" stroke-width=".5" fill="yellow"></path><path stroke="#000" id="svg_12" d="m13.48405,8.16288l7.28124,0l0,2.49999l-7.28124,0l0,-2.49999z" stroke-width=".5" fill="yellow"></path><path opacity="0.7" stroke="#000" id="svg_13" d="m4.14032,12.10037l9.96874,0l0,1.81249l-9.96874,0l0,-1.81249z" stroke-width=".5" fill="white"></path><path opacity="0.7" stroke="#000" id="svg_15" d="m14.60905,12.13162l5.40625,0l0,1.81249l-5.40625,0l0,-1.81249z" stroke-width=".5" fill="white"></path></g></svg></div></button></div>'; 
     if (window.weird_classname_mode){
-        buttonOne.innerHTML ='<div class="medium ltr-1dcjcj4" id="myTutorialButton"><button aria-label="Open Tutorial" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-iyulz3" role="presentation"><svg width="24" height="24" viewBox="-1 0 24 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z" fill="none" stroke="yellow" stroke-width="1"></path></svg></div></button></div>'; 
+        buttonOne.innerHTML ='<div class="medium ltr-1dcjcj4" id="myTutorialButton"><button aria-label="Open Tutorial" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-iyulz3" role="presentation"><svg width="24" height="24" viewBox="-1 0 24 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><g xmlns="http://www.w3.org/2000/svg"><rect stroke-width="2" stroke="white" id="svg_2" height="14" width="22" y="4.93751" x="1" fill="transparent"></rect><path stroke="#000" id="svg_9" d="m3.01532,8.13163l9.68748,0l0,2.5l-9.68748,0l0,-2.5z" stroke-width=".5" fill="yellow"></path><path stroke="#000" id="svg_12" d="m13.48405,8.16288l7.28124,0l0,2.49999l-7.28124,0l0,-2.49999z" stroke-width=".5" fill="yellow"></path><path opacity="0.7" stroke="#000" id="svg_13" d="m4.14032,12.10037l9.96874,0l0,1.81249l-9.96874,0l0,-1.81249z" stroke-width=".5" fill="white"></path><path opacity="0.7" stroke="#000" id="svg_15" d="m14.60905,12.13162l5.40625,0l0,1.81249l-5.40625,0l0,-1.81249z" stroke-width=".5" fill="white"></path></g></svg></div></button></div>'; 
 
     }
     buttonOne=buttonOne.firstElementChild;
@@ -297,16 +305,259 @@ function actual_create_buttons(){
     }
     
     buttonOne.addEventListener("click", function() {
-
-        open_browser_action();
+        open_settings_menu();
+        // open_browser_action();
 
     });
 
     //bump up text
-   
-
-        
 }
+function open_settings_menu(){
+    if(document.getElementById('dsubs_settings-panel')){document.getElementById('dsubs_settings-panel').remove();return;}
+        fetch(chrome.runtime.getURL('/settings_box.html')).then(r => r.text()).then(html => {
+            document.body.insertAdjacentHTML('beforeend', html);
+            // not using innerHTML as it would break js event listeners of the page
+            draggable(document.getElementById('dsubs_banner'));
+            closeable(document.getElementById('dsubs_x-button'))
+            applyPreferencesToSettingsMenu();
+            });
+}
+
+function closeable(el){
+    el.addEventListener('mousedown',function(e){
+    document.getElementById('dsubs_settings-panel').remove();
+    });
+}
+
+function draggable(el){ //For Settings Menu
+        el.addEventListener('mousedown', function(e) {
+            //'https://stackoverflow.com/questions/9334084/moveable-draggable-div'
+            
+            let container = document.getElementById('dsubs_settings-panel')
+            if(!container)return
+            
+            var offsetX = e.clientX - parseInt(window.getComputedStyle(container).left);
+            var offsetY = e.clientY - parseInt(window.getComputedStyle(container).top);
+            
+            function mouseMoveHandler(e) {
+                container.style.top = (e.clientY - offsetY) + 'px';
+                container.style.left = (e.clientX - offsetX) + 'px';
+            }
+            
+            function reset() {
+                window.removeEventListener('mousemove', mouseMoveHandler);
+                window.removeEventListener('mouseup', reset);
+            }
+
+            window.addEventListener('mousemove', mouseMoveHandler);
+            window.addEventListener('mouseup', reset);
+        });
+}
+
+function applyPreferencesToSettingsMenu(){
+
+    var translatedTextSizeSlider = document.getElementById('dsubs_translatedTextSizeSlider');
+    var translatedTextSizeSliderValue= document.getElementById('dsubs_translatedTextSizeSliderValue');
+
+    var originalOpacitySlider = document.getElementById('dsubs_originalOpacitySlider');
+    var originalOpacitySliderValue = document.getElementById('dsubs_originalOpacitySliderValue');
+
+    var translatedOpacitySlider = document.getElementById('dsubs_translatedOpacitySlider');
+    var translatedOpacitySliderValue = document.getElementById('dsubs_translatedOpacitySliderValue');
+
+    var originalColorPicker = document.getElementById('dsubs_originalColorPicker');
+    var translatedColorPicker = document.getElementById('dsubs_translatedColorPicker');
+    var logoOriginalText = document.getElementById('dsubs_logo-top');
+    var logoTranslatedText = document.getElementById('dsubs_logo-bot');
+
+    var restoreDefaultsButton = document.getElementById('dsubs_restoreDefaultsButton');
+
+    var enableSubsValue = document.getElementById("dsubs_enableSubsValue");
+    // var enableButtonValue = document.getElementById("dsubs_enableButtonValue");
+    var enableStackedSubsValue = document.getElementById("dsubs_enableStackedSubsValue");
+
+
+
+    chrome.storage.sync.get('font_multiplier',function(data){
+        translatedTextSizeSlider.value=data.font_multiplier;
+        translatedTextSizeSliderValue.innerHTML=data.font_multiplier;
+    });
+
+    chrome.storage.sync.get('opacity',function(data){
+        translatedOpacitySlider.value=data.opacity;
+        translatedOpacitySliderValue.innerHTML=data.opacity;
+
+    });
+
+    chrome.storage.sync.get('originaltext_opacity',function(data){
+        originalOpacitySlider.value=data.originaltext_opacity;
+        originalOpacitySliderValue.innerHTML=data.originaltext_opacity;
+
+    });
+
+    chrome.storage.sync.get('text_color',function(data){
+        translatedColorPicker.value=data.text_color;
+        logoTranslatedText.style.color=data.text_color;
+    });
+    
+    chrome.storage.sync.get('originaltext_color',function(data){
+        originalColorPicker.value=data.originaltext_color;
+        logoOriginalText.style.color=data.originaltext_color;
+    });
+
+    chrome.storage.sync.get('on_off',function(data){
+        enableSubsValue.checked=data.on_off;
+    });
+
+    // chrome.storage.sync.get('button_on_off',function(data){
+    //     enableButtonValue.checked=data.button_on_off;
+    // });
+
+    chrome.storage.sync.get('button_up_down_mode',function(data){
+        enableStackedSubsValue.checked=data.button_up_down_mode;
+    });
+
+    restoreDefaultsButton.addEventListener('click',function() {
+
+        //chrome.storage.sync.set({"left_or_right":this.value});
+        translatedColorPicker.value='#FFFFFF';
+        translatedColorPicker.dispatchEvent(new Event('input'));
+
+        originalColorPicker.value='#FFF000';
+        originalColorPicker.dispatchEvent(new Event('input'));
+
+        translatedOpacitySlider.value=.8;
+        translatedOpacitySlider.dispatchEvent(new Event('change'));
+        originalOpacitySlider.value=1;
+        originalOpacitySlider.dispatchEvent(new Event('change'));
+
+        translatedTextSizeSlider.value=1;
+        translatedTextSizeSlider.dispatchEvent(new Event('change'));
+        
+    }, false);
+
+    // LISTENERS FOR CHANGING PREFERENCES //
+
+    translatedTextSizeSlider.addEventListener('change', function() {
+        translatedTextSizeSliderValue.innerHTML=this.value;
+        translatedTextSizeSlider.value=this.value;
+        //Send Message to background to store this value
+        //chrome.storage.sync.set({"font_multiplier":this.value});
+        chrome.runtime.sendMessage({
+            "message": "update_font_multiplier",
+            "value": this.value
+        });
+        
+    }, false);
+
+    translatedOpacitySlider.addEventListener('change',function() {
+        translatedOpacitySliderValue.innerHTML=this.value;
+        translatedOpacitySlider.value = this.value;
+
+        logoTranslatedText.style.opacity=this.value;
+        
+        //chrome.storage.sync.set({"left_or_right":this.value});
+        chrome.runtime.sendMessage({
+            "message": "update_opacity",
+            "value": this.value
+        });
+    }, false);
+
+    originalOpacitySlider.addEventListener('change',function() {
+        originalOpacitySliderValue.innerHTML=this.value;
+        originalOpacitySlider.value = this.value;
+        
+        logoOriginalText.style.opacity=this.value;
+
+        //chrome.storage.sync.set({"left_or_right":this.value});
+        chrome.runtime.sendMessage({
+            "message": "update_originaltext_opacity",
+            "value": this.value
+        });
+    }, false);
+
+    translatedColorPicker.addEventListener('input',function() {
+        console.log("HERE COLOR PICKER");
+        translatedColorPicker.value = this.value;
+
+        logoTranslatedText.style.color=this.value;
+        
+        //chrome.storage.sync.set({"left_or_right":this.value});
+        chrome.runtime.sendMessage({
+            "message": "update_text_color",
+            "value": this.value
+        });
+    }, false);
+    
+    originalColorPicker.addEventListener('input',function() {
+        console.log("HERE COLOR PICKER");
+        originalColorPicker.value = this.value;
+        
+        logoOriginalText.style.color=this.value;
+
+        //chrome.storage.sync.set({"left_or_right":this.value});
+        chrome.runtime.sendMessage({
+            "message": "update_originaltext_color",
+            "value": this.value
+        });
+    }, false);
+
+    enableSubsValue.addEventListener('change',function() {
+
+        //chrome.storage.sync.set({"left_or_right":this.value});
+       chrome.runtime.sendMessage({
+           "message":"update_on_off",
+           "value": this.checked
+       });
+        
+
+    }, false);
+
+    // enableButtonValue.addEventListener('change',function() {
+
+    //     //chrome.storage.sync.set({"left_or_right":this.value});
+    //    chrome.runtime.sendMessage({
+    //        "message":"update_button_on_off",
+    //        "value": this.checked
+    //    });
+        
+
+    // }, false);
+
+    enableStackedSubsValue.addEventListener('change',function() {
+
+        //chrome.storage.sync.set({"left_or_right":this.value});
+       chrome.runtime.sendMessage({
+           "message":"update_button_up_down_mode",
+           "value": this.checked
+       });
+        
+
+    }, false);
+
+    //TAB SWITCHING
+    document.getElementById('dsubs_help_button').onclick=function(){
+        open_browser_action();
+    }
+    document.getElementById('dsubs_preference_button').onclick=function(){
+        Array.from(document.querySelectorAll('.dsubs_activetab')).forEach(element => {
+            element.classList.remove('dsubs_activetab');
+        });
+        //swap tabs
+        document.getElementById('dsubs_preference_tab').classList.add('dsubs_activetab');
+
+    }
+    document.getElementById('dsubs_donate_button').onclick=function(){
+        Array.from(document.querySelectorAll('.dsubs_activetab')).forEach(element => {
+            element.classList.remove('dsubs_activetab');
+        });
+        //swap tabs
+        document.getElementById('dsubs_donation_tab').classList.add('dsubs_activetab');
+
+    }
+
+}
+
 function open_browser_action(){
 
     chrome.runtime.sendMessage({
@@ -772,7 +1023,10 @@ function update_style(setting){
 
 chrome.runtime.onMessage.addListener( //Listens for messages sent from background script (Preferences Controller)
     function (request, sendRespone, sendResponse){
-
+        if (request.message === 'open_settings_menu'){
+            console.log("OPENING MENU")
+            open_settings_menu();
+        }
         if (request.message === "update_on_off"){
             window.on_off = request.value;
             if (!window.on_off){
@@ -790,13 +1044,13 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                 catch(e){
                    console.log(e);
                 }
-                try{
+                // try{
 
-                    document.getElementById("myTutorialButton").style.display='none';
-                }
-                catch(e){
-                   // console.log(e);
-                }
+                //     document.getElementById("myTutorialButton").style.display='none';
+                // }
+                // catch(e){
+                //    // console.log(e);
+                // }
             }
             else{
 
