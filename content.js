@@ -21,11 +21,25 @@
 //TODO: Test bugfixes in Chrome
 
 //8/21/2023 - Bugfix: Classname recalibration. TODO: Change tutorial button to be On/Off button 
+
+// 10/13/2023 - TODO before 1.9 release: Update fresh install tutorial images to reflect new settings menu, maybe put tutorial images in settings menu instead of opening tab (but keep tab for fresh installs)
     
 window.player_active=0;
 window.weird_classname_mode=0;
 window.edge=0;
     
+window.default_preferences={ //Just in case
+
+    'font_multiplier':1,
+    'text_color':'#FFFFFF',
+    'opacity':.8,
+    'on_off':1,
+    'button_on_off':1,
+    'originaltext_opacity':1,
+    'button_up_down_mode':1,
+    'originaltext_color':'#fff000'
+  
+  }
     
 //Solution for note 2 above, This is not a foolproof way to detect which browser the user is on, but it works well enough for now
 
@@ -40,13 +54,17 @@ else{
 
 //
 
+
 try{
-    getSetting('button_up_down_mode'); //I don't like putting this here but need to for now, the storage retrieval happens takes too long to affect the first subs
-    getSetting('on_off');
+    // getSetting('button_up_down_mode'); //I don't like putting this here but need to for now, the storage retrieval happens takes too long to affect the first subs
+    // getSetting('on_off');
+    // getSetting('text_color');
     //Or maybe it isn't so bad to pull local preferences on every script load rather than waiting for the llsubs trigger? haven't decided yet.
+    requestPreferencesFromBackground();
 }
 catch(e){
-    // console.log("Error retrieving Stacked Subs preference, setting to default");
+    console.log("Error retrieving early preferences");
+    console.log(e);
     window.up_down_mode=1;
 }
 
@@ -84,48 +102,70 @@ function waitForElement(selector) {
     });
 }
 
-function getSetting(setting){ //Pulling User Preferences from Chrome Storage
-
-    chrome.storage.sync.get(setting,function(data){
-
-        if (setting === "on_off"){
-            window.on_off = data[setting];
-        }
-
-        else if (setting === "button_on_off"){
-            window.button_on_off = data[setting];
-        }
-        else if (setting ==="button_up_down_mode"){
-            window.up_down_mode=data[setting];
-        }
-
-        else if (setting === "font_multiplier"){
-            window.current_multiplier = parseFloat(data[setting]);
-        }
-
-        /*else if (setting === "sub_distance"){ Don't feel this is necessary anymore
-            window.sub_distance= data[setting];
-           // console.log("Retrieved Sub Distance From Storage: ",window.sub_distance);
-        }*/
-
-        else if (setting === "text_color"){
-            window.text_color = data[setting];
-        }
-
-        else if (setting === "opacity"){
-            window.opacity = data[setting];
-        }
-        else if (setting === "originaltext_opacity"){
-            window.originaltext_opacity = data[setting];
-        }
-        else if (setting === "originaltext_color"){
-            window.originaltext_color = data[setting];
-        }
-        else{
-            console.log("No setting:",setting);
-        }
-
+function requestPreferencesFromBackground(){
+    chrome.runtime.sendMessage({
+        "message": "request_preferences",
+        "value": 'please'
     });
+}
+
+function loadPreferences(prefs){ //Pulling User Preferences from Chrome Storage
+
+    console.log('LOADIGN PREFERENCES: ',prefs);
+    if(prefs == null){
+        prefs=window.default_preferences
+    }else{
+        window.preferences=prefs;
+    }
+
+    window.on_off = prefs['on_off'];
+    window.up_down_mode=prefs['button_up_down_mode'];
+    window.current_multiplier = prefs['font_multiplier'];
+    window.opacity = prefs['opacity'];
+    window.originaltext_opacity = prefs['originaltext_opacity'];
+    window.originaltext_color = prefs['originaltext_color'];
+    window.text_color = prefs['text_color'];
+
+    // chrome.storage.sync.get(setting,function(data){
+
+    //     if (setting === "on_off"){
+    //         window.on_off = data[setting];
+    //     }
+
+    //     else if (setting === "button_on_off"){
+    //         window.button_on_off = data[setting];
+    //     }
+    //     else if (setting ==="button_up_down_mode"){
+    //         window.up_down_mode=data[setting];
+    //     }
+
+    //     else if (setting === "font_multiplier"){
+    //         window.current_multiplier = parseFloat(data[setting]);
+    //     }
+
+    //     /*else if (setting === "sub_distance"){ Don't feel this is necessary anymore
+    //         window.sub_distance= data[setting];
+    //        // console.log("Retrieved Sub Distance From Storage: ",window.sub_distance);
+    //     }*/
+
+    //     else if (setting === "text_color"){
+    //         window.text_color = data[setting];
+    //     }
+
+    //     else if (setting === "opacity"){
+    //         window.opacity = data[setting];
+    //     }
+    //     else if (setting === "originaltext_opacity"){
+    //         window.originaltext_opacity = data[setting];
+    //     }
+    //     else if (setting === "originaltext_color"){
+    //         window.originaltext_color = data[setting];
+    //     }
+    //     else{
+    //         console.log("No setting:",setting);
+    //     }
+
+    // });
 }
 
 function wait_for_player_to_finish_loading(){
@@ -139,16 +179,16 @@ function wait_for_player_to_finish_loading(){
         }
 
         //Once the player is found, we pull color settings in anticipation for subtitles 
-        getSetting('text_color');
-        getSetting('opacity');
-        getSetting('originaltext_opacity');
-        getSetting('font_multiplier');
+        // getSetting('text_color');
+        // getSetting('opacity');
+        // getSetting('originaltext_opacity');
+        // getSetting('font_multiplier');
         //getSetting('sub_distance'); disabled for now, unnecessary imo
         //getSetting('text_side'); 
 
         window.original_text_side = 0; //Can change this to flip the text, don't like the feature since the text moves too much but maybe I can improve it later
         
-        initialize_button_observer();
+        // initialize_button_observer();//10/13/2013 button should always be made regardless now so trying out moving this up
         llsubs();
     
     });
@@ -206,13 +246,14 @@ window.video_change_observer.observe(document.documentElement,window.video_chang
 
 function prepare_for_dual_subs(){ //Starts the observer that waits for the video player to finish loading after a page/video change
         //Enables right click
-        console.log("PREPARING FOR DUALSUBS")
+        console.log("PREPARING FOR DUALSUBS");
         var elements = document.getElementsByTagName("*");
         for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
         
         // getSetting('button_up_down_mode');
-        getSetting('originaltext_color');
-        getSetting('button_on_off');
+        // getSetting('text_color');
+        // getSetting('originaltext_color');
+        // getSetting('button_on_off');
 
         try{
             actual_create_buttons();
@@ -225,18 +266,18 @@ function prepare_for_dual_subs(){ //Starts the observer that waits for the video
         //Use to be able to create buttons before bottom bar was visible, can't anymore so button creation
         //is moved to after player is detected now
 
+        initialize_button_observer()
         wait_for_player_to_finish_loading();
-
 
 }
 
 function actual_create_buttons(){
-   console.log("Creating buttons..");
+    
     // if (!window.on_off || !window.button_on_off){ //Buttons disabled for now so I can get working subs out as fast as possible
     //     return;
     // }
     if (document.getElementById('myTutorialButton')){
-       // console.log("Buttons alreayd made");
+       console.log("Buttons alreayd made");
         return;
     }
 
@@ -247,7 +288,7 @@ function actual_create_buttons(){
     document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonSpacing);
     }
     catch(e){
-       // console.log("No bar 1");
+        console.log(e);
         return;
     }
 
@@ -257,7 +298,22 @@ function actual_create_buttons(){
     // fill="none" stroke="yellow" stroke-width="2"></path></svg></div></button></div>'; 
 
     let buttonOne = document.createElement('DIV');
-    buttonOne.innerHTML ='<div class="medium ltr-1dcjcj4" id="myTutorialButton"><button aria-label="Open Tutorial" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-iyulz3" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><g xmlns="http://www.w3.org/2000/svg"><rect stroke-width="2" stroke="white" id="svg_2" height="14" width="22" y="4.93751" x="1" fill="transparent"></rect><path stroke="#000" id="svg_9" d="m3.01532,8.13163l9.68748,0l0,2.5l-9.68748,0l0,-2.5z" stroke-width=".5" fill="yellow"></path><path stroke="#000" id="svg_12" d="m13.48405,8.16288l7.28124,0l0,2.49999l-7.28124,0l0,-2.49999z" stroke-width=".5" fill="yellow"></path><path opacity="0.7" stroke="#000" id="svg_13" d="m4.14032,12.10037l9.96874,0l0,1.81249l-9.96874,0l0,-1.81249z" stroke-width=".5" fill="white"></path><path opacity="0.7" stroke="#000" id="svg_15" d="m14.60905,12.13162l5.40625,0l0,1.81249l-5.40625,0l0,-1.81249z" stroke-width=".5" fill="white"></path></g></svg></div></button></div>'; 
+
+    
+    let button_top_color = window.text_color;
+    let button_bottom_color = window.originaltext_color;
+    if(!button_bottom_color && !button_top_color){
+        button_top_color='yellow';
+        button_bottom_color='white';
+    }
+    
+    buttonOne.innerHTML =`<div class="medium ltr-1dcjcj4" id="myTutorialButton"><button aria-label="Open Tutorial" class=" ltr-1enhvti" data-uia="control-fontsize-minus">\
+    <div class="control-medium ltr-iyulz3" role="presentation"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard">\
+    <g xmlns="http://www.w3.org/2000/svg"><rect stroke-width="2" stroke="white" id="svg_2" height="14" width="22" y="4.93751" x="1" fill="transparent"></rect>\
+    <path stroke="#000" id="dsubs_svg_9" d="m3.01532,8.13163l9.68748,0l0,2.5l-9.68748,0l0,-2.5z" stroke-width=".5" fill="${button_bottom_color}"></path>\
+    <path stroke="#000" id="dsubs_svg_12" d="m13.48405,8.16288l7.28124,0l0,2.49999l-7.28124,0l0,-2.49999z" stroke-width=".5" fill="${button_bottom_color}"></path>\
+    <path opacity="0.7" stroke="#000" id="dsubs_svg_13" d="m4.14032,12.10037l9.96874,0l0,1.81249l-9.96874,0l0,-1.81249z" stroke-width=".5" fill="${button_top_color}"></path>\
+    <path opacity="0.7" stroke="#000" id="dsubs_svg_15" d="m14.60905,12.13162l5.40625,0l0,1.81249l-5.40625,0l0,-1.81249z" stroke-width=".5" fill="${button_top_color}"></path></g></svg></div></button></div>`; 
     if (window.weird_classname_mode){
         buttonOne.innerHTML ='<div class="medium ltr-1dcjcj4" id="myTutorialButton"><button aria-label="Open Tutorial" class=" ltr-1enhvti" data-uia="control-fontsize-minus"><div class="control-medium ltr-iyulz3" role="presentation"><svg width="24" height="24" viewBox="-1 0 24 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="Hawkins-Icon Hawkins-Icon-Standard"><g xmlns="http://www.w3.org/2000/svg"><rect stroke-width="2" stroke="white" id="svg_2" height="14" width="22" y="4.93751" x="1" fill="transparent"></rect><path stroke="#000" id="svg_9" d="m3.01532,8.13163l9.68748,0l0,2.5l-9.68748,0l0,-2.5z" stroke-width=".5" fill="yellow"></path><path stroke="#000" id="svg_12" d="m13.48405,8.16288l7.28124,0l0,2.49999l-7.28124,0l0,-2.49999z" stroke-width=".5" fill="yellow"></path><path opacity="0.7" stroke="#000" id="svg_13" d="m4.14032,12.10037l9.96874,0l0,1.81249l-9.96874,0l0,-1.81249z" stroke-width=".5" fill="white"></path><path opacity="0.7" stroke="#000" id="svg_15" d="m14.60905,12.13162l5.40625,0l0,1.81249l-5.40625,0l0,-1.81249z" stroke-width=".5" fill="white"></path></g></svg></div></button></div>'; 
 
@@ -268,7 +324,7 @@ function actual_create_buttons(){
     document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonOne);
     }
     catch(e){
-       // console.log("No bar 2");
+       console.log("No bar 2");
         return;
     }
     buttonOne.onmouseenter=function(){
@@ -292,17 +348,6 @@ function actual_create_buttons(){
     buttonSpacing.innerHTML='<div class="ltr-1npqywr" style="min-width: 3rem; width: 3rem;"></div>';
     buttonSpacing=buttonSpacing.firstElementChild;
 
-    try{
-        document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonSpacing);
-    }
-    catch(e){
-       // console.log("No bar 3");
-        return;
-    }
-
-    if (window.originaltext_color){
-    document.getElementById('myTutorialButton').firstChild.firstChild.firstChild.firstElementChild.setAttribute('stroke',window.originaltext_color);
-    }
     
     buttonOne.addEventListener("click", function() {
         open_settings_menu();
@@ -378,44 +423,39 @@ function applyPreferencesToSettingsMenu(){
 
 
 
-    chrome.storage.sync.get('font_multiplier',function(data){
-        translatedTextSizeSlider.value=data.font_multiplier;
-        translatedTextSizeSliderValue.innerHTML=data.font_multiplier;
-    });
 
-    chrome.storage.sync.get('opacity',function(data){
-        translatedOpacitySlider.value=data.opacity;
-        translatedOpacitySliderValue.innerHTML=data.opacity;
+    // window.on_off = prefs['on_off'];
+    // window.up_down_mode=prefs['button_up_down_mode'];
+    // window.current_multiplier = parseFloat(prefs['font_multiplier']);
+    // window.opacity = prefs['opacity'];
+    // window.originaltext_opacity = prefs['originaltext_opacity'];
+    // window.originaltext_color = prefs['originaltext_color'];
+    // window.text_color = prefs['text_color'];
+    translatedTextSizeSlider.value=window.current_multiplier;
+    translatedTextSizeSliderValue.innerHTML=window.current_multiplier;
 
-    });
+    translatedOpacitySlider.value=window.opacity;
+    translatedOpacitySliderValue.innerHTML=window.opacity;
 
-    chrome.storage.sync.get('originaltext_opacity',function(data){
-        originalOpacitySlider.value=data.originaltext_opacity;
-        originalOpacitySliderValue.innerHTML=data.originaltext_opacity;
 
-    });
+    originalOpacitySlider.value=window.originaltext_opacity;
+    originalOpacitySliderValue.innerHTML=window.originaltext_opacity;
 
-    chrome.storage.sync.get('text_color',function(data){
-        translatedColorPicker.value=data.text_color;
-        logoTranslatedText.style.color=data.text_color;
-    });
+
+    translatedColorPicker.value=window.text_color;
+    logoTranslatedText.style.color=window.text_color;
     
-    chrome.storage.sync.get('originaltext_color',function(data){
-        originalColorPicker.value=data.originaltext_color;
-        logoOriginalText.style.color=data.originaltext_color;
-    });
+    originalColorPicker.value=window.originaltext_color;
+    logoOriginalText.style.color=window.originaltext_color;
 
-    chrome.storage.sync.get('on_off',function(data){
-        enableSubsValue.checked=data.on_off;
-    });
+    enableSubsValue.checked=window.on_off;
+    
 
     // chrome.storage.sync.get('button_on_off',function(data){
     //     enableButtonValue.checked=data.button_on_off;
     // });
 
-    chrome.storage.sync.get('button_up_down_mode',function(data){
-        enableStackedSubsValue.checked=data.button_up_down_mode;
-    });
+    enableStackedSubsValue.checked=window.up_down_mode;
 
     restoreDefaultsButton.addEventListener('click',function() {
 
@@ -477,7 +517,6 @@ function applyPreferencesToSettingsMenu(){
     }, false);
 
     translatedColorPicker.addEventListener('input',function() {
-        console.log("HERE COLOR PICKER");
         translatedColorPicker.value = this.value;
 
         logoTranslatedText.style.color=this.value;
@@ -490,7 +529,6 @@ function applyPreferencesToSettingsMenu(){
     }, false);
     
     originalColorPicker.addEventListener('input',function() {
-        console.log("HERE COLOR PICKER");
         originalColorPicker.value = this.value;
         
         logoOriginalText.style.color=this.value;
@@ -566,6 +604,7 @@ function open_browser_action(){
         });
 
 }
+
 function initialize_button_observer(){ 
     //This keeps track of the bottom playback bar, 
     //it has to create buttons every time it appears since the element is destroyed rather than hidden
@@ -575,18 +614,25 @@ function initialize_button_observer(){
 
     window.button_config = {subtree:true,childList:false,attributes:true,attributeFilter:["class"]};
 
+    let possible_bottom_bar_classnames = ['active ltr-fntwn3','active ltr-omkt8s','active ltr-gwjau2-playerCss'];
+
     const callback = function(mutationsList,button_observer){
-        for (const mutation of mutationsList){
-           
-             if (mutation.target.className==='active ltr-fntwn3' || mutation.target.className==='active ltr-omkt8s' || mutation.target.className==='active ltr-gwjau2-playerCss'){
-                 //console.log("Bottom bar visible");
-                if (mutation.target.className==='active ltr-gwjau2-playerCss'){
-                    window.netflix_mode = 2;
-                }
-                actual_create_buttons();
-             }
-           
+        //works but expensive
+        for (const curr_class_name of possible_bottom_bar_classnames){
+            let check_for_bar = document.getElementsByClassName(curr_class_name)
+            if(check_for_bar){actual_create_buttons();break;}
         }
+        // for (const mutation of mutationsList){
+           
+        //      if (mutation.target.className==='active ltr-fntwn3' || mutation.target.className==='active ltr-omkt8s' || mutation.target.className==='active ltr-gwjau2-playerCss'){
+        //          //console.log("Bottom bar visible");
+        //         if (mutation.target.className==='active ltr-gwjau2-playerCss'){
+        //             window.netflix_mode = 2;
+        //         }
+        //         actual_create_buttons();
+        //      }
+           
+        // }
        
     };
 
@@ -998,6 +1044,16 @@ function update_style(setting){
         //following line is for multi-container support, but doesn't affect single container mode so I didn't bother with an if(container_count)
         document.getElementsByClassName('player-timedtext')[0].firstChild.firstChild.style['color']=window.originaltext_color;
 
+        try{//For Icon
+            document.getElementById('dsubs_svg_9').setAttribute('fill',window.originaltext_color);
+            document.getElementById('dsubs_svg_12').setAttribute('fill',window.originaltext_color);
+            document.getElementById('dsubs_svg_13').setAttribute('fill',window.text_color);
+            document.getElementById('dsubs_svg_15').setAttribute('fill',window.text_color);
+        }
+        catch{
+            console.log("error changing button style, button probably doesnt exist");
+        }
+
         for (let i =0;i<document.getElementsByClassName("player-timedtext")[0].firstChild.firstChild.children.length;i++){
             original_lines.children[i].style['color']=window.originaltext_color;
         }
@@ -1023,8 +1079,10 @@ function update_style(setting){
 
 chrome.runtime.onMessage.addListener( //Listens for messages sent from background script (Preferences Controller)
     function (request, sendRespone, sendResponse){
+        if (request.message === 'user_preferences'){
+            loadPreferences(request.value);
+        }
         if (request.message === 'open_settings_menu'){
-            console.log("OPENING MENU")
             open_settings_menu();
         }
         if (request.message === "update_on_off"){

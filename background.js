@@ -13,6 +13,7 @@ chrome.runtime.onInstalled.addListener(function(details){
   //   return;
   // }
 });
+console.log("HEREEEEEEEEEEEEEEEEEERR");
 /*chrome.runtime.onInstalled.addListener(function(details){
   if(details.reason == "update"){
       chrome.storage.sync.get('text_color',function(data){ //On update save switch right side color to left
@@ -27,11 +28,25 @@ chrome.runtime.onInstalled.addListener(function(details){
 });
 */
 //Font Multiplier
+var preferences={
+
+  'font_multiplier':1,
+  'text_color':'#FFFFFF',
+  'opacity':.8,
+  'on_off':1,
+  'button_on_off':1,
+  'originaltext_opacity':1,
+  'button_up_down_mode':1,
+  'originaltext_color':'#fff000'
+
+}
+console.log('Starting: ',preferences);
 
 chrome.storage.sync.get('font_multiplier',function(data){
   if(data.font_multiplier!=null){
     console.log("Preferences: Font_multiplier found: ");
     console.log(data.font_multiplier);
+    preferences['font_multiplier']=data.font_multiplier;
   }
   else{
     console.log("No Font Multiplier stored");
@@ -44,6 +59,7 @@ chrome.storage.sync.get('font_multiplier',function(data){
 chrome.storage.sync.get('text_color', function(data){
   if(data.text_color){
     console.log("Preferences: Text Color : " + data.text_color);
+    preferences['text_color']=data.text_color;
   }
   else{
     console.log("No Color Preference Found - Setting YELLOW");
@@ -56,6 +72,7 @@ chrome.storage.sync.get('text_color', function(data){
 chrome.storage.sync.get('opacity', function(data){
   if(data.opacity){
     console.log("Preferences: Opacity : " + data.opacity);
+    preferences['opacity']=data.opacity;
   }
   else{
     console.log("No Opacity Preference Found - Setting to .8");
@@ -67,6 +84,7 @@ chrome.storage.sync.get('opacity', function(data){
 chrome.storage.sync.get('on_off', function(data){
   if(data.on_off!=null){
     console.log("Preferences: on_off : " + data.on_off);
+    preferences['on_off']=data.on_off;
   }
   else{
     console.log("No Opacity Preference Found - Setting to ON");
@@ -77,6 +95,7 @@ chrome.storage.sync.get('on_off', function(data){
 chrome.storage.sync.get('button_on_off', function(data){
   if(data.button_on_off!=null){
     console.log("Preferences: button_on_off : " + data.button_on_off);
+    preferences['button_on_off']=data.button_on_off;
   }
   else{
     console.log("No Opacity Preference Found - Setting to ON");
@@ -87,7 +106,8 @@ chrome.storage.sync.get('button_on_off', function(data){
 
 chrome.storage.sync.get('originaltext_opacity', function(data){
   if(data.originaltext_opacity){
-    console.log("Preferences: Original Text Opacity : " + data.originaltext_color);
+    console.log("Preferences: Original Text Opacity : " + data.originaltext_opacity);
+    preferences['originaltext_opacity']=data.originaltext_opacity;
   }
   else{
     console.log("No Original Text Opacity Preference Found - Setting to 1");
@@ -98,6 +118,7 @@ chrome.storage.sync.get('originaltext_opacity', function(data){
 chrome.storage.sync.get('originaltext_color', function(data){
   if(data.originaltext_color){
     console.log("Preferences: OriginalText Color : " + data.originaltext_color);
+    preferences['originaltext_color']=data.originaltext_color;
   }
   else{
     console.log("No OriginalText Color Preference Found - Setting YELLOW");
@@ -108,12 +129,15 @@ chrome.storage.sync.get('originaltext_color', function(data){
 chrome.storage.sync.get('button_up_down_mode', function(data){
   if(data.button_up_down_mode){
     console.log("Preferences: up_down_mode: " + data.button_up_down_mode);
+    preferences['button_up_down_mode']=data.button_up_down_mode;
   }
   else{
     console.log("No up_down_mode Preference Found - Setting 1");
     chrome.storage.sync.set({'button_up_down_mode': 1});
   }
 });
+
+console.log('Now: ',preferences);
 
 //Sub Distance
 
@@ -134,6 +158,16 @@ chrome.storage.sync.get('button_up_down_mode', function(data){
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
 
+      if(request.message === 'request_preferences'){
+        console.log("SENDING: ",preferences);
+        chrome.tabs.query({active:true, currentWindow:true}, function(tabs){ //Pass message onto Content.js
+          chrome.tabs.sendMessage(tabs[0].id, {
+            "message":"user_preferences",
+            "value":preferences}); 
+        });
+
+      }
+
       if(request.message === 'open_settings_menu'){
         chrome.tabs.query({active:true, currentWindow:true}, function(tabs){ //Pass message onto Content.js
           chrome.tabs.sendMessage(tabs[0].id, {
@@ -153,6 +187,7 @@ chrome.runtime.onMessage.addListener(
 
         console.log("Background.js recieved message from SLIDER to update on_off to " + request.value);
         chrome.storage.sync.set({'on_off':request.value});           //Store into local variables
+        preferences['on_off']=request.value;
         
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs){ //Pass message onto Content.js
           chrome.tabs.sendMessage(tabs[0].id, {
@@ -167,6 +202,7 @@ chrome.runtime.onMessage.addListener(
 
         console.log("Background.js recieved message from SLIDER to update button_on_off to " + request.value);
         chrome.storage.sync.set({'button_on_off':request.value});           //Store into local variables
+        preferences['button_on_off']=request.value;
         
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs){ //Pass message onto Content.js
           chrome.tabs.sendMessage(tabs[0].id, {
@@ -181,6 +217,7 @@ chrome.runtime.onMessage.addListener(
 
         console.log("Background.js recieved  a message from SLIDER to update up_down_mode to " + request.value);
         chrome.storage.sync.set({'button_up_down_mode':request.value});
+        preferences['button_up_down_mode']=request.value;
         
         chrome.tabs.query({active:true, currentWindow:true}, function(tabs){ //Pass message onto Content.js
           chrome.tabs.sendMessage(tabs[0].id, {
@@ -196,6 +233,7 @@ chrome.runtime.onMessage.addListener(
 
         console.log("Background.js recieved message from SLIDER to update font multiplier to " + request.value);
         chrome.storage.sync.set({'font_multiplier':parseFloat(request.value)});           //Store into local variables
+        preferences['font_multiplier']=parseFloat(request.value);
         
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs){ //Pass message onto Content.js
           chrome.tabs.sendMessage(tabs[0].id, {
@@ -210,6 +248,7 @@ chrome.runtime.onMessage.addListener(
 
         console.log("Background.js recieved  a message from COLORSELECTOR to update TEXT_COLOR to " + request.value);
         chrome.storage.sync.set({'text_color':request.value});
+        preferences['text_color']=request.value;
         
         chrome.tabs.query({active:true, currentWindow:true}, function(tabs){ //Pass message onto Content.js
           chrome.tabs.sendMessage(tabs[0].id, {
@@ -224,6 +263,7 @@ chrome.runtime.onMessage.addListener(
 
         console.log("BACKGROUND.JS recieved a message from SIDESELECTOR to update TEXT_SIDE to " + request.value);
         chrome.storage.sync.set({'opacity': request.value});
+        preferences['opacity']=request.value;
 
         chrome.tabs.query({active:true, currentWindow:true}, function(tabs){
           chrome.tabs.sendMessage(tabs[0].id, {
@@ -238,6 +278,7 @@ chrome.runtime.onMessage.addListener(
 
         console.log("BACKGROUND.JS recieved a message from SIDESELECTOR to update ORIGINALTEXT_OPACITY to " + request.value);
         chrome.storage.sync.set({'originaltext_opacity': request.value});
+        preferences['originaltext_opacity']=request.value;
 
         chrome.tabs.query({active:true, currentWindow:true}, function(tabs){
           chrome.tabs.sendMessage(tabs[0].id, {
@@ -252,6 +293,7 @@ chrome.runtime.onMessage.addListener(
 
         console.log("Background.js recieved  a message from COLORSELECTOR to update ORIGINALTEXT_COLOR to " + request.value);
         chrome.storage.sync.set({'originaltext_color':request.value});
+        preferences['originaltext_color']=request.value;
         
         chrome.tabs.query({active:true, currentWindow:true}, function(tabs){ //Pass message onto Content.js
           chrome.tabs.sendMessage(tabs[0].id, {
