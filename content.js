@@ -575,7 +575,12 @@ function applyPreferencesToSettingsMenu(){
 
     //TAB SWITCHING
     document.getElementById('dsubs_help_button').onclick=function(){
-        open_browser_action();
+        // open_browser_action();
+        Array.from(document.querySelectorAll('.dsubs_activetab')).forEach(element => {
+            element.classList.remove('dsubs_activetab');
+        });
+        //swap tabs
+        document.getElementById('dsubs_help_tab').classList.add('dsubs_activetab');
     }
     document.getElementById('dsubs_preference_button').onclick=function(){
         Array.from(document.querySelectorAll('.dsubs_activetab')).forEach(element => {
