@@ -159,7 +159,6 @@ chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
 
       if(request.message === 'request_preferences'){
-        console.log("SENDING: ",preferences);
         chrome.tabs.query({active:true, currentWindow:true}, function(tabs){ //Pass message onto Content.js
           chrome.tabs.sendMessage(tabs[0].id, {
             "message":"user_preferences",

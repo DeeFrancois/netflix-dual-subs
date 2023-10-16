@@ -63,8 +63,8 @@ try{
     requestPreferencesFromBackground();
 }
 catch(e){
-    console.log("Error retrieving early preferences");
-    console.log(e);
+    // console.log("Error retrieving early preferences");
+    // console.log(e);
     window.up_down_mode=1;
 }
 
@@ -111,7 +111,6 @@ function requestPreferencesFromBackground(){
 
 function loadPreferences(prefs){ //Pulling User Preferences from Chrome Storage
 
-    console.log('LOADIGN PREFERENCES: ',prefs);
     if(prefs == null){
         prefs=window.default_preferences
     }else{
@@ -246,7 +245,6 @@ window.video_change_observer.observe(document.documentElement,window.video_chang
 
 function prepare_for_dual_subs(){ //Starts the observer that waits for the video player to finish loading after a page/video change
         //Enables right click
-        console.log("PREPARING FOR DUALSUBS");
         var elements = document.getElementsByTagName("*");
         for(var id = 0; id < elements.length; ++id) { elements[id].addEventListener('contextmenu',function(e){e.stopPropagation()},true);elements[id].oncontextmenu = null; }
         
@@ -277,7 +275,6 @@ function actual_create_buttons(){
     //     return;
     // }
     if (document.getElementById('myTutorialButton')){
-       console.log("Buttons alreayd made");
         return;
     }
 
@@ -288,7 +285,7 @@ function actual_create_buttons(){
     document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonSpacing);
     }
     catch(e){
-        console.log(e);
+        // console.log(e);
         return;
     }
 
@@ -324,7 +321,7 @@ function actual_create_buttons(){
     document.querySelector('button[aria-label="Seek Back"]').parentElement.parentElement.appendChild(buttonOne);
     }
     catch(e){
-       console.log("No bar 2");
+    //    console.log("No bar 2");
         return;
     }
     buttonOne.onmouseenter=function(){
@@ -790,7 +787,7 @@ function llsubs(){
                         Array.from(document.querySelector('.player-timedtext').children).forEach(e=>e.setAttribute('_istranslated','1')); //MIGHT WORK FOR DUAL COMPATIBILITY!!!! (spoofs edge translator to skip since translate tag doesnt work)
                         }
                         catch(e){
-                            console.log("No subs");
+                            // console.log("No subs");
                         }
 
                     const caption_row = document.getElementsByClassName("player-timedtext")[0];
@@ -1056,7 +1053,7 @@ function update_style(setting){
             document.getElementById('dsubs_svg_15').setAttribute('fill',window.text_color);
         }
         catch{
-            console.log("error changing button style, button probably doesnt exist");
+            // console.log("error changing button style, button probably doesnt exist");
         }
 
         for (let i =0;i<document.getElementsByClassName("player-timedtext")[0].firstChild.firstChild.children.length;i++){
@@ -1105,7 +1102,7 @@ chrome.runtime.onMessage.addListener( //Listens for messages sent from backgroun
                     
                 }
                 catch(e){
-                   console.log(e);
+                //    console.log(e);
                 }
                 // try{
 
