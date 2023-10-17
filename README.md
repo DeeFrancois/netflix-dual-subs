@@ -8,10 +8,10 @@ Works with the browser's built-in translator to enable dual language subtitles o
 ![demo](https://github.com/DeeFrancois/netflix-dual-subs/blob/master/DocumentImages/demo.gif)
 
 <sup><sup>_Hjem Til Jul (2019)_</sup></sup>
-#### *Does NOT Work when the original subtitles are inserted with images since the browser can't detect those*
-<sup>(This includes: Arabic, Hebrew, Hindi, Japanese, Korean, Persian, Thai, Traditional Chinese, Vietnamese)</sup>
+#### *Some titles in the following languages may contain hardcoded subtitles which this extension cannot support: Arabic, Hebrew, Hindi, Japanese, Korean, Persian, Thai, Traditional Chinese, Vietnamese*
+However, you can still use the **Alternate Method** mentioned below (but it is a less-than-ideal experience)
 
-However, you can still use the **Alternate Method** mentioned below which works with **any language** but provides a less-than-ideal experience 
+<sup> Note: I haven't seen hardcoded subtitles on Netflix in a while though, so this actually might not be an issue anymore. Still, I haven't checked enough titles to make any guarantees. </sup>
 
 ## Motivation
 I'm learning Norwegian and I've found that dual subtitles are a really great language learning tool. Many people tend to watch foreign shows with their native subs on while using a seperate tab to constantly look up words they don't know. Having dual subtitles makes that process more efficient by bringing the translations directly onto the video.
