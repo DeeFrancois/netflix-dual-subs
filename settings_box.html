@@ -397,41 +397,16 @@
         <div class="dsubs_help_tab" id="dsubs_help_tab">
 
             <div class="dsubs_title_line">Turning ON Dual Subtitles: </div> 
-            <p class="dsubs_text_line"> - Activate the browser translator with: Right Click => "Translate to.."</p>
+            <p class="dsubs_text_line"> 1) Turn on subtitles in your Target Language</p>
+            <p class="dsubs_text_line"> 2) Activate the browser's translator with: Right Click => "Translate to.."</p>
             <video width="520" src="https://i.imgur.com/EJru8ub.mp4" loop controls='true' autoplay='true'></video>
             <div class="dsubs_title_line">Turning OFF Dual Subtitles: </div> 
-            <p class="dsubs_text_line"> - Use the Google Translate icon at the end of the address bar to deactivate the browser's translator before unchecking the box</p>
+            <p class="dsubs_text_line"> 1) Uncheck "Enable Dual Subtitles" in Preferences </p>
+            <p class="dsubs_text_line"> 2) Use the Google Translate icon at the end of the address bar to deactivate the browser's translator before unchecking the box</p>
             <video width="520" src="https://i.imgur.com/O8bnHFS.mp4" loop controls='true' autoplay='true'></video>
             <div class="dsubs_text_Line"> Please report any issues you find so I can fix them for everyone! (In the mean time try refreshing) </div>
         </div>
 
     </div>
-    <script>
-        //TAB SWITCHING
-    document.getElementById('dsubs_help_button').onclick=function(){
-        // open_browser_action();
-        Array.from(document.querySelectorAll('.dsubs_activetab')).forEach(element => {
-            element.classList.remove('dsubs_activetab');
-        });
-        //swap tabs
-        document.getElementById('dsubs_help_tab').classList.add('dsubs_activetab');
-    }
-    document.getElementById('dsubs_preference_button').onclick=function(){
-        Array.from(document.querySelectorAll('.dsubs_activetab')).forEach(element => {
-            element.classList.remove('dsubs_activetab');
-        });
-        //swap tabs
-        document.getElementById('dsubs_preference_tab').classList.add('dsubs_activetab');
-
-    }
-    document.getElementById('dsubs_donate_button').onclick=function(){
-        Array.from(document.querySelectorAll('.dsubs_activetab')).forEach(element => {
-            element.classList.remove('dsubs_activetab');
-        });
-        //swap tabs
-        document.getElementById('dsubs_donation_tab').classList.add('dsubs_activetab');
-
-    }
-    </script>
    
 </div>
